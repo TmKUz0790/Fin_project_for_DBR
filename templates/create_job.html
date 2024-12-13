@@ -1,0 +1,168 @@
+
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body Styling with Background Image */
+        body {
+            background: url("{% static 'images/blue.jpeg' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: #130b0b;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: rgba(246, 243, 243, 0.9); /* Slight transparency for background */
+            width: 80%;
+            max-width: 700px;
+            padding: 30px;
+            box-shadow: 0px 4px 12px rgba(243, 6, 6, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Logo Header Styling */
+        .header {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8); /* Slight background for readability */
+            padding: 5px 10px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            width: 40px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .company-name {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-name h1 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .company-name p {
+            font-size: 0.8em;
+            color: #3a3c3c;
+            margin: 0;
+        }
+
+        /* Header Styling */
+        h2 {
+            color: #120303;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        /* Form Layout and Element Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        input[type="text"], input[type="email"], select, textarea {
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid #faf9f9;
+            border-radius: 6px;
+            width: 100%;
+            background-color: #f8f6f6; /* Dark background */
+            color: #0c0303; /* Light text color */
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
+            border-color: #040101;
+            outline: none;
+        }
+
+        /* Button Styling */
+        button[type="submit"] {
+            background: linear-gradient(90deg, #40ff00, #3741c6);
+            color: #0b0404;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(90deg, darkred, orange);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <img src="{% static 'images/DBS_logo.png' %}" alt="DBS Logo">
+    </div>
+    <div class="company-name">
+        <h1>DBR</h1>
+        <p>Financial and Automation</p>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Create Job</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ job_form.as_p }}
+
+        <button type="submit">Create Job</button>
+    </form>
+</div>
+
+</body>
+</html>
+

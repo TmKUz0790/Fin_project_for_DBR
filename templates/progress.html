@@ -1,0 +1,480 @@
+<!-- <!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Прогресс-бар с пульсирующим свечением</title>
+    <style>
+      .progress-container1 {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .task-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      .task-title {
+        width: 150px;
+        font-weight: bold;
+        text-align: left;
+        margin-right: 10px;
+      }
+
+      .progress-bar1 {
+        position: relative;
+        height: 20px;
+        width: calc(600px + 10px * 11);
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: bold;
+        font-size: 12px;
+        white-space: nowrap;
+        position: absolute;
+        top: 0;
+        border-radius: 5px;
+        animation: glowing 1.5s infinite; /* Добавление анимации */
+      }
+      /* Применение цветов и эффектов свечения */
+      .progress-low {
+        background-color: #e60000;
+        animation: glowing-red 1.5s infinite;
+      }
+
+      .progress-full {
+        background-color: #0073e6;
+        animation: glowing 1.5s infinite;
+      }
+      .progress-medium {
+        background-color: #ffb700;
+        animation: glowing-yellow 1.5s infinite;
+      }
+
+      .progress-high {
+        background-color: #00ff44;
+        animation: glowing-green 1.5s infinite;
+      }
+
+      /* Анимация пульсирующего свечения */
+
+      @keyframes glowing {
+        0% {
+          box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+        }
+        50% {
+          box-shadow: 0 0 20px #00bfff, 0 0 40px #00bfff, 0 0 60px #00bfff;
+        }
+        100% {
+          box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+        }
+      }
+      @keyframes glowing-red {
+        0% {
+          box-shadow: 0 0 10px #e60000, 0 0 20px #e60000, 0 0 30px #e60000;
+        }
+        50% {
+          box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333, 0 0 60px #ff3333;
+        }
+        100% {
+          box-shadow: 0 0 10px #e60000, 0 0 20px #e60000, 0 0 30px #e60000;
+        }
+      }
+
+      /* Анимация свечения для желтого прогрессбара */
+      @keyframes glowing-yellow {
+        0% {
+          box-shadow: 0 0 10px #ffb700, 0 0 20px #ffb700, 0 0 30px #ffb700;
+        }
+        50% {
+          box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ffd700;
+        }
+        100% {
+          box-shadow: 0 0 10px #ffb700, 0 0 20px #ffb700, 0 0 30px #ffb700;
+        }
+      }
+
+      /* Анимация свечения для зеленого прогрессбара */
+      @keyframes glowing-green {
+        0% {
+          box-shadow: 0 0 10px #00ff44, 0 0 20px #00ff44, 0 0 30px #00ff44;
+        }
+        50% {
+          box-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99, 0 0 60px #00ff99;
+        }
+        100% {
+          box-shadow: 0 0 10px #00ff44, 0 0 20px #00ff44, 0 0 30px #00ff44;
+        }
+      }
+
+      .month-labels {
+        display: flex;
+        width: calc(600px + 10px * 11);
+        justify-content: space-between;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .month-label {
+        flex: 1;
+        text-align: center;
+        padding: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="progress-container1"
+      id="progress-container1"
+    >
+      <div class="task-row">
+        <div class="task-title"></div>
+        <div
+          class="month-labels"
+          id="month-labels"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      let data = {
+        months: [
+          'январь',
+          'февраль',
+          'март',
+          'апрель',
+          'май',
+          'июнь',
+          'июль',
+          'август',
+          'сентябрь',
+          'октябрь',
+          'ноябрь',
+        ],
+        tasks: [
+          { title: 'Персональный менеджер', start: 0, end: 10, progress: 80 },
+          { title: 'Управленческий учет', start: 0, end: 5, progress: 50 },
+          { title: 'Финансовый анализ', start: 2, end: 5, progress: 25 },
+          { title: 'Финансовый отчет', start: 0, end: 3, progress: 50 },
+          { title: 'Дашборд', start: 3, end: 8, progress: 100 },
+        ],
+      };
+
+      function createMonthLabels(months) {
+        const monthLabelsContainer = document.getElementById('month-labels');
+        monthLabelsContainer.innerHTML = '';
+        months.forEach((month) => {
+          const monthLabel = document.createElement('div');
+          monthLabel.className = 'month-label';
+          monthLabel.textContent = month;
+          monthLabelsContainer.appendChild(monthLabel);
+        });
+      }
+
+      function createProgressBars(data) {
+        const container = document.getElementById('progress-container1');
+        container
+          .querySelectorAll('.task-row:not(:first-child)')
+          .forEach((row) => row.remove());
+        const totalMonths = data.months.length;
+
+        data.tasks.forEach((task) => {
+          const taskRow = document.createElement('div');
+          taskRow.className = 'task-row';
+
+          const taskTitle = document.createElement('div');
+          taskTitle.className = 'task-title';
+          taskTitle.textContent = task.title;
+          taskRow.appendChild(taskTitle);
+
+          const progressBar = document.createElement('div');
+          progressBar.className = 'progress-bar1';
+
+          const progressFill = document.createElement('div');
+          progressFill.className = 'progress-fill';
+
+          // Добавляем соответствующий класс на основе значения progress
+          if (task.progress === 100) {
+            progressFill.classList.add('progress-full');
+          } else if (task.progress < 50) {
+            progressFill.classList.add('progress-low');
+          } else if (task.progress < 80) {
+            progressFill.classList.add('progress-medium');
+          } else {
+            progressFill.classList.add('progress-high');
+          }
+
+          const taskMonths = task.end - task.start + 1;
+          const barWidth = (taskMonths / totalMonths) * 100;
+          const progressWidth = (task.progress / 100) * barWidth;
+          const offsetLeft = (task.start / totalMonths) * 100;
+
+          progressFill.style.width = `${progressWidth}%`;
+          progressFill.style.left = `${offsetLeft}%`;
+          progressFill.textContent = `${task.progress}%`;
+
+          progressBar.appendChild(progressFill);
+          taskRow.appendChild(progressBar);
+          container.appendChild(taskRow);
+        });
+      }
+
+      createMonthLabels(data.months);
+      createProgressBars(data);
+
+      function removeMonth(monthName) {
+        data.months = data.months.filter((month) => month !== monthName);
+        createMonthLabels(data.months);
+        createProgressBars(data);
+      }
+
+      setTimeout(() => {
+        removeMonth('март');
+      }, 2000);
+    </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Прогресс-бар с пульсирующим свечением</title>
+    <style>
+      /* Основные стили для контейнера и прогресс-бара */
+      .progress-container1 {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .task-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+      .task-title {
+        width: 150px;
+        font-weight: bold;
+        text-align: left;
+        margin-right: 10px;
+      }
+      .progress-bar1 {
+        position: relative;
+        height: 20px;
+        width: calc(600px + 10px * 11);
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: bold;
+        font-size: 12px;
+        white-space: nowrap;
+        position: absolute;
+        top: 0;
+        border-radius: 5px;
+        animation: glowing 1.5s infinite;
+      }
+      /* Эффекты свечения для разных уровней прогресса */
+      .progress-low {
+        background-color: #e60000;
+        animation: glowing-red 1.5s infinite;
+      }
+      .progress-full {
+        background-color: #0073e6;
+        animation: glowing 1.5s infinite;
+      }
+      .progress-medium {
+        background-color: #ffb700;
+        animation: glowing-yellow 1.5s infinite;
+      }
+      .progress-high {
+        background-color: #00ff44;
+        animation: glowing-green 1.5s infinite;
+      }
+
+      /* Анимации свечения */
+      @keyframes glowing {
+        0% {
+          box-shadow: 0 0 10px #0073e6;
+        }
+        50% {
+          box-shadow: 0 0 20px #00bfff;
+        }
+        100% {
+          box-shadow: 0 0 10px #0073e6;
+        }
+      }
+      @keyframes glowing-red {
+        0% {
+          box-shadow: 0 0 10px #e60000;
+        }
+        50% {
+          box-shadow: 0 0 20px #ff3333;
+        }
+        100% {
+          box-shadow: 0 0 10px #e60000;
+        }
+      }
+      @keyframes glowing-yellow {
+        0% {
+          box-shadow: 0 0 10px #ffb700;
+        }
+        50% {
+          box-shadow: 0 0 20px #ffd700;
+        }
+        100% {
+          box-shadow: 0 0 10px #ffb700;
+        }
+      }
+      @keyframes glowing-green {
+        0% {
+          box-shadow: 0 0 10px #00ff44;
+        }
+        50% {
+          box-shadow: 0 0 20px #00ff99;
+        }
+        100% {
+          box-shadow: 0 0 10px #00ff44;
+        }
+      }
+
+      .month-labels {
+        display: flex;
+        width: calc(600px + 10px * 11);
+        justify-content: space-between;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .month-label {
+        flex: 1;
+        text-align: center;
+        padding: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="progress-container1"
+      id="progress-container1"
+    >
+      <div class="task-row">
+        <div class="task-title"></div>
+        <div
+          class="month-labels"
+          id="month-labels"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      // Массив месяцев, переданный из Django
+      const months = [{% for month in months %}'{{ month }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+      // Массив задач, переданный из Django, с предвычисленными значениями `start` и `end`
+      const tasks = [
+          {% for task in tasks %}
+          {
+              title: '{{ task.title }}',
+              start: {{ task.start }},
+              end: {{ task.end|default:"null" }},
+              progress: {{ task.progress }}
+          }{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+      ];
+
+      function createMonthLabels(months) {
+          const monthLabelsContainer = document.getElementById('month-labels');
+          monthLabelsContainer.innerHTML = '';
+          months.forEach((month) => {
+              const monthLabel = document.createElement('div');
+              monthLabel.className = 'month-label';
+              monthLabel.textContent = month;
+              monthLabelsContainer.appendChild(monthLabel);
+          });
+      }
+
+      function createProgressBars(tasks) {
+          const container = document.getElementById('progress-container1');
+          container
+              .querySelectorAll('.task-row:not(:first-child)')
+              .forEach((row) => row.remove());
+          const totalMonths = months.length;
+
+          tasks.forEach((task) => {
+              const taskRow = document.createElement('div');
+              taskRow.className = 'task-row';
+
+              const taskTitle = document.createElement('div');
+              taskTitle.className = 'task-title';
+              taskTitle.textContent = task.title;
+              taskRow.appendChild(taskTitle);
+
+              const progressBar = document.createElement('div');
+              progressBar.className = 'progress-bar1';
+
+              const progressFill = document.createElement('div');
+              progressFill.className = 'progress-fill';
+
+              if (task.progress === 100) {
+                  progressFill.classList.add('progress-full');
+              } else if (task.progress < 50) {
+                  progressFill.classList.add('progress-low');
+              } else if (task.progress < 80) {
+                  progressFill.classList.add('progress-medium');
+              } else {
+                  progressFill.classList.add('progress-high');
+              }
+
+              const taskMonths = task.end - task.start + 1;
+              const barWidth = (taskMonths / totalMonths) * 100;
+              const progressWidth = (task.progress / 100) * barWidth;
+              const offsetLeft = (task.start / totalMonths) * 100;
+
+              progressFill.style.width = `${progressWidth}%`;
+              progressFill.style.left = `${offsetLeft}%`;
+              progressFill.textContent = `${task.progress}%`;
+
+              progressBar.appendChild(progressFill);
+              taskRow.appendChild(progressBar);
+              container.appendChild(taskRow);
+          });
+      }
+
+      // Создание меток месяцев и прогресс-бара
+      createMonthLabels(months);
+      createProgressBars(tasks);
+    </script>
+  </body>
+</html>

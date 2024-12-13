@@ -1,0 +1,390 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+body {
+  margin: 0;
+  padding: 0;
+  background: #232741;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+}
+.container {
+  max-width: 1500px !important;
+}
+.main_content {
+  padding: 20px;
+  background-color: aliceblue;
+  border-radius: 10px;
+  position: relative;
+  z-index: 2;
+  border: 3px solid black;
+  border-top: 5px solid #0073e6;
+  min-height: auto;
+  height: auto;
+  margin-top: 20px;
+}
+
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #232741;
+  z-index: 0;
+  top: 0;
+  left: 0;
+}
+h1 {
+  border-bottom: 1px solid #000;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+table th {
+  border-bottom: 1px solid black;
+  text-align: center;
+}
+table td {
+  /* border: 1px solid black; */
+  text-align: center;
+  border-bottom: 1px solid #000;
+  font-weight: bold;
+  font-size: 15px;
+}
+table {
+  margin-top: 0;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.progress-container {
+  width: 100%;
+  background-color: #9f9f9f;
+  border-radius: 25px;
+  padding: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.progress-bar {
+  width: 70%;
+  height: 30px;
+  background-color: #0073e6;
+  border-radius: 25px;
+  text-align: center;
+  color: white;
+  line-height: 30px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 17, 255, 0.278);
+  position: relative;
+  animation: glowing 1.5s infinite;
+}
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+  }
+  50% {
+    box-shadow: 0 0 20px #00bfff, 0 0 40px #00bfff, 0 0 60px #00bfff;
+  }
+  100% {
+    box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+  }
+}
+@keyframes glowing-red {
+  0% {
+    box-shadow: 0 0 10px #e60000, 0 0 20px #e60000, 0 0 30px #e60000;
+  }
+  50% {
+    box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333, 0 0 60px #ff3333;
+  }
+  100% {
+    box-shadow: 0 0 10px #e60000, 0 0 20px #e60000, 0 0 30px #e60000;
+  }
+}
+
+/* Анимация свечения для желтого прогрессбара */
+@keyframes glowing-yellow {
+  0% {
+    box-shadow: 0 0 10px #ffb700, 0 0 20px #ffb700, 0 0 30px #ffb700;
+  }
+  50% {
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ffd700;
+  }
+  100% {
+    box-shadow: 0 0 10px #ffb700, 0 0 20px #ffb700, 0 0 30px #ffb700;
+  }
+}
+
+/* Анимация свечения для зеленого прогрессбара */
+@keyframes glowing-green {
+  0% {
+    box-shadow: 0 0 10px #00ff44, 0 0 20px #00ff44, 0 0 30px #00ff44;
+  }
+  50% {
+    box-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99, 0 0 60px #00ff99;
+  }
+  100% {
+    box-shadow: 0 0 10px #00ff44, 0 0 20px #00ff44, 0 0 30px #00ff44;
+  }
+}
+
+.chart-container {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 400px;
+  height: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.process {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.feed_back_menu {
+  padding: 15px;
+  position: fixed;
+  font-size: 18px;
+  color: #fff;
+  background-color: #0073e6; /* Неоново-зеленый цвет */
+  border: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+  transition: box-shadow 0.3s ease;
+  top: 50%;
+  left: -30px;
+  transform: rotate(90deg) translateX(-50%);
+  text-align: center;
+  z-index: 9999999;
+  font-weight: 500;
+}
+.feed_back_menu:hover {
+  box-shadow: 0 0 20px #00bfff, 0 0 40px #00bfff, 0 0 60px #00bfff;
+}
+
+.open-modal-btn {
+  padding: 10px 20px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.open-modal-btn:hover {
+  background-color: #4cae4c;
+}
+
+/* Стили для модального окна */
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0 auto; /* Отцентровка модального окна по вертикали с фиксированным отступом */
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%; /* Ограничение высоты */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type='submit'] {
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+input[type='submit']:hover {
+  background-color: #4cae4c;
+}
+
+.progress-container1 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.task-title {
+  width: 150px;
+  font-weight: bold;
+  text-align: left;
+  margin-right: 10px;
+}
+
+.progress-bar1 {
+  position: relative;
+  height: 20px;
+  width: calc(600px + 10px * 11);
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  white-space: nowrap;
+  position: absolute;
+  top: 0;
+  border-radius: 5px;
+  animation: blowing 1.5s infinite; /* Добавление анимации */
+}
+/* Применение цветов и эффектов свечения */
+.progress-low {
+  background-color: #e60000;
+  animation: blowing-red 1.5s infinite;
+}
+
+.progress-full {
+  background-color: #0073e6;
+  animation: blowing 1.5s infinite;
+}
+.progress-medium {
+  background-color: #ffb700;
+  animation: blowing-yellow 1.5s infinite;
+}
+
+.progress-high {
+  background-color: #00ff44;
+  animation: blowing-green 1.5s infinite;
+}
+
+/* Анимация пульсирующего свечения */
+
+@keyframes blowing {
+  0% {
+    box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+  }
+  50% {
+    box-shadow: 0 0 20px #00bfff, 0 0 40px #00bfff, 0 0 60px #00bfff;
+  }
+  100% {
+    box-shadow: 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 30px #0073e6;
+  }
+}
+@keyframes blowing-red {
+  0% {
+    box-shadow: 0 0 10px #e60000, 0 0 20px #e60000, 0 0 30px #e60000;
+  }
+  50% {
+    box-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333, 0 0 60px #ff3333;
+  }
+  100% {
+    box-shadow: 0 0 10px #e60000, 0 0 20px #e60000, 0 0 30px #e60000;
+  }
+}
+
+/* Анимация свечения для желтого прогрессбара */
+@keyframes blowing-yellow {
+  0% {
+    box-shadow: 0 0 10px #ffb700, 0 0 20px #ffb700, 0 0 30px #ffb700;
+  }
+  50% {
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ffd700;
+  }
+  100% {
+    box-shadow: 0 0 10px #ffb700, 0 0 20px #ffb700, 0 0 30px #ffb700;
+  }
+}
+
+/* Анимация свечения для зеленого прогрессбара */
+@keyframes blowing-green {
+  0% {
+    box-shadow: 0 0 10px #00ff44, 0 0 20px #00ff44, 0 0 30px #00ff44;
+  }
+  50% {
+    box-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99, 0 0 60px #00ff99;
+  }
+  100% {
+    box-shadow: 0 0 10px #00ff44, 0 0 20px #00ff44, 0 0 30px #00ff44;
+  }
+}
+
+.month-labels {
+  display: flex;
+  width: calc(600px + 10px * 11);
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.month-label {
+  flex: 1;
+  text-align: center;
+  padding: 0 10px;
+}

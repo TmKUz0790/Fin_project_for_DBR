@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Progress</title>
+</head>
+<body>
+
+<div class="container">
+    <h2>Progress for Job: {{ job.title }}</h2>
+
+    <h3>Overall Progress: {{ job.get_overall_progress }}%</h3>
+
+    <h3>Tasks</h3>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <strong>{{ task.title }}:</strong> {{ task.description }}<br>
+                Task Percentage: {{ task.task_percentage }}%<br>
+                Developer Progress: {{ task.progress }}%<br>
+                Deadline: {{ task.deadline }}<br>
+                <strong>Feedback:</strong> {{ task.feedback }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+</html>

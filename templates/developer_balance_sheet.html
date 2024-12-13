@@ -1,0 +1,65 @@
+
+<h1>Developer Payment Sheet</h1>
+
+<!-- Filter Form -->
+<form method="get">
+    <label for="developer">Filter by Developer:</label>
+    <select name="developer_id" id="developer" onchange="this.form.submit()">
+        <option value="">All Developers</option>
+        {% for developer in all_developers %}
+            <option value="{{ developer.id }}" {% if developer.id == selected_developer_id %}selected{% endif %}>
+                {{ developer.username }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<table border="1">
+    <tr>
+        <th>Developer</th>
+        <th>Job Title</th>
+        <th>Task Title</th>
+        <th>Money for Task</th>
+       
+        <th>Paid</th>
+    </tr>
+
+    {% for developer in developer_data %}
+        {% for task in developer.tasks %}
+            <tr>
+                <td>{{ developer.developer.username }}</td>
+                <td>{{ task.job_title }}</td>
+                <td>{{ task.task_title }}</td>
+                <td>${{ task.money_for_task }}</td>
+                
+                <td>
+                    {% if task.paid %}
+                        ${{ task.paid }}
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3"><strong>Total Earned:</strong></td>
+            <td>${{ developer.total_earned }}</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Total Paid:</strong></td>
+            <td>${{ developer.total_paid }}</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Total Deductions:</strong></td>
+            <td>${{ developer.total_deductions }}</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Balance:</strong></td>
+            <td>${{ developer.balance }}</td>
+            <td colspan="2"></td>
+        </tr>
+    {% endfor %}
+</table>

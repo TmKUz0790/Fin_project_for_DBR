@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Job: {{ job.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .task-form {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .form-actions {
+            text-align: center;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .delete-task {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Update Job: {{ job.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <h3>Job Details</h3>
+        {{ job_form.non_field_errors }}
+        <label for="id_title">Title</label>
+        {{ job_form.title }}
+        <label for="id_client_email">Client Email</label>
+        {{ job_form.client_email }}
+        <label for="id_client_password">Client Password</label>
+        {{ job_form.client_password }}
+        <label for="id_over_all_income">Total Income</label>
+        {{ job_form.over_all_income }}
+
+        <h3>Tasks</h3>
+        {{ task_formset.management_form }}
+        {% for form in task_formset %}
+        <div class="task-form">
+            {{ form.non_field_errors }}
+            <label for="id_title_{{ forloop.counter }}">Title</label>
+            {{ form.title }}
+            <label for="id_description_{{ forloop.counter }}">Description</label>
+            {{ form.description }}
+            <label for="id_assigned_users_{{ forloop.counter }}">Assigned Users</label>
+            {{ form.assigned_users }}
+            <label for="id_hours_{{ forloop.counter }}">Hours</label>
+            {{ form.hours }}
+            <label for="id_deadline_{{ forloop.counter }}">Deadline</label>
+            {{ form.deadline }}
+            <label for="id_money_for_task_{{ forloop.counter }}">Money for Task</label>
+            {{ form.money_for_task }}
+            {% if form.instance.pk %}
+            <label>
+                <input type="checkbox" name="{{ form.delete_field.name }}"> Delete
+            </label>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit">Save Changes</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

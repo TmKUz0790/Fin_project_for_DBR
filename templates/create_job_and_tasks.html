@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job and Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: #444;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .task-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Create Job and Assign Tasks</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Job form section -->
+        <h3>Job Details</h3>
+        <div class="form-group">
+            <label for="id_title">Job Title:</label>
+            {{ job_form.title }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_client_email">Client Email:</label>
+            {{ job_form.client_email }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_client_password">Client Password:</label>
+            {{ job_form.client_password }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_assigned_users">Assign Developers (by Email):</label>
+            {{ job_form.assigned_users }}
+        </div>
+
+        <!-- Task formset section -->
+        <h3>Tasks</h3>
+        {{ task_formset.management_form }}
+        {% for form in task_formset %}
+            <div class="task-form">
+                <h4>Task {{ forloop.counter }}</h4>
+                <div class="form-group">
+                    <label for="id_title">Task Title:</label>
+                    {{ form.title }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_assigned_users">Assign Developers (by Email):</label>
+                    {{ form.assigned_users }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_description">Description:</label>
+                    {{ form.description }}
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Submit button -->
+        <div class="form-actions">
+            <button type="submit">Create Job and Tasks</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
