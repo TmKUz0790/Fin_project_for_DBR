@@ -642,9 +642,7 @@ from django.utils.timezone import now
 
 @login_required
 def admin_dashboard(request):
-    # Get all jobs
     jobs = Job.objects.all()
-    # Calculate totals
     total_jobs = jobs.count()
     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
     total_remaining_income = calculate_income_balance()["income_balance"]
