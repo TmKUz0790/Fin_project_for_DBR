@@ -75,7 +75,7 @@ def login_view(request):
 @login_required
 def create_job(request):
     # Check if the logged-in user has the allowed email
-    if request.user.email != 'admin_tmk@gmail.com':
+    if request.user.email != 'Admin@dbr.org':
         # Return a 403 Forbidden response if the user is not authorized
         return HttpResponseForbidden("You are not authorized to access this page.")
 
@@ -642,6 +642,9 @@ from django.utils.timezone import now
 
 @login_required
 def admin_dashboard(request):
+    if request.user.email != 'Admin@dbr.org':
+        # Return a 403 Forbidden response if the user is not authorized
+        return HttpResponseForbidden("You are not authorized to access this page.")
     jobs = Job.objects.all()
     total_jobs = jobs.count()
     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
