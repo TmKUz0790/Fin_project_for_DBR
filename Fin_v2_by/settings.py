@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = [
-    'dbr-control.up.railway.app'
+    'https://dbr-control.up.railway.app'
 ]
 
 
