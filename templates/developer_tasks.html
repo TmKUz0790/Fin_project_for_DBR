@@ -1,3 +1,755 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Developer Dashboard</title>#}
+{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">#}
+{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css">#}
+{##}
+{#    <style>#}
+{#        body { background-color: #f8f9fa; }#}
+{#        .navbar-brand, .nav-link { font-weight: 600; color: #4a4a8d !important; }#}
+{#        .task-item {#}
+{#            cursor: pointer;#}
+{#            background-color: #fff;#}
+{#            margin-bottom: 10px;#}
+{#            padding: 15px;#}
+{#            border-radius: 5px;#}
+{#            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);#}
+{#        }#}
+{#        .countdown {#}
+{#            font-weight: bold;#}
+{#        }#}
+{#        .countdown.green {#}
+{#            color: green;#}
+{#        }#}
+{#        .countdown.yellow {#}
+{#            color: #ffc107;#}
+{#        }#}
+{#        .countdown.red {#}
+{#            color: #dc3545;#}
+{#        }#}
+{#        .countdown.gray {#}
+{#            color: gray;#}
+{#        }#}
+{#        .btn-primary {#}
+{#            /* background-color; */#}
+{#            border: none;#}
+{#        }#}
+{#        .btn-primary:hover {#}
+{#            background-color: #3b3b6f;#}
+{#        }#}
+{#        .back-button {#}
+{#            cursor: pointer;#}
+{#            color: #4a4a8d;#}
+{#        }#}
+{#        .back-button:hover {#}
+{#            color: #3b3b6f;#}
+{#            text-decoration: underline;#}
+{#        }#}
+{#        .balance-info {#}
+{#            position: relative;#}
+{#            margin-top: 45px;#}
+{#            padding: 10px;#}
+{#            font-weight: bold;#}
+{#            color: #4a4a8d;#}
+{#            border: 1px solid #4a4a8d;#}
+{#            background-color: #f8f9fa;#}
+{#            z-index: 1000;#}
+{#            transform:translateY(-50%);#}
+{#            border-radius: 5px;#}
+{#            transition: 1s;#}
+{#            #}
+{#        }#}
+{##}
+{#        .task-item { position: relative; background-color: #fff; margin-bottom: 10px; padding: 15px; border-radius: 5px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); overflow: hidden; }#}
+{#        .wave-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0; z-index: 1; transition: width 1s ease; }#}
+{#        .wave { position: absolute; top: 50%; left: 0; width: 200%; height: 200%; background: rgba(255, 255, 255, 0.3); border-radius: 50%; transform: translateY(-50%) scaleX(0.5); animation: waveMove 3s infinite linear; }#}
+{#        .wave:nth-child(2) { animation-delay: -1.5s; background: rgba(255, 255, 255, 0.2); }#}
+{#        @keyframes waveMove { 0% { transform: translateX(-100%) scaleX(1); } 50% { transform: translateX(0) scaleX(1.2); } 100% { transform: translateX(100%) scaleX(1); } }#}
+{#        .back-button { cursor: pointer; color: #4a4a8d; }#}
+{#        .back-button:hover { color: #3b3b6f; text-decoration: underline; }#}
+{#        #}
+{# #tasks-container {#}
+{#            display: flex !important;#}
+{#            flex-direction: row;#}
+{#            flex-wrap: wrap !important;#}
+{#            gap: 10px; /* Отступы между карточками */#}
+{#            justify-content: flex-start;#}
+{#        }#}
+{##}
+{#        /* Карточка задачи */#}
+{#        .task-item {#}
+{#            flex: 1 1 30%; /* 3 карточки в ряд, регулируется в зависимости от ширины экрана */#}
+{#            min-width: 250px; /* Минимальная ширина карточки */#}
+{#            max-width: 33%; /* Максимальная ширина для трех карточек в ряд */#}
+{#            background-color: #fff;#}
+{#            padding: 15px;#}
+{#            border-radius: 5px;#}
+{#            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);#}
+{#            position: relative;#}
+{#            overflow: hidden;#}
+{#        }#}
+{##}
+{#        .taks_lists {#}
+{#            display: flex;#}
+{#            justify-content:space-between;#}
+{#            align-items: center;#}
+{#        }#}
+{#        h1 {#}
+{#            padding-bottom: 10px;#}
+{#        }#}
+{##}
+{#        .circular-progress {#}
+{#            position: absolute;#}
+{#            bottom: 10px;#}
+{#            right: 10px;#}
+{#            width: 50px;#}
+{#            height: 50px;#}
+{#            transform: rotate(-90deg);#}
+{#        }#}
+{#        .circular-progress circle {#}
+{#            fill: none;#}
+{#            stroke-width: 6;#}
+{#            stroke-linecap: round;#}
+{#        }#}
+{#        .circular-progress .background-circle {#}
+{#            stroke: #e6e6e6;#}
+{#        }#}
+{#        .circular-progress .progress-circle {#}
+{#            stroke: #4a4a8d;#}
+{#            transition: stroke-dashoffset 0.6s ease;#}
+{#        }#}
+{#        .progress-circle.low { stroke: #dc3545; } /* красный */#}
+{#.progress-circle.medium { stroke: #ffc107; } /* желтый */#}
+{#.progress-circle.high { stroke: #4a4a8d; } /* синий */#}
+{#.progress-circle.complete { stroke: #28a745; } /* зеленый */#}
+{##}
+{# .circular-progress {#}
+{#            width: 50px;#}
+{#            height: 50px;#}
+{#            border-radius: 50%;#}
+{#        }#}
+{#        .background-circle {#}
+{#            fill: none;#}
+{#            stroke: #e6e6e6;#}
+{#            stroke-width: 4;#}
+{#        }#}
+{#        .progress-circle {#}
+{#            fill: none;#}
+{#            stroke: #4a4a8d;#}
+{#            stroke-width: 4;#}
+{#            stroke-dasharray: 100;#}
+{#            transition: stroke-dashoffset 0.5s ease;#}
+{#        }#}
+{#        .nav-link, .navbar-brand {#}
+{#            border: 1px solid #3b3b6f !important;#}
+{#            margin-left: 5px;#}
+{#            border-radius: 5px;#}
+{#        }#}
+{#        .navbar-brand {#}
+{#            padding: 8px;#}
+{#        }#}
+{##}
+{#        .task-item_2 {#}
+{#            flex: 1 1 30%; /* 3 карточки в ряд, регулируется в зависимости от ширины экрана */#}
+{#            min-width: 250px; /* Минимальная ширина карточки */#}
+{#            max-width: 33%; /* Максимальная ширина для трех карточек в ряд */#}
+{#            background-color: #fff;#}
+{#            padding: 15px;#}
+{#            border-radius: 5px;#}
+{#            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);#}
+{#            position: relative;#}
+{#            overflow: hidden;#}
+{#        }#}
+{##}
+{#        .taks_lists_2 {#}
+{#            display: flex;#}
+{#            justify-content:space-between;#}
+{#            align-items: center;#}
+{#        }#}
+{#        #tasks-container-2 {#}
+{#            display: flex !important;#}
+{#            flex-direction: row !important;#}
+{#            flex-wrap: wrap !important;#}
+{#            gap: 10px; /* Отступы между карточками */#}
+{#            justify-content: flex-start;#}
+{#            align-items: center;#}
+{#        }#}
+{##}
+{##}
+{#         .styled-btn {#}
+{#  position: relative;#}
+{#  display: inline-block;#}
+{#  margin: 1.75rem auto 0;#}
+{#  padding: 1rem 1.5rem;#}
+{#  text-decoration: none;#}
+{#  font-size: 16px;#}
+{#  letter-spacing: 2px;#}
+{#  font-weight: 600;#}
+{#  color: rgb(23, 194, 203);#}
+{#  overflow: hidden;#}
+{#  filter: hue-rotate(340deg);#}
+{#  transition: all 0.5s ease;#}
+{#}#}
+{##}
+{#.animation_span {#}
+{#  display: block;#}
+{#  position: absolute;#}
+{#}#}
+{##}
+{#.animation_span:nth-child(1) {#}
+{#  width: 100%;#}
+{#  height: 2px;#}
+{#  top: 0;#}
+{#  right: 0;#}
+{#  background: linear-gradient(270deg, transparent, rgb(23, 194, 203));#}
+{#  animation: animate1 1s linear infinite;#}
+{#}#}
+{##}
+{#@keyframes animate1 {#}
+{#  0% {#}
+{#    right: -100%;#}
+{#  }#}
+{#  50%,#}
+{#  100% {#}
+{#    right: 100%;#}
+{#  }#}
+{#}#}
+{##}
+{#.animation_span:nth-child(2) {#}
+{#  width: 2px;#}
+{#  height: 100%;#}
+{#  top: -100%;#}
+{#  left: 0;#}
+{#  background: linear-gradient(180deg, transparent, rgb(23, 194, 203));#}
+{#  animation: animate2 1s linear infinite;#}
+{#  animation-delay: 0.25s;#}
+{#}#}
+{##}
+{#@keyframes animate2 {#}
+{#  0% {#}
+{#    top: -100%;#}
+{#  }#}
+{#  50%,#}
+{#  100% {#}
+{#    top: 100%;#}
+{#  }#}
+{#}#}
+{##}
+{#.animation_span:nth-child(3) {#}
+{#  width: 100%;#}
+{#  height: 2px;#}
+{#  bottom: 0;#}
+{#  left: 0;#}
+{#  background: linear-gradient(90deg, transparent, rgb(23, 194, 203));#}
+{#  animation: animate3 1s linear infinite;#}
+{#  animation-delay: 0.5s;#}
+{#}#}
+{##}
+{#@keyframes animate3 {#}
+{#  0% {#}
+{#    left: -100%;#}
+{#  }#}
+{#  50%,#}
+{#  100% {#}
+{#    left: 100%;#}
+{#  }#}
+{#}#}
+{##}
+{#.animation_span:nth-child(4) {#}
+{#  width: 2px;#}
+{#  height: 100%;#}
+{#  bottom: -100%;#}
+{#  right: 0;#}
+{#  background: linear-gradient(360deg, transparent, rgb(23, 194, 203));#}
+{#  animation: animate4 1s linear infinite;#}
+{#  animation-delay: 0.75s;#}
+{#}#}
+{##}
+{#@keyframes animate4 {#}
+{#  0% {#}
+{#    bottom: -100%;#}
+{#  }#}
+{#  50%,#}
+{#  100% {#}
+{#    bottom: 100%;#}
+{#  }#}
+{#}#}
+{##}
+{#.list-group {#}
+{#    display: flex;#}
+{#    flex-direction: row;#}
+{#    flex-wrap: wrap;#}
+{#    justify-content: flex-start;#}
+{#    align-items: center;#}
+{#     gap: 10px;#}
+{#}#}
+{##}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#    #}
+{##}
+{##}
+{#    <nav class="navbar navbar-expand-lg navbar-light bg-light">#}
+{#        <div class="container">#}
+{#            <a class="navbar-brand" href="#">Developer Dashboard</a>#}
+{#            <div class="balance-info">#}
+{#             Balance: {{ balance }} USD | $ #}
+{#            </div>#}
+{#            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">#}
+{#                <span class="navbar-toggler-icon"></span>#}
+{#            </button>#}
+{#            <div class="collapse navbar-collapse" id="navbarNav">#}
+{#                <ul class="navbar-nav ms-auto">#}
+{#                    <li class="nav-item"><a class="nav-link" href="{% url 'payment_history' %}"> <i class="bi bi-receipt"></i> Payment History</a></li>#}
+{#                    <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="showFeedbackTasksList()"> <i class="bi bi-chat-dots"></i> Write Feedback</a></li>#}
+{#                    <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="showUpdateProgressList()"><i class="bi bi-check2-square"></i> Update Progress</a></li>#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+{#    </nav>#}
+{##}
+{##}
+{#       #}
+{# <div class="container my-4">#}
+{#        <h1 class="text-center">Your Tasks</h1>#}
+{#    #}
+{#    <!-- Кнопки фильтрации -->#}
+{#    #}
+{#    <div id="task-list">#}
+{#        <h1 class="text-center">All Tasks and Deadlines</h1>#}
+{#        <div class="text-left mb-4">#}
+{#        <button class="btn btn-outline-primary"  onclick="filterTasks('all')">All</button>#}
+{#        <button class="btn btn-outline-success" onclick="filterTasks('done')">Done</button>#}
+{#        <button class="btn btn-outline-danger" onclick="filterTasks('undone')">Undone</button>#}
+{#        <button class="btn btn-outline-secondary" onclick="filterTasks('deadline_passed')">Deadline Passed</button>#}
+{#        <button class="btn btn-outline-info" onclick="filterTasks('upcoming_deadlines')">Upcoming Deadlines</button>#}
+{#    </div>#}
+{##}
+{#        <div class="list-group" id="tasks-container">#}
+{#            #}
+{#            {% for task in tasks %}#}
+{#            <a href="javascript:void(0);" class="list-group-item task-item" data-progress="{{ task.progress }}">#}
+{#                <div class="wave-fill" id="wave-fill-{{ task.id }}">#}
+{#                </div>#}
+{#                <div class="task-content">#}
+{#                    <div class="d-flex justify-content-between align-items-center">#}
+{#                        <h5>{{ task.title }}</h5>#}
+{#                        <small id="countdown-{{ task.id }}" class="countdown" data-deadline="{{ task.deadline }}"></small>#}
+{#                    </div>#}
+{#                    <p>Progress: {{ task.progress }}%</p>#}
+{#                    <small>Payment Status: <span class="colorOfPayment">{{ task.paid|yesno:"Paid,Pending" }}</span></small>#}
+{#                </div>#}
+{#            </a>#}
+{#            {% empty %}#}
+{#            <p>No tasks available.</p>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    #}
+{##}
+{##}
+{##}
+{#            <!-- Pagination Controls for Task List -->#}
+{#            <div class="d-flex justify-content-left mt-4">#}
+{#                <nav aria-label="Page navigation">#}
+{#                    <ul class="pagination">#}
+{#                        {% if tasks.has_previous %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ tasks.previous_page_number }}" aria-label="Previous">#}
+{#                                <span aria-hidden="true">&laquo;</span>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{#                        {% for num in tasks.paginator.page_range %}#}
+{#                            {% if tasks.number == num %}#}
+{#                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>#}
+{#                            {% elif num > tasks.number|add:'-3' and num < tasks.number|add:'3' %}#}
+{#                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>#}
+{#                            {% endif %}#}
+{#                        {% endfor %}#}
+{#                        {% if tasks.has_next %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ tasks.next_page_number }}" aria-label="Next">#}
+{#                                <span aria-hidden="true">&raquo;</span>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{#                    </ul>#}
+{#                </nav>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#        <!-- Feedback Tasks List with Pagination -->#}
+{#         <div id="feedback-tasks-list" style="display: none;">#}
+{#            <button class="btn btn-link back-button mb-3 styled-btn" onclick="showTaskList()">#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                ← Go Back to Task List#}
+{#            </button>#}
+{#            <h2>Select a Task to Provide Feedback</h2>#}
+{#            <div class="list-group"  id="task-content2">#}
+{#    {% for task in feedback_tasks %}#}
+{#    <a href="javascript:void(0);" class="list-group-item task-item list-group-item-action d-flex justify-content-between align-items-center" onclick="showFeedbackForm('{{ task.id }}')">#}
+{#        {{ task.title }}#}
+{#        <button class="btn btn-primary"><i class="bi bi-pencil"></i></button>#}
+{#         <!-- Карандашная иконка (Font Awesome) -->#}
+{#    </a>#}
+{#    {% empty %}#}
+{#    <p>No tasks available for feedback.</p>#}
+{#    {% endfor %}#}
+{#</div>#}
+{##}
+{#            <!-- Pagination Controls for Feedback List -->#}
+{#            <div class="d-flex justify-content-left mt-4">#}
+{#                <nav aria-label="Feedback Page navigation">#}
+{#                    <ul class="pagination">#}
+{#                        {% if feedback_tasks.has_previous %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?feedback_page={{ feedback_tasks.previous_page_number }}&section=feedback" aria-label="Previous">#}
+{#                                <span aria-hidden="true">&laquo;</span>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{#                        {% for num in feedback_tasks.paginator.page_range %}#}
+{#                            {% if feedback_tasks.number == num %}#}
+{#                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>#}
+{#                            {% elif num > feedback_tasks.number|add:'-3' and num < feedback_tasks.number|add:'3' %}#}
+{#                                <li class="page-item"><a class="page-link" href="?feedback_page={{ num }}&section=feedback">{{ num }}</a></li>#}
+{#                            {% endif %}#}
+{#                        {% endfor %}#}
+{#                        {% if feedback_tasks.has_next %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?feedback_page={{ feedback_tasks.next_page_number }}&section=feedback" aria-label="Next">#}
+{#                                <span aria-hidden="true">&raquo;</span>#}
+{#                            </a>#}
+{#                        {% endif %}#}
+{#                    </ul>#}
+{#                </nav>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#        <!-- Task Feedback Form -->#}
+{#        {% for task in feedback_tasks %}#}
+{#        <div id="feedback-form-{{ task.id }}" class="task-details" style="display: none;">#}
+{#            <button class="btn btn-link back-button mb-3 styled-btn" onclick="showFeedbackTasksList()">#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                ← Go Back to Task List</button>#}
+{#            <h3>Provide Feedback for: {{ task.title }}</h3>#}
+{#           <form method="post" action="{% url 'update_feedback' %}">#}
+{#    {% csrf_token %}#}
+{#    <div class="mb-3">#}
+{#        <label for="feedback_{{ task.id }}" class="form-label">Feedback:</label>#}
+{#        <textarea id="feedback_{{ task.id }}" name="feedback" class="form-control">{{ task.feedback }}</textarea>#}
+{#    </div>#}
+{#    <input type="hidden" name="task_id" value="{{ task.id }}">#}
+{#    <button type="submit" class="btn btn-primary">Submit Feedback</button>#}
+{#</form>#}
+{#        </div>#}
+{#        {% endfor %}#}
+{##}
+{#        <!-- Update Progress List with Pagination -->#}
+{#        <div id="update-progress-list" style="display: none;">#}
+{#            <button class="btn btn-link back-button mb-3 styled-btn" onclick="showTaskList()">#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                ← Go Back to Task List</button>#}
+{#            <h2>Select a Task to Update Progress</h2>#}
+{#            <div class="list-group" id="task-content2">#}
+{#                {% for task in tasks %}#}
+{#                <a href="javascript:void(0);" class="list-group-item task-item list-group-item-action d-flex justify-content-between align-items-center" onclick="showUpdateProgressForm('{{ task.id }}')">#}
+{#                    {{ task.title }}#}
+{#                    <button class="btn btn-primary"><i class="bi bi-pencil"></i></button>#}
+{#                </a>#}
+{#                {% endfor %}#}
+{#            </div>#}
+{##}
+{#            <!-- Pagination Controls for Update Progress List -->   #}
+{#            <div class="d-flex justify-content-left mt-4">#}
+{#                <nav aria-label="Update Progress Page navigation">#}
+{#                    <ul class="pagination">#}
+{#                        {% if tasks.has_previous %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ tasks.previous_page_number }}&section=update_progress" aria-label="Previous">#}
+{#                                <span aria-hidden="true">&laquo;</span>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{#                        {% for num in tasks.paginator.page_range %}#}
+{#                            {% if tasks.number == num %}#}
+{#                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>#}
+{#                            {% elif num > tasks.number|add:'-3' and num < tasks.number|add:'3' %}#}
+{#                                <li class="page-item"><a class="page-link" href="?page={{ num }}&section=update_progress">{{ num }}</a></li>#}
+{#                            {% endif %}#}
+{#                        {% endfor %}#}
+{#                        {% if tasks.has_next %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ tasks.next_page_number }}&section=update_progress" aria-label="Next">#}
+{#                                <span aria-hidden="true">&raquo;</span>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{#                    </ul>#}
+{#                </nav>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#        #}
+{##}
+{#        <!-- Task Update Progress Form -->#}
+{#         {% for task in tasks %}#}
+{#        <div id="update-progress-form-{{ task.id }}" class="task-details" style="display: none;">#}
+{#            <button class="btn btn-link back-button mb-3 styled-btn" onclick="showUpdateProgressList()">#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                <span class="animation_span"></span>#}
+{#                ← Go Back to Task List</button>#}
+{#            <h3>Update Progress for: {{ task.title }}</h3>#}
+{#            <form method="post">#}
+{#                {% csrf_token %}#}
+{#                <div class="mb-3">#}
+{#                    <label for="progress_{{ task.id }}" class="form-label">Progress (%):</label>#}
+{#                    <input type="number" id="progress_{{ task.id }}" name="progress" class="form-control" value="{{ task.progress }}" min="0" max="100">#}
+{#                </div>#}
+{#                <input type="hidden" name="task_id" value="{{ task.id }}">#}
+{#                <button type="submit" class="btn btn-primary">Update Progress</button>#}
+{#            </form>#}
+{#        </div>#}
+{#        {% endfor %}#}
+{#    </div>#}
+{##}
+{##}
+{#    <script>#}
+{#         function getQueryParam(param) {#}
+{#            const urlParams = new URLSearchParams(window.location.search);#}
+{#            return urlParams.get(param);#}
+{#        }#}
+{##}
+{#        // Display the appropriate section based on the 'section' query parameter#}
+{#        document.addEventListener('DOMContentLoaded', function () {#}
+{#            const section = getQueryParam('section');#}
+{##}
+{#            // Hide all sections initially#}
+{#            document.getElementById('task-list').style.display = 'none';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-list').style.display = 'none';#}
+{##}
+{#            // Show the correct section based on the query parameter#}
+{#            if (section === 'feedback') {#}
+{#                document.getElementById('feedback-tasks-list').style.display = 'block';#}
+{#            } else if (section === 'update_progress') {#}
+{#                document.getElementById('update-progress-list').style.display = 'block';#}
+{#            } else {#}
+{#                document.getElementById('task-list').style.display = 'block';#}
+{#            }#}
+{#        });#}
+{##}
+{##}
+{#         function updateCountdowns() {#}
+{#            const countdownElements = document.querySelectorAll('.countdown');#}
+{##}
+{#            countdownElements.forEach(countdownElement => {#}
+{#                const deadlineDate = new Date(countdownElement.getAttribute('data-deadline'));#}
+{#                const today = new Date();#}
+{#                const timeDiff = deadlineDate - today;#}
+{#                const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));#}
+{##}
+{#                countdownElement.classList.remove('green', 'yellow', 'red', 'gray');#}
+{##}
+{#                if (daysLeft > 10) {#}
+{#                    countdownElement.textContent = `${daysLeft} days left`;#}
+{#                    countdownElement.classList.add('green');#}
+{#                } else if (daysLeft > 5) {#}
+{#                    countdownElement.textContent = `${daysLeft} days left`;#}
+{#                    countdownElement.classList.add('yellow');#}
+{#                } else if (daysLeft > 0) {#}
+{#                    countdownElement.textContent = `${daysLeft} days left`;#}
+{#                    countdownElement.classList.add('red');#}
+{#                } else {#}
+{#                    countdownElement.textContent = "Deadline passed";#}
+{#                    countdownElement.classList.add('gray');#}
+{#                }#}
+{#            });#}
+{#        }#}
+{#         document.addEventListener('DOMContentLoaded', updateCountdowns);#}
+{##}
+{#        document.addEventListener('DOMContentLoaded', function () {#}
+{#            const section = new URLSearchParams(window.location.search).get('section');#}
+{#            document.getElementById('task-list').style.display = 'none';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-list').style.display = 'none';#}
+{##}
+{#            if (section === 'feedback') {#}
+{#                showFeedbackTasksList();#}
+{#            } else if (section === 'update_progress') {#}
+{#                showUpdateProgressList();#}
+{#            } else {#}
+{#                showTaskList();#}
+{#            }#}
+{##}
+{#            document.querySelectorAll('.task-item').forEach(item => {#}
+{#                const progress = parseInt(item.getAttribute('data-progress')) || 0;#}
+{#                const waveFill = item.querySelector('.wave-fill');#}
+{#                waveFill.style.width = `${progress}%`;#}
+{##}
+{#                if (progress <= 25) {#}
+{#                    waveFill.style.background = 'rgba(220, 53, 69, 0.5)';#}
+{#                } else if (progress > 25 && progress < 50) {#}
+{#                    waveFill.style.background = 'rgba(255, 193, 7, 0.5)';#}
+{#                } else if (progress >= 50 && progress < 100) {#}
+{#                    waveFill.style.background = 'rgba(0, 123, 255, 0.5)';#}
+{#                } else {#}
+{#                    waveFill.style.background = 'rgba(40, 167, 69, 0.5)';#}
+{#                }#}
+{#            });#}
+{#        });#}
+{##}
+{#        function showTaskList() {#}
+{#            document.getElementById('task-list').style.display = 'block';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-list').style.display = 'none';#}
+{#        }#}
+{##}
+{#        function showFeedbackTasksList() {#}
+{#            document.getElementById('task-list').style.display = 'none';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'block';#}
+{#            document.getElementById('update-progress-list').style.display = 'none';#}
+{#        }#}
+{##}
+{#        function showUpdateProgressList() {#}
+{#            document.getElementById('task-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-list').style.display = 'block';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#        }#}
+{##}
+{#        document.querySelectorAll('.colorOfPayment').forEach((color) => {#}
+{#            color.style.color = color.innerText === "Pending" ? '#EB5757' : '#28A745';#}
+{#        });#}
+{##}
+{#         function showFeedbackTasksList() {#}
+{#            document.getElementById('task-list').style.display = 'none';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'block';#}
+{#            document.querySelectorAll('.task-details').forEach(detail => detail.style.display = 'none');#}
+{#        }#}
+{##}
+{#        function showFeedbackForm(taskId) {#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#            document.getElementById('feedback-form-' + taskId).style.display = 'block';#}
+{#        }#}
+{##}
+{#        function showTaskList() {#}
+{#            document.getElementById('task-list').style.display = 'block';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-list').style.display = 'none';#}
+{#            document.querySelectorAll('.task-details').forEach(detail => detail.style.display = 'none');#}
+{#        }#}
+{##}
+{#        function showUpdateProgressList() {#}
+{#            document.getElementById('task-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-list').style.display = 'block';#}
+{#            document.getElementById('feedback-tasks-list').style.display = 'none';#}
+{#            document.querySelectorAll('.task-details').forEach(detail => detail.style.display = 'none');#}
+{#        }#}
+{##}
+{#        function showUpdateProgressForm(taskId) {#}
+{#            document.getElementById('update-progress-list').style.display = 'none';#}
+{#            document.getElementById('update-progress-form-' + taskId).style.display = 'block';#}
+{#        }#}
+{##}
+{##}
+{#        document.querySelectorAll('.task-item').forEach(item => {#}
+{#    const progress = parseInt(item.getAttribute('data-progress')) || 0;#}
+{#    const progressCircle = item.querySelector('.progress-circle');#}
+{##}
+{#    if (progress <= 25) {#}
+{#        progressCircle.classList.add('low');#}
+{#    } else if (progress > 25 && progress < 50) {#}
+{#        progressCircle.classList.add('medium');#}
+{#    } else if (progress >= 50 && progress < 100) {#}
+{#        progressCircle.classList.add('high');#}
+{#    } else {#}
+{#        progressCircle.classList.add('complete');#}
+{#    }#}
+{##}
+{#    #}
+{#});#}
+{##}
+{##}
+{# document.addEventListener("DOMContentLoaded", function() {#}
+{#            // Находим все круги прогресса#}
+{#            document.querySelectorAll(".circular-progress").forEach(function(svg) {#}
+{#                const progress = parseInt(svg.getAttribute("data-progress"), 10) || 0;#}
+{#                const progressCircle = svg.querySelector(".progress-circle");#}
+{##}
+{#                // Рассчитываем и применяем stroke-dashoffset#}
+{#                const offset = 100 - progress;#}
+{#                progressCircle.style.strokeDashoffset = offset;#}
+{#            });#}
+{#        });#}
+{##}
+{##}
+{##}
+{#function filterTasks(filter) {#}
+{#    const taskItems = document.querySelectorAll('.task-item');#}
+{#    const pagination = document.querySelector('.pagination'); // Пагинация блока#}
+{##}
+{#    let filteredTasks = 0;#}
+{##}
+{#    taskItems.forEach(item => {#}
+{#        const progress = parseInt(item.getAttribute('data-progress'));#}
+{#        const deadlineElement = item.querySelector('.countdown');#}
+{#        const deadlineText = deadlineElement ? deadlineElement.textContent.toLowerCase() : '';#}
+{##}
+{#        let shouldDisplay = false;#}
+{##}
+{#        if (filter === 'all') {#}
+{#            shouldDisplay = true;#}
+{#        } else if (filter === 'done' && progress === 100) {#}
+{#            shouldDisplay = true;#}
+{#        } else if (filter === 'undone' && progress < 100) {#}
+{#            shouldDisplay = true;#}
+{#        } else if (filter === 'deadline_passed' && deadlineText.includes('deadline passed')) {#}
+{#            shouldDisplay = true;#}
+{#        } else if (filter === 'upcoming_deadlines' && !deadlineText.includes('deadline passed')) {#}
+{#            shouldDisplay = true;#}
+{#        }#}
+{##}
+{#        if (shouldDisplay) {#}
+{#            item.style.display = 'block';#}
+{#            filteredTasks++;#}
+{#        } else {#}
+{#            item.style.display = 'none';#}
+{#        }#}
+{#    });#}
+{##}
+{#    // Скрыть пагинацию, если выбрано что-то кроме "all", иначе показать её#}
+{#    if (filter === 'all') {#}
+{#        pagination.style.display = 'flex'; // Отображаем пагинацию#}
+{#    } else {#}
+{#        pagination.style.display = 'none'; // Скрываем пагинацию#}
+{#    }#}
+{#}#}
+{##}
+{##}
+{#    const buttons = document.querySelectorAll('#filter-buttons button');#}
+{#        buttons.forEach(btn => btn.classList.remove('active'));#}
+{#        button.classList.add('active');#}
+{#        #}
+{#    </script>#}
+{#</body>#}
+{#</html>#}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -296,18 +1048,18 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Developer Dashboard</a>
+            <a class="navbar-brand" href="#">Панель разработчика</a>
             <div class="balance-info">
-             Balance: {{ balance }} USD | $ 
+             Баланс: {{ balance }} USD | $ 
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'payment_history' %}"> <i class="bi bi-receipt"></i> Payment History</a></li>
-                    <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="showFeedbackTasksList()"> <i class="bi bi-chat-dots"></i> Write Feedback</a></li>
-                    <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="showUpdateProgressList()"><i class="bi bi-check2-square"></i> Update Progress</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'payment_history' %}"> <i class="bi bi-receipt"></i> История выплат</a></li>
+                    <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="showFeedbackTasksList()"> <i class="bi bi-chat-dots"></i> Написать отзыв</a></li>
+                    <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="showUpdateProgressList()"><i class="bi bi-check2-square"></i> Обновить прогресс</a></li>
                 </ul>
             </div>
         </div>
@@ -316,18 +1068,18 @@
 
        
  <div class="container my-4">
-        <h1 class="text-center">Your Tasks</h1>
+        <h1 class="text-center">Ваши задачи</h1>
     
     <!-- Кнопки фильтрации -->
     
     <div id="task-list">
-        <h1 class="text-center">All Tasks and Deadlines</h1>
+        <h1 class="text-center">Все задачи и дедлайны</h1>
         <div class="text-left mb-4">
-        <button class="btn btn-outline-primary"  onclick="filterTasks('all')">All</button>
-        <button class="btn btn-outline-success" onclick="filterTasks('done')">Done</button>
-        <button class="btn btn-outline-danger" onclick="filterTasks('undone')">Undone</button>
-        <button class="btn btn-outline-secondary" onclick="filterTasks('deadline_passed')">Deadline Passed</button>
-        <button class="btn btn-outline-info" onclick="filterTasks('upcoming_deadlines')">Upcoming Deadlines</button>
+        <button class="btn btn-outline-primary"  onclick="filterTasks('all')">Все</button>
+        <button class="btn btn-outline-success" onclick="filterTasks('done')">Завершенные</button>
+        <button class="btn btn-outline-danger" onclick="filterTasks('undone')">Незавершенные</button>
+        <button class="btn btn-outline-secondary" onclick="filterTasks('deadline_passed')">Просроченные</button>
+        <button class="btn btn-outline-info" onclick="filterTasks('upcoming_deadlines')">Предстоящие дедлайны</button>
     </div>
 
         <div class="list-group" id="tasks-container">
@@ -341,12 +1093,12 @@
                         <h5>{{ task.title }}</h5>
                         <small id="countdown-{{ task.id }}" class="countdown" data-deadline="{{ task.deadline }}"></small>
                     </div>
-                    <p>Progress: {{ task.progress }}%</p>
-                    <small>Payment Status: <span class="colorOfPayment">{{ task.paid|yesno:"Paid,Pending" }}</span></small>
+                    <p>прогресс: {{ task.progress }}%</p>
+                    <small>Статус оплаты: <span class="colorOfPayment">{{ task.paid|yesno:"Paid,Pending" }}</span></small>
                 </div>
             </a>
             {% empty %}
-            <p>No tasks available.</p>
+            <p>Задачи отсутствуют</p>
             {% endfor %}
         </div>
     
@@ -390,9 +1142,9 @@
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
-                ← Go Back to Task List
+                ←  Вернуться к списку задач
             </button>
-            <h2>Select a Task to Provide Feedback</h2>
+            <h2>Выберите задачу для написания отзыва</h2>
             <div class="list-group"  id="task-content2">
     {% for task in feedback_tasks %}
     <a href="javascript:void(0);" class="list-group-item task-item list-group-item-action d-flex justify-content-between align-items-center" onclick="showFeedbackForm('{{ task.id }}')">
@@ -401,7 +1153,7 @@
          <!-- Карандашная иконка (Font Awesome) -->
     </a>
     {% empty %}
-    <p>No tasks available for feedback.</p>
+    <p>Нет доступных задач для отзыва.</p>
     {% endfor %}
 </div>
 
@@ -442,16 +1194,16 @@
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
-                ← Go Back to Task List</button>
-            <h3>Provide Feedback for: {{ task.title }}</h3>
+                ← Вернуться к списку задач</button>
+            <h3>Оставить отзыв для: {{ task.title }}</h3>
            <form method="post" action="{% url 'update_feedback' %}">
     {% csrf_token %}
     <div class="mb-3">
-        <label for="feedback_{{ task.id }}" class="form-label">Feedback:</label>
+        <label for="feedback_{{ task.id }}" class="form-label">Отзыв:</label>
         <textarea id="feedback_{{ task.id }}" name="feedback" class="form-control">{{ task.feedback }}</textarea>
     </div>
     <input type="hidden" name="task_id" value="{{ task.id }}">
-    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+    <button type="submit" class="btn btn-primary">Отправить отзыв</button>
 </form>
         </div>
         {% endfor %}
@@ -463,8 +1215,8 @@
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
-                ← Go Back to Task List</button>
-            <h2>Select a Task to Update Progress</h2>
+                ← Вернуться к списку задач</button>
+            <h2>Выберите задачу для обновления прогресса</h2>
             <div class="list-group" id="task-content2">
                 {% for task in tasks %}
                 <a href="javascript:void(0);" class="list-group-item task-item list-group-item-action d-flex justify-content-between align-items-center" onclick="showUpdateProgressForm('{{ task.id }}')">
@@ -514,16 +1266,16 @@
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
                 <span class="animation_span"></span>
-                ← Go Back to Task List</button>
-            <h3>Update Progress for: {{ task.title }}</h3>
+                ← Вернуться к списку задач</button>
+            <h3>Обновить прогресс для: {{ task.title }}</h3>
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="progress_{{ task.id }}" class="form-label">Progress (%):</label>
+                    <label for="progress_{{ task.id }}" class="form-label">Прогресс (%):</label>
                     <input type="number" id="progress_{{ task.id }}" name="progress" class="form-control" value="{{ task.progress }}" min="0" max="100">
                 </div>
                 <input type="hidden" name="task_id" value="{{ task.id }}">
-                <button type="submit" class="btn btn-primary">Update Progress</button>
+                <button type="submit" class="btn btn-primary">Обновить прогресс</button>
             </form>
         </div>
         {% endfor %}

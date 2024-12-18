@@ -63,6 +63,239 @@
 {#        </tr>#}
 {#    {% endfor %}#}
 {#</table>#}
+{##}
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">#}
+{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">#}
+{#    <title>Developer Payment Sheet</title>#}
+{#    <style>#}
+{#        body {#}
+{#    font-family: Arial, sans-serif;#}
+{#    background-color: #f4f4f9;#}
+{#    /* margin: 20px; */#}
+{#}#}
+{##}
+{#h1 {#}
+{#    text-align: center;#}
+{#    color: #333;#}
+{#    margin-bottom: 20px;#}
+{#}#}
+{#        .active_link {#}
+{#        background: #ddd !important;#}
+{#        color: #000 !important;#}
+{#        border-radius: 8px;#}
+{#}#}
+{##}
+{#table {#}
+{#    width: 100%;#}
+{#    border-collapse: collapse;#}
+{#    margin: 20px 0;#}
+{#    background: #fff;#}
+{#    border-radius: 8px;#}
+{#    overflow: hidden;#}
+{#    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);#}
+{#}#}
+{##}
+{#table th {#}
+{#    background-color: #009879;#}
+{#    color: #ffffff;#}
+{#    text-align: left;#}
+{#    padding: 12px;#}
+{#    font-size: 16px;#}
+{#    font-weight: bold;#}
+{#}#}
+{##}
+{#table td {#}
+{#    padding: 12px;#}
+{#    font-size: 14px;#}
+{#    color: #333;#}
+{#}#}
+{##}
+{#table tr:nth-child(even) {#}
+{#    background-color: #f3f3f3;#}
+{#}#}
+{##}
+{#table tr:hover {#}
+{#    background-color: #d1e7dd;#}
+{#}#}
+{##}
+{#table tr td:first-child {#}
+{#    font-weight: bold;#}
+{#}#}
+{##}
+{#form {#}
+{#    margin-bottom: 20px;#}
+{#}#}
+{##}
+{#form label {#}
+{#    margin-right: 10px;#}
+{#    font-size: 16px;#}
+{#    font-weight: bold;#}
+{#    color: #333;#}
+{#}#}
+{##}
+{#form select {#}
+{#    padding: 8px;#}
+{#    font-size: 14px;#}
+{#    border: 1px solid #ccc;#}
+{#    border-radius: 5px;#}
+{#}#}
+{##}
+{#form select:focus {#}
+{#    outline: none;#}
+{#    border-color: #009879;#}
+{#    box-shadow: 0 0 5px rgba(0, 152, 121, 0.5);#}
+{#    cursor: pointer;#}
+{#}#}
+{##}
+{#h1 {#}
+{#    padding-top: 10px;#}
+{#}#}
+{#.badge {#}
+{#    display: inline-block;#}
+{#    padding: 5px 10px;#}
+{#    font-size: 12px;#}
+{#    font-weight: bold;#}
+{#    text-align: center;#}
+{#    border-radius: 12px;#}
+{#    color: #fff;#}
+{#}#}
+{##}
+{#.badge-paid {#}
+{#    background-color: #28a745; /* Зеленый для оплаченных */#}
+{#}#}
+{##}
+{#.badge-unpaid {#}
+{#    background-color: #dc3545; /* Красный для неоплаченных */#}
+{#}#}
+{##}
+{#.table-summary-row {#}
+{#    background-color: #e9f7ef; /* Светло-зелёный фон */#}
+{#    font-weight: bold; /* Жирный текст */#}
+{#    font-size: 20px; /* Крупный шрифт */#}
+{#    color: #155724; /* Тёмно-зелёный текст */#}
+{#    border-top: 2px solid #28a745; /* Верхняя граница */#}
+{#    border-bottom: 2px solid #28a745; /* Нижняя граница */#}
+{#}#}
+{##}
+{#.table-summary-row td {#}
+{#    padding: 12px 10px; /* Дополнительные отступы */#}
+{#}#}
+{##}
+{#.table-summary-row td:first-child {#}
+{#    text-align: left; /* Выравнивание названий */#}
+{#}#}
+{##}
+{##}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{#    <div class="contrainer-fluid">#}
+{##}
+{#   #}
+{#    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">#}
+{#        <div class="container-fluid">#}
+{#            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>#}
+{#            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">#}
+{#                <span class="navbar-toggler-icon"></span>#}
+{#            </button>#}
+{#            <div class="collapse navbar-collapse" id="adminNavbar">#}
+{#                <ul class="navbar-nav me-auto mb-2 mb-lg-0">#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link " href="{% url 'admin_dashboard' %}">Dashboard</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'job_list' %}">Job List</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'deduction_logs_admin' %}">All Deduction Logs</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item ">#}
+{#                        <a class="nav-link active_link" href="{% url 'dev_history' %}">Balance sheet</a>#}
+{#                    </li>#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+{#    </nav>#}
+{#     </div>#}
+{#    <div class="container">#}
+{#        <h1>Developer Payment Sheet</h1>#}
+{##}
+{#<!-- Filter Form -->#}
+{#<form method="get">#}
+{#    <label for="developer">Filter by Developer:</label>#}
+{#    <select name="developer_id" id="developer" onchange="this.form.submit()">#}
+{#        <option value="">All Developers</option>#}
+{#        {% for developer in all_developers %}#}
+{#            <option value="{{ developer.id }}" {% if developer.id == selected_developer_id %}selected{% endif %}>#}
+{#                {{ developer.username }}#}
+{#            </option>#}
+{#        {% endfor %}#}
+{#    </select>#}
+{#</form>#}
+{##}
+{#<table border="1">#}
+{#    <tr>#}
+{#        <th>Developer</th>#}
+{#        <th>Job Title</th>#}
+{#        <th>Task Title</th>#}
+{#        <th>Money for Task</th>#}
+{#        <th>Paid</th>#}
+{#    </tr>#}
+{##}
+{#    {% for developer in developer_data %}#}
+{#        {% for task in developer.tasks %}#}
+{#            <tr>#}
+{#                <td>{{ developer.developer.username }}</td>#}
+{#                <td>{{ task.job_title }}</td>#}
+{#                <td>{{ task.task_title }}</td>#}
+{#                <td>${{ task.money_for_task }}</td>#}
+{#                #}
+{#                <td>#}
+{#                    {% if task.paid %}#}
+{#                     <span class="badge badge-paid"> ${{ task.paid }}</span>  #}
+{#                    {% else %}#}
+{#                       <span class="badge badge-unpaid">No</span>#}
+{#                    {% endif %}#}
+{#                </td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#        #}
+{#        <tr class="table-summary-row">#}
+{#    <td colspan="3">Total Earned:</td>#}
+{#    <td></td>#}
+{#    <td colspan="2">${{ developer.total_earned }}</td>#}
+{#</tr>#}
+{#<tr class="table-summary-row">#}
+{#    <td colspan="3">Total Paid:</td>#}
+{#    <td></td>#}
+{#    <td colspan="2">${{ developer.total_paid }}</td>#}
+{#</tr>#}
+{#<tr class="table-summary-row">#}
+{#    <td colspan="3">Total Deductions:</td>#}
+{#    <td></td>#}
+{#    <td colspan="2">${{ developer.total_deductions }}</td>#}
+{#</tr>#}
+{#<tr class="table-summary-row">#}
+{#    <td colspan="3">Balance:</td>#}
+{#    <td></td>#}
+{#    <td colspan="2">${{ developer.balance }}</td>#}
+{#</tr>#}
+{##}
+{#    {% endfor %}#}
+{#</table>#}
+{##}
+{#    </div>#}
+{##}
+{##}
+{##}
+{##}
+{#</body>#}
+{#</html>#}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +304,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Developer Payment Sheet</title>
+    <title>Платежная ведомость разработчика</title>
+
     <style>
         body {
     font-family: Arial, sans-serif;
@@ -194,102 +428,102 @@ h1 {
     </style>
 </head>
 <body>
-    <div class="contrainer-fluid">
-
-   
+   <div class="contrainer-fluid">
+    <!-- Навигационная панель -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">Панель администратора</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Переключить навигацию">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="adminNavbar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link " href="{% url 'admin_dashboard' %}">Dashboard</a>
+                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Главная</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'job_list' %}">Job List</a>
+                        <a class="nav-link" href="{% url 'job_list' %}">Список проектов</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'deduction_logs_admin' %}">All Deduction Logs</a>
+                        <a class="nav-link" href="{% url 'deduction_logs_admin' %}">Все вычеты</a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link active_link" href="{% url 'dev_history' %}">Balance sheet</a>
+                    <li class="nav-item">
+                        <a class="nav-link active_link" href="{% url 'dev_history' %}">Платежная ведомость</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-     </div>
-    <div class="container">
-        <h1>Developer Payment Sheet</h1>
+</div>
 
-<!-- Filter Form -->
-<form method="get">
-    <label for="developer">Filter by Developer:</label>
-    <select name="developer_id" id="developer" onchange="this.form.submit()">
-        <option value="">All Developers</option>
-        {% for developer in all_developers %}
-            <option value="{{ developer.id }}" {% if developer.id == selected_developer_id %}selected{% endif %}>
-                {{ developer.username }}
-            </option>
-        {% endfor %}
-    </select>
-</form>
+<!-- Основное содержимое -->
+<div class="container">
+    <h1>Платежная ведомость разработчика</h1>
 
-<table border="1">
-    <tr>
-        <th>Developer</th>
-        <th>Job Title</th>
-        <th>Task Title</th>
-        <th>Money for Task</th>
-        <th>Paid</th>
-    </tr>
+    <!-- Форма фильтрации -->
+    <form method="get">
+        <label for="developer">Фильтр по разработчику:</label>
+        <select name="developer_id" id="developer" onchange="this.form.submit()">
+            <option value="">Все разработчики</option>
+            {% for developer in all_developers %}
+                <option value="{{ developer.id }}" {% if developer.id == selected_developer_id %}selected{% endif %}>
+                    {{ developer.username }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
 
-    {% for developer in developer_data %}
-        {% for task in developer.tasks %}
-            <tr>
-                <td>{{ developer.developer.username }}</td>
-                <td>{{ task.job_title }}</td>
-                <td>{{ task.task_title }}</td>
-                <td>${{ task.money_for_task }}</td>
-                
-                <td>
-                    {% if task.paid %}
-                     <span class="badge badge-paid"> ${{ task.paid }}</span>  
-                    {% else %}
-                       <span class="badge badge-unpaid">No</span>
-                    {% endif %}
-                </td>
+    <!-- Таблица данных -->
+    <table border="1">
+        <tr>
+            <th>Разработчик</th>
+            <th>Название проекта</th>
+            <th>Название задачи</th>
+            <th>Оплата за задачу</th>
+            <th>Оплачено</th>
+        </tr>
+
+        {% for developer in developer_data %}
+            {% for task in developer.tasks %}
+                <tr>
+                    <td>{{ developer.developer.username }}</td>
+                    <td>{{ task.job_title }}</td>
+                    <td>{{ task.task_title }}</td>
+                    <td>${{ task.money_for_task }}</td>
+                    <td>
+                        {% if task.paid %}
+                            <span class="badge badge-paid">${{ task.paid }}</span>
+                        {% else %}
+                            <span class="badge badge-unpaid">Нет</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            
+            <!-- Суммирование по разработчику -->
+            <tr class="table-summary-row">
+                <td colspan="3">Заработано всего:</td>
+                <td></td>
+                <td colspan="2">${{ developer.total_earned }}</td>
+            </tr>
+            <tr class="table-summary-row">
+                <td colspan="3">Оплачено всего:</td>
+                <td></td>
+                <td colspan="2">${{ developer.total_paid }}</td>
+            </tr>
+            <tr class="table-summary-row">
+                <td colspan="3">Вычеты:</td>
+                <td></td>
+                <td colspan="2">${{ developer.total_deductions }}</td>
+            </tr>
+            <tr class="table-summary-row">
+                <td colspan="3">Баланс:</td>
+                <td></td>
+                <td colspan="2">${{ developer.balance }}</td>
             </tr>
         {% endfor %}
-        
-        <tr class="table-summary-row">
-    <td colspan="3">Total Earned:</td>
-    <td></td>
-    <td colspan="2">${{ developer.total_earned }}</td>
-</tr>
-<tr class="table-summary-row">
-    <td colspan="3">Total Paid:</td>
-    <td></td>
-    <td colspan="2">${{ developer.total_paid }}</td>
-</tr>
-<tr class="table-summary-row">
-    <td colspan="3">Total Deductions:</td>
-    <td></td>
-    <td colspan="2">${{ developer.total_deductions }}</td>
-</tr>
-<tr class="table-summary-row">
-    <td colspan="3">Balance:</td>
-    <td></td>
-    <td colspan="2">${{ developer.balance }}</td>
-</tr>
-
-    {% endfor %}
-</table>
-
-    </div>
+    </table>
+</div>
 
 
 

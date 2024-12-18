@@ -1,14 +1,40 @@
+{#{% extends 'base.html' %}#}
+{#{% block content %}#}
+{#<div class="container mt-5">#}
+{#    <h2>Deduction Logs</h2>#}
+{#    <table class="table table-striped table-bordered">#}
+{#        <thead class="table-dark">#}
+{#            <tr>#}
+{#                <th>Admin</th>#}
+{#                <th>Developer</th>#}
+{#                <th>Deduction Amount</th>#}
+{#                <th>Date</th>#}
+{#            </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#            {% for log in deduction_logs %}#}
+{#            <tr>#}
+{#                <td>{{ log.deducted_by.username }}</td>#}
+{#                <td>{{ log.developer.username }}</td>#}
+{#                <td>{{ log.deduction_amount }} USD</td>#}
+{#                <td>{{ log.deduction_date }}</td>#}
+{#            </tr>#}
+{#            {% endfor %}#}
+{#        </tbody>#}
+{#    </table>#}
+{#</div>#}
+{#{% endblock %}#}
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
-    <h2>Deduction Logs</h2>
+    <h2>Журнал вычетов</h2>
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <th>Admin</th>
-                <th>Developer</th>
-                <th>Deduction Amount</th>
-                <th>Date</th>
+                <th>Администратор</th>
+                <th>Разработчик</th>
+                <th>Сумма вычета</th>
+                <th>Дата</th>
             </tr>
         </thead>
         <tbody>
