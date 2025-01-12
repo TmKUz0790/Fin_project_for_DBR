@@ -41,6 +41,8 @@ urlpatterns = [
 # Admin login URL
     path('login/', views.login_view, name='login'),
 
+    path('task/<int:task_id>/delete/', views.delete_task, name='delete_task'),
+
     # Job creation URLs
     path('create_job/', views.create_job, name='create_job'),
     path('task_create/<int:job_id>/', views.create_tasks, name='task_create'),

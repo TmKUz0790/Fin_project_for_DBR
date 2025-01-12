@@ -1179,3 +1179,40 @@ def developer_payment_sheet(request):
         'all_developers': all_developers,
         'selected_developer_id': int(developer_id) if developer_id else None,
     })
+
+
+# Add this to views.py
+@login_required
+def delete_task(request, task_id):
+    # Only admin can delete tasks
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("You are not authorized to delete tasks.")
+
+    task = get_object_or_404(Task, id=task_id)
+    job = task.job  # Get the associated job before deleting the task
+
+    if request.method == 'POST':
+        # Delete the task
+        task.delete()
+
+        # Recalculate percentages for remaining tasks in the job
+        remaining_tasks = Task.objects.filter(job=job)
+        total_hours = remaining_tasks.aggregate(Sum('hours'))['hours__sum'] or 0
+
+        if total_hours > 0:  # Only recalculate if there are remaining tasks
+            for remaining_task in remaining_tasks:
+                remaining_task.task_percentage = (remaining_task.hours / total_hours) * 100
+                remaining_task.save()
+
+        messages.success(request, f"Task '{task.title}' has been successfully deleted.")
+
+        # Redirect back to the job details page
+        return redirect('job_details', job_id=job.id)
+
+    # If it's a GET request, show confirmation page
+    return render(request, 'delete_task_confirmation.html', {
+        'task': task,
+        'job': job
+    })
+
+
