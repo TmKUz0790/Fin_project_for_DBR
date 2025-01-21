@@ -1215,4 +1215,36 @@ def delete_task(request, task_id):
         'job': job
     })
 
+# def payment_load(request):
+#     job_id = request.session.get('client_job_id')
+#     if not job_id:
+#         return redirect('client_login')
+#
+#     job = get_object_or_404(Job, id=job_id)
+#     tasks_data = get_tasks_data(job)
+#
+#     context = {
+#         'job': job,
+#         # 'tasks': mark_safe(json.dumps(tasks_data))  # Сериализуем данные в JSON
+#     }
+#     # Логика обработки запроса
+#     return render(request, 'payment_load.html')
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.safestring import mark_safe
 
+
+def payment_load(request):
+    job_id = request.session.get('client_job_id')
+    if not job_id:
+        return redirect('client_login')
+
+    job = get_object_or_404(Job, id=job_id)
+    tasks_data = get_tasks_data(job)
+
+    # Make sure job is passed to the template
+    context = {
+        'job': job,
+        'debug': True  # Enable debug mode
+    }
+
+    return render(request, 'payment_load.html', context)

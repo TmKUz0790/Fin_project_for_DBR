@@ -25,6 +25,9 @@ body {
   margin-top: 20px;
   position: relative;
 }
+.main_content h1 {
+  width: 100%;
+}
 
 #particles-js {
   position: fixed;

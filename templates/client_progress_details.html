@@ -297,6 +297,10 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
 
     <!-- Custom CSS -->
     <link
@@ -310,19 +314,28 @@
     <!-- Particles Container -->
     <div id="particles-js"></div>
     <section class="container main_content relative">
-      <h1>Progress for Job: {{ job.title }}</h1>
+       <div class="d-flex justify-content-between align-items-center">
+        
+        <h1>Прогресс по задаче: {{ job.title }}</h1>
+        
+        <div>
+      <button class="btn btn-outline-success text-white" style="background-color: #20c997;"><a class="text-decoration-none text-white" href="{% url 'client_progress' %}"><i class="bi bi-house"></i>
+ 
+ На главную</a></button>
+        </div>
+
+      </div>
 
       <div class="overall-progress-container">
         <h3 class="text-center mb-4">Overall Progress</h3>
         <div id="overallProgressChart">
-
         </div>
         
 <p class="text-center mt-3" id="progressText">Выполнено: {{ job.get_overall_progress|default:"0" }}% | Осталось: </p>
    
       </div>
       <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-<dotlottie-player class="dottie_player" src="https://lottie.host/58a43bb0-7bf6-47b2-83d3-08efcbfc47ca/lW03hugphB.lottie" background="transparent" speed="1" style="width: 100%; height: 500px" loop autoplay></dotlottie-player>
+<dotlottie-player class="dottie_player" src="https://lottie.host/58a43bb0-7bf6-47b2-83d3-08efcbfc47ca/lW03hugphB.lottie" background="transparent" speed="1" style="max-width:500px;width: 100%; height: 500px" loop autoplay></dotlottie-player>
       <div class="container-fluid">
         <div class="row">
           <div id="chartsContainer" class="container"></div>
