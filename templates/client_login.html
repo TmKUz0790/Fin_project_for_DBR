@@ -1,234 +1,251 @@
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
-{#    <title>Developer Login</title>#}
-{#    <style>#}
-{#        * {#}
-{#            margin: 0;#}
-{#            padding: 0;#}
-{#            box-sizing: border-box;#}
-{#        }#}
-{##}
-{#        body {#}
-{#            font-family: 'Arial', sans-serif;#}
-{#            background: url('https://via.placeholder.com/1500x1000/333333/333333') no-repeat center center;#}
-{#            background-size: cover;#}
-{#            height: 100vh;#}
-{#            display: flex;#}
-{#            justify-content: center;#}
-{#            align-items: center;#}
-{#        }#}
-{##}
-{#        .container {#}
-{#            background-color: rgba(255, 255, 255, 0.1);#}
-{#            padding: 50px;#}
-{#            border-radius: 10px;#}
-{#            backdrop-filter: blur(5px);#}
-{#            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);#}
-{#            text-align: center;#}
-{#            width: 350px;#}
-{#        }#}
-{##}
-{#        h2 {#}
-{#            font-size: 24px;#}
-{#            color: white;#}
-{#            margin-bottom: 20px;#}
-{#            text-transform: uppercase;#}
-{#        }#}
-{##}
-{#        label {#}
-{#            display: block;#}
-{#            color: #cccccc;#}
-{#            font-size: 14px;#}
-{#            margin-bottom: 5px;#}
-{#            text-align: left;#}
-{#        }#}
-{##}
-{#        input[type="email"],#}
-{#        input[type="password"] {#}
-{#            width: 100%;#}
-{#            padding: 10px;#}
-{#            margin: 10px 0;#}
-{#            border: none;#}
-{#            border-radius: 5px;#}
-{#            background-color: rgba(255, 255, 255, 0.9);#}
-{#            font-size: 14px;#}
-{#            outline: none;#}
-{#        }#}
-{##}
-{#        button {#}
-{#            width: 100%;#}
-{#            padding: 12px;#}
-{#            border: none;#}
-{#            border-radius: 5px;#}
-{#            background: linear-gradient(90deg, #e91e63, #ff6f00);#}
-{#            color: white;#}
-{#            font-size: 16px;#}
-{#            text-transform: uppercase;#}
-{#            cursor: pointer;#}
-{#            transition: background 0.3s ease;#}
-{#            margin-top: 10px;#}
-{#        }#}
-{##}
-{#        button:hover {#}
-{#            background: linear-gradient(90deg, #ff6f00, #e91e63);#}
-{#        }#}
-{##}
-{#        ul {#}
-{#            margin-top: 20px;#}
-{#            list-style-type: none;#}
-{#            padding: 0;#}
-{#        }#}
-{##}
-{#        ul li {#}
-{#            color: white;#}
-{#            font-size: 14px;#}
-{#        }#}
-{#    </style>#}
-{#</head>#}
-{#<body>#}
-{##}
-{#<div class="container">#}
-{#    <h2>Account Login</h2>#}
-{##}
-{##}
-{#    <form method="post" action="{% url 'client_login' %}">#}
-{#        {% csrf_token %}#}
-{#        <label for="email">User name</label>#}
-{#        <input type="email" id="email" name="email" placeholder="User name" required>#}
-{##}
-{#        <label for="password">Password</label>#}
-{#        <input type="password" id="password" name="password" placeholder="Password" required>#}
-{##}
-{#        <button type="submit">Login</button>#}
-{#    </form>#}
-{##}
-{#    {% if messages %}#}
-{#        <ul>#}
-{#            {% for message in messages %}#}
-{#                <li>{{ message }}</li>#}
-{#            {% endfor %}#}
-{#        </ul>#}
-{#    {% endif %}#}
-{#</div>#}
-{##}
-{#</body>#}
-{#</html>#}
-
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Вход для разработчиков</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
-      body {
-        font-family: 'Arial', sans-serif;
-        background: url('https://via.placeholder.com/1500x1000/333333/333333') no-repeat center center;
-        background-size: cover;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      
-      .container {
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 50px;
-        border-radius: 10px;
-        backdrop-filter: blur(5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        width: 350px;
-      }
-      
-      h2 {
-        font-size: 24px;
-        color: white;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-      }
-      
-      label {
-        display: block;
-        color: #cccccc;
-        font-size: 14px;
-        margin-bottom: 5px;
-        text-align: left;
-      }
-      
-      input[type='email'],
-      input[type='password'] {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border: none;
-        border-radius: 5px;
-        background-color: rgba(255, 255, 255, 0.9);
-        font-size: 14px;
-        outline: none;
-      }
-      
-      button {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 5px;
-        background: linear-gradient(90deg, #e91e63, #ff6f00);
-        color: white;
-        font-size: 16px;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        margin-top: 10px;
-      }
-      
-      button:hover {
-        background: linear-gradient(90deg, #ff6f00, #e91e63);
-      }
-      
-      ul {
-        margin-top: 20px;
-        list-style-type: none;
-        padding: 0;
-      }
-      
-      ul li {
-        color: white;
-        font-size: 14px;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(30deg, rgba(255, 255, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.03) 87.5%, rgba(255, 255, 255, 0.03)),
+                linear-gradient(150deg, rgba(255, 255, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.03) 87.5%, rgba(255, 255, 255, 0.03)),
+                linear-gradient(30deg, rgba(255, 255, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.03) 87.5%, rgba(255, 255, 255, 0.03)),
+                linear-gradient(150deg, rgba(255, 255, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(255, 255, 255, 0.03) 87.5%, rgba(255, 255, 255, 0.03)),
+                linear-gradient(60deg, rgba(77, 77, 77, 0.05) 25%, transparent 25.5%, transparent 75%, rgba(77, 77, 77, 0.05) 75%, rgba(77, 77, 77, 0.05)),
+                linear-gradient(60deg, rgba(77, 77, 77, 0.05) 25%, transparent 25.5%, transparent 75%, rgba(77, 77, 77, 0.05) 75%, rgba(77, 77, 77, 0.05));
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+        }
+
+        .login-container {
+            width: 400px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(180deg, #1a1a1a 0%, #1a1a1a 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .brand-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .brand-icon i {
+            font-size: 30px;
+            color: #000;
+        }
+
+        h2 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 40px;
+            background: #1a1a1a;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #FFD700;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: none;
+            border-radius: 12px;
+            color: #000000;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .security-info {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .security-info i {
+            color: #FFD700;
+            font-size: 20px;
+        }
+
+        .security-info p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+
+        .messages {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255, 59, 48, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 59, 48, 0.2);
+        }
+
+        .messages li {
+            color: #ff3b30;
+            font-size: 14px;
+            list-style: none;
+            margin: 4px 0;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                width: 100%;
+                margin: 20px;
+            }
+            
+            .header, .login-form {
+                padding: 30px 20px;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Вход в аккаунт</h2>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="login-container">
+        <div class="header">
+            <div class="brand-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2>Вход в аккаунт</h2>
+            <div class="subtitle">Управление бизнесом</div>
+        </div>
 
-      <form method="post" action="{% url 'client_login' %}">
-        {% csrf_token %}
-        <label for="email">Имя пользователя</label>
-        <input type="email" id="email" name="email" placeholder="Имя пользователя" required />
+        <div class="login-form">
+            <form method="post" action="{% url 'client_login' %}">
+                {% csrf_token %}
+                
+                <div class="input-group">
+                    <label for="email">Имя пользователя</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Введите имя пользователя"
+                        required
+                    >
+                </div>
 
-        <label for="password">Пароль</label>
-        <input type="password" id="password" name="password" placeholder="Пароль" required />
+                <div class="input-group">
+                    <label for="password">Пароль</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Введите пароль"
+                        required
+                    >
+                </div>
 
-        <button type="submit">Войти</button>
-      </form>
+                <button type="submit" class="login-button">Войти</button>
 
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+                <div class="security-info">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Защищенное SSL-соединение. Ваши данные надежно зашифрованы.</p>
+                </div>
+            </form>
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
     </div>
-  </body>
+</body>
 </html>

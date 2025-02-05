@@ -1,235 +1,264 @@
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
-{#    <title>Developer Login</title>#}
-{#    <style>#}
-{#        * {#}
-{#            margin: 0;#}
-{#            padding: 0;#}
-{#            box-sizing: border-box;#}
-{#        }#}
-{##}
-{#        body {#}
-{#            font-family: 'Arial', sans-serif;#}
-{#            background: url('https://via.placeholder.com/1500x1000/333333/333333') no-repeat center center;#}
-{#            background-size: cover;#}
-{#            height: 100vh;#}
-{#            display: flex;#}
-{#            justify-content: center;#}
-{#            align-items: center;#}
-{#        }#}
-{##}
-{#        .container {#}
-{#            background-color: rgba(255, 255, 255, 0.1);#}
-{#            padding: 50px;#}
-{#            border-radius: 10px;#}
-{#            backdrop-filter: blur(5px);#}
-{#            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);#}
-{#            text-align: center;#}
-{#            width: 350px;#}
-{#        }#}
-{##}
-{#        h2 {#}
-{#            font-size: 24px;#}
-{#            color: white;#}
-{#            margin-bottom: 20px;#}
-{#            text-transform: uppercase;#}
-{#        }#}
-{##}
-{#        label {#}
-{#            display: block;#}
-{#            color: #cccccc;#}
-{#            font-size: 14px;#}
-{#            margin-bottom: 5px;#}
-{#            text-align: left;#}
-{#        }#}
-{##}
-{#        input[type="email"],#}
-{#        input[type="password"] {#}
-{#            width: 100%;#}
-{#            padding: 10px;#}
-{#            margin: 10px 0;#}
-{#            border: none;#}
-{#            border-radius: 5px;#}
-{#            background-color: rgba(255, 255, 255, 0.9);#}
-{#            font-size: 14px;#}
-{#            outline: none;#}
-{#        }#}
-{##}
-{#        button {#}
-{#            width: 100%;#}
-{#            padding: 12px;#}
-{#            border: none;#}
-{#            border-radius: 5px;#}
-{#            background: linear-gradient(90deg, #e91e63, #ff6f00);#}
-{#            color: white;#}
-{#            font-size: 16px;#}
-{#            text-transform: uppercase;#}
-{#            cursor: pointer;#}
-{#            transition: background 0.3s ease;#}
-{#            margin-top: 10px;#}
-{#        }#}
-{##}
-{#        button:hover {#}
-{#            background: linear-gradient(90deg, #ff6f00, #e91e63);#}
-{#        }#}
-{##}
-{#        ul {#}
-{#            margin-top: 20px;#}
-{#            list-style-type: none;#}
-{#            padding: 0;#}
-{#        }#}
-{##}
-{#        ul li {#}
-{#            color: white;#}
-{#            font-size: 14px;#}
-{#        }#}
-{#    </style>#}
-{#</head>#}
-{#<body>#}
-{##}
-{#<div class="container">#}
-{#    <h2>Account Login</h2>#}
-{##}
-{#    <form method="post" action="{% url 'developer_login' %}">#}
-{#        {% csrf_token %}#}
-{#        <label for="email">User name</label>#}
-{#        <input type="email" id="email" name="email" placeholder="User name" required>#}
-{##}
-{#        <label for="password">Password</label>#}
-{#        <input type="password" id="password" name="password" placeholder="Password" required>#}
-{##}
-{#        <button type="submit">Login</button>#}
-{#    </form>#}
-{##}
-{#    {% if messages %}#}
-{#        <ul>#}
-{#            {% for message in messages %}#}
-{#                <li>{{ message }}</li>#}
-{#            {% endfor %}#}
-{#        </ul>#}
-{#    {% endif %}#}
-{#</div>#}
-{##}
-{#</body>#}
-{#</html>#}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developer Login</title>
+    <title>Futuristic Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: url('https://via.placeholder.com/1500x1000/333333/333333') no-repeat center center;
-            background-size: cover;
-            height: 100vh;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000, #0a0a2e);
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        .container {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 50px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px) 0 0,
+                linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px) 0 0;
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: grid-move 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes grid-move {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+        }
+
+        .login-container {
+            position: relative;
+            width: 400px;
+            background: rgba(10, 10, 46, 0.8);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            z-index: 2;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.1),
+                        inset 0 0 20px rgba(0, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(0, 255, 255, 0.1) 50%,
+                transparent 100%
+            );
+            animation: holographic 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes holographic {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header {
             text-align: center;
-            width: 350px;
+            margin-bottom: 30px;
+            position: relative;
         }
 
         h2 {
-            font-size: 24px;
-            color: white;
-            margin-bottom: 20px;
+            color: #00ffff;
+            font-size: 28px;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
-        label {
-            display: block;
-            color: #cccccc;
-            font-size: 14px;
-            margin-bottom: 5px;
-            text-align: left;
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
         }
 
-        input[type="email"],
-        input[type="password"] {
+        .input-group label {
+            position: absolute;
+            left: 15px;
+            top: -10px;
+            background: rgba(10, 10, 46, 0.9);
+            padding: 0 5px;
+            color: #00ffff;
+            font-size: 12px;
+            letter-spacing: 1px;
+            z-index: 1;
+        }
+
+        .input-group input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
             outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            background: rgba(0, 255, 255, 0.1);
         }
 
-        button {
+        .scan-line {
+            position: absolute;
             width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            background: linear-gradient(90deg, #e91e63, #ff6f00);
-            color: white;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.5);
+            top: 0;
+            left: 0;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            color: #00ffff;
             font-size: 16px;
             text-transform: uppercase;
+            letter-spacing: 2px;
             cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover {
-            background: linear-gradient(90deg, #ff6f00, #e91e63);
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 255, 0.2),
+                transparent
+            );
+            animation: button-shine 3s linear infinite;
         }
 
-        ul {
+        @keyframes button-shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .login-button:hover {
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .messages {
             margin-top: 20px;
-            list-style-type: none;
-            padding: 0;
+            padding: 15px;
+            background: rgba(255, 0, 85, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 85, 0.3);
         }
 
-        ul li {
-            color: white;
+        .messages li {
+            color: #ff0055;
             font-size: 14px;
+            list-style: none;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                width: 90%;
+                margin: 20px;
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="cyber-grid"></div>
+    
+    <div class="login-container">
+        <div class="scan-line"></div>
+        <div class="header">
+            <h2>System Access</h2>
+        </div>
 
-<div class="container">
-    <h2>Вход в аккаунт</h2>
+        <form method="post" action="{% url 'developer_login' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                <label>IDENTIFICATION</label>
+                <input type="email" name="email" placeholder="Enter Username" required>
+            </div>
 
-    <form method="post" action="{% url 'developer_login' %}">
-        {% csrf_token %}
-        <label for="email">Имя пользователя</label>
-        <input type="email" id="email" name="email" placeholder="Имя пользователя" required>
+            <div class="input-group">
+                <label>SECURITY KEY</label>
+                <input type="password" name="password" placeholder="Enter Password" required>
+            </div>
 
-        <label for="password">Пароль</label>
-        <input type="password" id="password" name="password" placeholder="Пароль" required>
+            <button type="submit" class="login-button">Initialize Login</button>
+        </form>
 
-        <button type="submit">Войти</button>
-    </form>
-
-    {% if messages %}
-        <ul>
+        {% if messages %}
+        <ul class="messages">
             {% for message in messages %}
-                <li>{{ message }}</li>
+            <li>{{ message }}</li>
             {% endfor %}
         </ul>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 
+    <script>
+        // Create multiple grid layers for depth effect
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.querySelector('body');
+            for(let i = 0; i < 3; i++) {
+                const grid = document.createElement('div');
+                grid.className = 'cyber-grid';
+                grid.style.opacity = (0.03 - (i * 0.01)).toString();
+                grid.style.animationDelay = `${i * -4}s`;
+                body.insertBefore(grid, body.firstChild);
+            }
+        });
+    </script>
 </body>
 </html>

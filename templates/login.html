@@ -1,229 +1,209 @@
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
-{#    <title>Account Login</title>#}
-{#    <style>#}
-{#        * {#}
-{#            margin: 0;#}
-{#            padding: 0;#}
-{#            box-sizing: border-box;#}
-{#        }#}
-{##}
-{#        body {#}
-{#            font-family: 'Arial', sans-serif;#}
-{#            background: url('https://via.placeholder.com/1500x1000/333333/333333') no-repeat center center;#}
-{#            background-size: cover;#}
-{#            height: 100vh;#}
-{#            display: flex;#}
-{#            justify-content: center;#}
-{#            align-items: center;#}
-{#        }#}
-{##}
-{#        .container {#}
-{#            background-color: rgba(255, 255, 255, 0.1);#}
-{#            padding: 50px;#}
-{#            border-radius: 10px;#}
-{#            backdrop-filter: blur(5px);#}
-{#            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);#}
-{#            text-align: center;#}
-{#            width: 400px;#}
-{#        }#}
-{##}
-{#        h2 {#}
-{#            font-size: 24px;#}
-{#            color: white;#}
-{#            margin-bottom: 20px;#}
-{#        }#}
-{##}
-{#        label {#}
-{#            display: block;#}
-{#            color: #cccccc;#}
-{#            font-size: 14px;#}
-{#            margin-bottom: 5px;#}
-{#            text-align: left;#}
-{#        }#}
-{##}
-{#        input[type="email"],#}
-{#        input[type="password"] {#}
-{#            width: 100%;#}
-{#            padding: 10px;#}
-{#            margin: 10px 0;#}
-{#            border: none;#}
-{#            border-radius: 5px;#}
-{#            background-color: rgba(255, 255, 255, 0.8);#}
-{#            font-size: 14px;#}
-{#        }#}
-{##}
-{#        button {#}
-{#            width: 100%;#}
-{#            padding: 12px;#}
-{#            border: none;#}
-{#            border-radius: 5px;#}
-{#            background: linear-gradient(90deg, #e91e63, #ff6f00);#}
-{#            color: white;#}
-{#            font-size: 16px;#}
-{#            text-transform: uppercase;#}
-{#            cursor: pointer;#}
-{#            transition: background 0.3s ease;#}
-{#        }#}
-{##}
-{#        button:hover {#}
-{#            background: linear-gradient(90deg, #ff6f00, #e91e63);#}
-{#        }#}
-{##}
-{#        ul {#}
-{#            margin-top: 20px;#}
-{#            list-style-type: none;#}
-{#            padding: 0;#}
-{#        }#}
-{##}
-{#        ul li {#}
-{#            color: white;#}
-{#            font-size: 14px;#}
-{#        }#}
-{#    </style>#}
-{#</head>#}
-{#<body>#}
-{##}
-{#<div class="container">#}
-{#    <h2>Account Login</h2>#}
-{##}
-{#    <form method="post" action="{% url 'login' %}">#}
-{#        {% csrf_token %}#}
-{#        <label for="email">User name</label>#}
-{#        <input type="email" id="email" name="email" placeholder="User name" required>#}
-{##}
-{#        <label for="password">Password</label>#}
-{#        <input type="password" id="password" name="password" placeholder="Password" required>#}
-{##}
-{#        <button type="submit">Login</button>#}
-{#    </form>#}
-{##}
-{#    {% if messages %}#}
-{#        <ul>#}
-{#            {% for message in messages %}#}
-{#                <li>{{ message }}</li>#}
-{#            {% endfor %}#}
-{#        </ul>#}
-{#    {% endif %}#}
-{#</div>#}
-{##}
-{#</body>#}
-{#</html>#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Login</title>
+    <title>Modern Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: url('https://via.placeholder.com/1500x1000/333333/333333') no-repeat center center;
-            background-size: cover;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(45deg, #1a1a1a, #2d3436);
+            position: relative;
+            overflow: hidden;
         }
 
-        .container {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 50px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(66, 133, 244, 0.3), rgba(219, 68, 55, 0.3));
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
             width: 400px;
+            height: 400px;
+            top: -200px;
+            right: -100px;
+        }
+
+        .shape:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(0, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 420px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 48px;
+            color: #fff;
+            margin-bottom: 15px;
         }
 
         h2 {
-            font-size: 24px;
-            color: white;
-            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
         }
 
-        label {
-            display: block;
-            color: #cccccc;
-            font-size: 14px;
-            margin-bottom: 5px;
-            text-align: left;
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
         }
 
-        input[type="email"],
-        input[type="password"] {
+        .input-group input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            background: linear-gradient(90deg, #e91e63, #ff6f00);
-            color: white;
+            border-radius: 12px;
+            color: #fff;
             font-size: 16px;
-            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #4285f4, #db4437);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        button:hover {
-            background: linear-gradient(90deg, #ff6f00, #e91e63);
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
         }
 
-        ul {
+        .messages {
             margin-top: 20px;
-            list-style-type: none;
-            padding: 0;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            list-style: none;
         }
 
-        ul li {
-            color: white;
+        .messages li {
+            color: #fff;
             font-size: 14px;
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                width: 90%;
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
 
-<div class="container">
-    <h2>Вход в аккаунт</h2>
+    <div class="login-container">
+        <div class="logo">
+            <i class="fas fa-user-circle"></i>
+        </div>
+        
+        <h2>Вход в аккаунт</h2>
 
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <label for="email">Имя пользователя</label>
-        <input type="email" id="email" name="email" placeholder="Имя пользователя" required>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="email" name="email" placeholder="Имя пользователя" required>
+            </div>
 
-        <label for="password">Пароль</label>
-        <input type="password" id="password" name="password" placeholder="Пароль" required>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" placeholder="Пароль" required>
+            </div>
 
-        <button type="submit">Войти</button>
-    </form>
+            <button type="submit" class="login-btn">Войти</button>
+        </form>
 
-    {% if messages %}
-        <ul>
+        {% if messages %}
+        <ul class="messages">
             {% for message in messages %}
-                <li>{{ message }}</li>
+            <li>{{ message }}</li>
             {% endfor %}
         </ul>
-    {% endif %}
-</div>
-
+        {% endif %}
+    </div>
 </body>
 </html>
-
