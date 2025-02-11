@@ -339,46 +339,96 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import Task, DeductionLog
 
+
 @login_required
 def developer_tasks(request):
-    developer = request.user
+    try:
+        developer = request.user
+        # Get all tasks assigned to the developer with related job data
+        tasks = Task.objects.filter(assigned_users=developer) \
+            .select_related('job') \
+            .prefetch_related('assigned_users') \
+            .order_by('deadline')
 
-    # Sort tasks by deadline in ascending order and paginate for main task list
-    tasks = Task.objects.filter(assigned_users=developer).order_by('deadline')
-    paginator = Paginator(tasks, 15)  # Main task list pagination
-    page_number = request.GET.get('page')
-    page_tasks = paginator.get_page(page_number)
+        # Get the section parameter from URL (if any)
+        section = request.GET.get('section', 'task-list')
 
-    # Pagination for Feedback Tasks
-    feedback_paginator = Paginator(tasks, 10)  # Paginate feedback section, 3 tasks per page
-    feedback_page_number = request.GET.get('feedback_page')
-    feedback_page_tasks = feedback_paginator.get_page(feedback_page_number)
+        # Get feedback tasks (tasks that can receive feedback)
+        feedback_tasks = tasks.filter(progress__gt=0)  # Only allow feedback for started tasks
 
-    balance = sum(task.money_for_task for task in tasks if task.paid)
-    deduction_logs = DeductionLog.objects.filter(developer=developer).order_by('-deduction_date')
+        # Process tasks for display
+        processed_tasks = []
+        for task in tasks:
+            # Calculate wave animation offset based on progress
+            progress_offset = 125.6 - (task.progress / 100 * 125.6)
+            task.progress_offset = progress_offset
 
-    if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        progress = request.POST.get('progress')
-        task = get_object_or_404(Task, id=task_id, assigned_users=developer)
+            # Calculate task status and deadline info
+            if task.deadline:
+                days_until_deadline = (task.deadline - timezone.now().date()).days
+                if days_until_deadline > 10:
+                    task.status = 'task_green'
+                elif 5 < days_until_deadline <= 10:
+                    task.status = 'task_yellow'
+                elif 0 <= days_until_deadline <= 5:
+                    task.status = 'task_red'
+                else:
+                    task.status = 'overdue'
+            else:
+                task.status = 'no_deadline'
 
-        if progress is not None:
-            task.progress = int(progress)
-            task.save()
+            processed_tasks.append(task)
 
-            if task.progress == 100:
-                task.check_and_pay_developer()
+        # Paginate main task list
+        paginator = Paginator(processed_tasks, 15)  # Show 15 tasks per page
+        page_number = request.GET.get('page')
+        page_tasks = paginator.get_page(page_number)
 
-        return redirect('developer_tasks')
+        # Paginate feedback tasks separately
+        feedback_paginator = Paginator(feedback_tasks, 10)  # Show 10 feedback tasks per page
+        feedback_page = request.GET.get('feedback_page')
+        page_feedback_tasks = feedback_paginator.get_page(feedback_page)
 
-    return render(request, 'developer_tasks.html', {
-        'developer': developer,
-        'tasks': page_tasks,
-        'feedback_tasks': feedback_page_tasks,  # Pass paginated feedback tasks to the template
-        'balance': balance,
-        'deduction_logs': deduction_logs
-    })
+        # Calculate total balance from paid tasks
+        total_balance = sum(task.money_for_task for task in tasks.filter(paid=True))
 
+        # Get recent notifications or updates
+        recent_updates = DeductionLog.objects.filter(developer=developer).order_by('-deduction_date')[:5]
+
+        # Prepare task statistics
+        task_stats = {
+            'total_tasks': tasks.count(),
+            'completed_tasks': tasks.filter(progress=100).count(),
+            'in_progress_tasks': tasks.filter(progress__gt=0, progress__lt=100).count(),
+            'pending_tasks': tasks.filter(progress=0).count(),
+            'overdue_tasks': tasks.filter(deadline__lt=timezone.now().date(), progress__lt=100).count()
+        }
+
+        context = {
+            'tasks': page_tasks,
+            'feedback_tasks': page_feedback_tasks,
+            'balance': total_balance,
+            'section': section,
+            'recent_updates': recent_updates,
+            'task_stats': task_stats,
+            'active_page': 'developer_tasks',
+            'today': timezone.now().date(),
+        }
+
+        return render(request, 'developer_tasks.html', context)
+
+    except Exception as e:
+        print(f"Error in developer_tasks view: {str(e)}")
+        # Log the full error traceback
+        import traceback
+        traceback.print_exc()
+
+        # Return error page with message
+        return render(request, 'error.html', {
+            'error_message': 'An error occurred while loading tasks.',
+            'error_details': str(e),
+            'show_details': request.user.is_staff  # Only show error details to staff
+        }, status=500)
 @login_required
 def payment_history(request):
     developer = request.user
@@ -1248,3 +1298,41 @@ def payment_load(request):
     }
 
     return render(request, 'payment_load.html', context)
+
+
+@login_required
+def update_progress(request):
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        progress = request.POST.get('progress')
+
+        try:
+            # Convert progress to integer and validate range
+            progress = int(progress)
+            if not (0 <= progress <= 100):
+                messages.error(request, "Progress must be between 0 and 100")
+                return redirect('developer_tasks')
+
+            # Get the task and verify the current user is assigned to it
+            task = get_object_or_404(Task, id=task_id)
+            if request.user not in task.assigned_users.all():
+                return HttpResponseForbidden("You are not authorized to update this task.")
+
+            # Update the progress
+            task.progress = progress
+            task.save()
+
+            # Check if task is completed and handle payment if needed
+            if progress == 100:
+                task.check_and_pay_developer()
+
+            messages.success(request, f"Progress for '{task.title}' updated to {progress}%")
+
+        except ValueError:
+            messages.error(request, "Invalid progress value")
+        except Task.DoesNotExist:
+            messages.error(request, "Task not found")
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+
+    return redirect('developer_tasks')

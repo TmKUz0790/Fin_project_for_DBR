@@ -74,5 +74,8 @@ urlpatterns = [
     path('payment_load/', views.payment_load, name='payment_load'),
 
 
+    path('update-progress/', views.update_progress, name='update_progress'),
+
+
     path('dev_history/', views.developer_payment_sheet, name='dev_history'),
 ]
