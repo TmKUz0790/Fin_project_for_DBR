@@ -1,132 +1,3 @@
-{##}
-{#<!DOCTYPE html>#}
-{#<html lang="ru">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
-{#    <title>Детали проекта</title>#}
-{#    <!-- Bootstrap CSS -->#}
-{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">#}
-{#</head>#}
-{#<body>#}
-{#    <!-- Навигационная панель -->#}
-{#    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">#}
-{#        <div class="container-fluid">#}
-{#            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">Панель администратора</a>#}
-{#            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">#}
-{#                <span class="navbar-toggler-icon"></span>#}
-{#            </button>#}
-{#            <div class="collapse navbar-collapse" id="navbarNav">#}
-{#                <ul class="navbar-nav">#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Главная</a>#}
-{#                    </li>#}
-{#                    <li class="nav-item">#}
-{#                        <a class="nav-link" href="{% url 'job_list' %}">Список проектов</a>#}
-{#                    </li>#}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-{#    </nav>#}
-{##}
-{#    <!-- Основное содержимое -->#}
-{#    <div class="container mt-5">#}
-{#        <h1>Детали проекта</h1>#}
-{##}
-{#        <!-- Кнопки навигации -->#}
-{#        <div class="d-flex justify-content-between align-items-center mb-3">#}
-{#            <a href="{% url 'job_list' %}" class="btn btn-secondary">Вернуться к списку проектов</a>#}
-{#            <a href="{% url 'add_task_to_job' job.id %}" class="btn btn-primary">Добавить задачу</a>#}
-{#        </div>#}
-{##}
-{#        <div class="card mb-4">#}
-{#            <div class="card-body">#}
-{#                <h5 class="card-title">{{ job.title }}</h5>#}
-{#                <p class="card-text"><strong>Email клиента:</strong> {{ job.client_email }}</p>#}
-{#                <p class="card-text"><strong>Общий доход:</strong> ${{ job.over_all_income }}</p>#}
-{#                <p class="card-text"><strong>Общая оплата за задачи:</strong> ${{ total_task_payment }}</p>#}
-{#                <p class="card-text"><strong>Оставшийся доход:</strong> ${{ remaining_income }}</p>#}
-{#                <p class="card-text"><strong>Общий прогресс:</strong> {{ overall_progress|floatformat:2 }}%</p>#}
-{#                {% if latest_deadline %}#}
-{#                    <p class="card-text"><strong>Последний дедлайн задачи:</strong> {{ latest_deadline|date:"Y-m-d" }}</p>#}
-{#                {% endif %}#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#        <!-- Таблица с деталями задач -->#}
-{#        <div class="table-responsive">#}
-{#            <h2 class="mb-4">Задачи</h2>#}
-{#            <table class="table table-striped table-bordered">#}
-{#                <thead>#}
-{#                    <tr>#}
-{#                        <th>#</th>#}
-{#                        <th>Название задачи</th>#}
-{#                        <th>Назначенный разработчик</th>#}
-{#                        <th>Прогресс (%)</th>#}
-{#                        <th>Оплата</th>#}
-{#                        <th>Дата начала</th>#}
-{#                        <th>Дедлайн</th>#}
-{#                    </tr>#}
-{#                </thead>#}
-{#                <tbody>#}
-{#                    {% for task in tasks %}#}
-{#                        <tr>#}
-{#                            <td>{{ forloop.counter }}</td>#}
-{#                            <td>{{ task.title }}</td>#}
-{#                            <td>#}
-{#                                {% if task.assigned_users.count > 0 %}#}
-{#                                    {{ task.assigned_users.all|join:", " }}#}
-{#                                {% else %}#}
-{#                                    Не назначено#}
-{#                                {% endif %}#}
-{#                            </td>#}
-{#                            <td>{{ task.progress|floatformat:2 }}</td>#}
-{#                            <td>${{ task.money_for_task }}</td>#}
-{#                            <td>{{ task.start_date|date:"Y-m-d" }}</td>#}
-{#                            <td>{{ task.deadline|date:"Y-m-d" }}</td>#}
-{#                        </tr>#}
-{#                    {% empty %}#}
-{#                        <tr>#}
-{#                            <td colspan="7" class="text-center">Задачи не найдены.</td>#}
-{#                        </tr>#}
-{#                    {% endfor %}#}
-{#                </tbody>#}
-{#            </table>#}
-{##}
-{#            <!-- Пагинация -->#}
-{#            <div class="d-flex justify-content-center">#}
-{#                {% if tasks.has_other_pages %}#}
-{#                    <ul class="pagination">#}
-{#                        {% if tasks.has_previous %}#}
-{#                            <li class="page-item">#}
-{#                                <a class="page-link" href="?page={{ tasks.previous_page_number }}" aria-label="Предыдущая">#}
-{#                                    <span aria-hidden="true">&laquo;</span>#}
-{#                                </a>#}
-{#                            </li>#}
-{#                        {% endif %}#}
-{#                        {% for page_num in tasks.paginator.page_range %}#}
-{#                            <li class="page-item {% if tasks.number == page_num %}active{% endif %}">#}
-{#                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>#}
-{#                            </li>#}
-{#                        {% endfor %}#}
-{#                        {% if tasks.has_next %}#}
-{#                            <li class="page-item">#}
-{#                                <a class="page-link" href="?page={{ tasks.next_page_number }}" aria-label="Следующая">#}
-{#                                    <span aria-hidden="true">&raquo;</span>#}
-{#                                </a>#}
-{#                            </li>#}
-{#                        {% endif %}#}
-{#                    </ul>#}
-{#                {% endif %}#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <!-- Bootstrap JS -->#}
-{#    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>#}
-{#</body>#}
-{#</html>#}
-
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -134,148 +5,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали проекта</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Add Font Awesome for delete icon -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f8f9fd;
+            --sidebar-bg: #2c3e50;
+            --card-bg: #ffffff;
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            background: var(--sidebar-bg);
+            min-height: 100vh;
+            width: 280px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 25px;
+            color: white;
+            z-index: 1000;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .project-header {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        .stats-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .custom-table {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        .table th {
+            background: var(--sidebar-bg);
+            color: white;
+            font-weight: 500;
+            padding: 15px 20px;
+            border: none;
+        }
+
+        .table td {
+            padding: 15px 20px;
+            vertical-align: middle;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .task-progress {
+            width: 100px;
+            height: 8px;
+            border-radius: 4px;
+            background: #edf2f7;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .assignee-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .page-link {
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--sidebar-bg);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Навигационная панель -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'admin_dashboard' %}">Панель администратора</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'admin_dashboard' %}">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'job_list' %}">Список проектов</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Основное содержимое -->
-    <div class="container mt-5">
-        <h1>Детали проекта</h1>
-
-        <!-- Кнопки навигации -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{% url 'job_list' %}" class="btn btn-secondary">Вернуться к списку проектов</a>
-            <a href="{% url 'add_task_to_job' job.id %}" class="btn btn-primary">Добавить задачу</a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="d-flex align-items-center mb-4 pb-3 border-bottom border-light">
+            <i class="bi bi-folder-fill fs-4 me-2"></i>
+            <h5 class="mb-0">Детали проекта</h5>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">{{ job.title }}</h5>
-                <p class="card-text"><strong>Email клиента:</strong> {{ job.client_email }}</p>
-                <p class="card-text"><strong>Общий доход:</strong> ${{ job.over_all_income }}</p>
-                <p class="card-text"><strong>Общая оплата за задачи:</strong> ${{ total_task_payment }}</p>
-                <p class="card-text"><strong>Оставшийся доход:</strong> ${{ remaining_income }}</p>
-                <p class="card-text"><strong>Общий прогресс:</strong> {{ overall_progress|floatformat:2 }}%</p>
-                {% if latest_deadline %}
-                    <p class="card-text"><strong>Последний дедлайн задачи:</strong> {{ latest_deadline|date:"Y-m-d" }}</p>
-                {% endif %}
-            </div>
-        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="{% url 'admin_dashboard' %}">
+                <i class="bi bi-house-door me-2"></i> Главная
+            </a>
+            <a class="nav-link" href="{% url 'job_list' %}">
+                <i class="bi bi-kanban me-2"></i> Проекты
+            </a>
+        </nav>
+    </div>
 
-        <!-- Messages section for displaying success/error messages -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Project Header -->
+        <div class="project-header">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h4 class="mb-1">{{ job.title }}</h4>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-envelope me-2"></i>{{ job.client_email }}
+                    </p>
                 </div>
-            {% endfor %}
-        {% endif %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'add_task_to_job' job.id %}" class="btn btn-primary btn-action">
+                        <i class="bi bi-plus-lg me-2"></i>Добавить задачу
+                    </a>
+                    {% if request.user.email == 'Admin@dbr.org' %}
+                    <form action="{% url 'delete_job' job.id %}" method="POST" style="display: inline;" 
+                          onsubmit="return confirm('Вы уверены, что хотите удалить этот проект?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-action">
+                            <i class="bi bi-trash me-2"></i>Удалить проект
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
 
-        <!-- Таблица с деталями задач -->
-        <div class="table-responsive">
-            <h2 class="mb-4">Задачи</h2>
-            <table class="table table-striped table-bordered">
+            <!-- Project Stats -->
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-wallet2 text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">${{ job.over_all_income }}</div>
+                                <div class="stat-label">Общий доход</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-cash-stack text-success fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">${{ remaining_income }}</div>
+                                <div class="stat-label">Остаток</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-graph-up text-warning fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">{{ overall_progress|floatformat:2 }}%</div>
+                                <div class="stat-label">Общий прогресс</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-calendar-check text-info fs-4"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">{{ latest_deadline|date:"d.m" }}</div>
+                                <div class="stat-label">Дедлайн</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Table -->
+        <div class="custom-table">
+            <table class="table mb-0">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Название задачи</th>
-                        <th>Назначенный разработчик</th>
-                        <th>Прогресс (%)</th>
+                        <th>Задача</th>
+                        <th>Разработчик</th>
+                        <th>Прогресс</th>
                         <th>Оплата</th>
-                        <th>Дата начала</th>
-                        <th>Дедлайн</th>
+                        <th>Сроки</th>
+                        <th>Статус</th>
                         <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for task in tasks %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ task.title }}</td>
-                            <td>
-                                {% if task.assigned_users.count > 0 %}
-                                    {{ task.assigned_users.all|join:", " }}
-                                {% else %}
-                                    Не назначено
-                                {% endif %}
-                            </td>
-                            <td>{{ task.progress|floatformat:2 }}</td>
-                            <td>${{ task.money_for_task }}</td>
-                            <td>{{ task.start_date|date:"Y-m-d" }}</td>
-                            <td>{{ task.deadline|date:"Y-m-d" }}</td>
-                            <td>
-                                {% if request.user.email == 'Admin@dbr.org' %}
-                                    <form action="{% url 'delete_task' task.id %}" method="POST" style="display: inline;" 
-                                          onsubmit="return confirm('Вы уверены, что хотите удалить эту задачу?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Удалить
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-square text-primary me-2"></i>
+                                {{ task.title }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if task.assigned_users.count > 0 %}
+                            <div class="d-flex align-items-center">
+                                <div class="assignee-avatar me-2">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                {{ task.assigned_users.all|join:", " }}
+                            </div>
+                            {% else %}
+                            <span class="badge bg-secondary">Не назначено</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="task-progress">
+                                    <div class="progress-bar bg-primary" style="width: {{ task.progress }}%"></div>
+                                </div>
+                                <span>{{ task.progress }}%</span>
+                            </div>
+                        </td>
+                        <td>${{ task.money_for_task }}</td>
+                        <td>
+                            <small class="text-muted">
+                                {{ task.start_date|date:"d.m.Y" }} - {{ task.deadline|date:"d.m.Y" }}
+                            </small>
+                        </td>
+                        <td>
+                            <form action="{% url 'change_task_status' task.id %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="status-badge border-0 {% if task.task_type == 'MONTHLY' %}bg-info{% else %}bg-secondary{% endif %} bg-opacity-10 {% if task.task_type == 'MONTHLY' %}text-info{% else %}text-secondary{% endif %}">
+                                    <i class="bi {% if task.task_type == 'MONTHLY' %}bi-calendar-check{% else %}bi-check-square{% endif %} me-1"></i>
+                                    {{ task.task_type }}
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            {% if request.user.email == 'Admin@dbr.org' %}
+                            <form action="{% url 'delete_task' task.id %}" method="POST" style="display: inline;" 
+                                  onsubmit="return confirm('Удалить задачу?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-light btn-sm btn-action">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
                     {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center">Задачи не найдены.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                            <p class="text-muted mb-0">Задачи не найдены</p>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
-            <!-- Пагинация -->
-            <div class="d-flex justify-content-center">
-                {% if tasks.has_other_pages %}
-                    <ul class="pagination">
-                        {% if tasks.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ tasks.previous_page_number }}" aria-label="Предыдущая">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% for page_num in tasks.paginator.page_range %}
-                            <li class="page-item {% if tasks.number == page_num %}active{% endif %}">
-                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
-                            </li>
-                        {% endfor %}
-                        {% if tasks.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ tasks.next_page_number }}" aria-label="Следующая">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                {% endif %}
-            </div>
         </div>
+
+        <!-- Pagination -->
+        {% if tasks.has_other_pages %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if tasks.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ tasks.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in tasks.paginator.page_range %}
+                <li class="page-item {% if tasks.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if tasks.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ tasks.next_page_number }}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1058,7 +1058,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+@login_required
 def add_task_to_job(request, job_id):
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("You are not authorized to add tasks.")
+
     job = get_object_or_404(Job, id=job_id)
 
     TaskFormSet = inlineformset_factory(
@@ -1068,61 +1073,128 @@ def add_task_to_job(request, job_id):
         can_delete=False
     )
 
-    task_formset = TaskFormSet(request.POST or None, instance=job)
-
     if request.method == 'POST':
-        if task_formset.is_valid():
-            # Calculate total hours for all tasks related to the job
-            existing_tasks = Task.objects.filter(job=job)
-            existing_hours = existing_tasks.aggregate(total_hours=Sum('hours'))['total_hours'] or 0
+        task_formset = TaskFormSet(request.POST, instance=job)
 
-            # Calculate total hours from the submitted formset
-            formset_hours = 0
-            for form in task_formset:
-                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                    hours = form.cleaned_data.get('hours', 0)
-                    formset_hours += hours
+        try:
+            if task_formset.is_valid():
+                # Get existing tasks and their total hours
+                existing_tasks = Task.objects.filter(job=job)
+                existing_hours = existing_tasks.aggregate(
+                    total_hours=Sum('hours'))['total_hours'] or 0
 
-            total_hours = existing_hours + formset_hours
-
-            if total_hours == 0:
-                messages.error(request, "Total hours cannot be zero.")
-                return render(request, 'add_task_to_job.html', {
-                    'task_formset': task_formset,
-                    'job': job,
-                })
-
-            with transaction.atomic():
-                # Save each form in the formset
+                # Calculate new hours from the formset
+                new_hours = 0
                 for form in task_formset:
                     if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                        task = form.save(commit=False)
-                        hours = form.cleaned_data.get('hours', 0)
-                        # Calculate task percentage based on total hours
-                        task.task_percentage = (hours / total_hours) * 100
-                        task.job = job  # Associate the task with the job
+                        new_hours += form.cleaned_data.get('hours', 0)
+
+                # Calculate total hours
+                total_hours = existing_hours + new_hours
+
+                if total_hours <= 0:
+                    messages.error(request, "Total hours must be greater than zero.")
+                    return render(request, 'add_task_to_job.html', {
+                        'task_formset': task_formset,
+                        'job': job,
+                    })
+
+                with transaction.atomic():
+                    # Save new tasks
+                    for form in task_formset:
+                        if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                            task = form.save(commit=False)
+                            task.job = job
+                            task.task_percentage = (form.cleaned_data.get('hours', 0) / total_hours) * 100
+                            task.save()
+                            form.save_m2m()
+
+                    # Update existing task percentages
+                    for task in existing_tasks:
+                        task.task_percentage = (task.hours / total_hours) * 100
                         task.save()
-                        form.save_m2m()  # Save many-to-many relationships
 
-                # Update task percentages for existing tasks
-                for task in existing_tasks:
-                    task.task_percentage = (task.hours / total_hours) * 100
-                    task.save()
-
-                logger.info(f"Tasks successfully added to job: {job.title}")
-                return redirect('job_list')
-        else:
-            logger.error("Formset validation failed.")
-            logger.error(f"Formset errors: {task_formset.errors}")
-            logger.error(f"Non-form errors: {task_formset.non_form_errors()}")
-            for form in task_formset:
-                logger.error(f"Form errors: {form.errors}")
+                messages.success(request, "Tasks successfully added to the job.")
+                return redirect('job_details', job_id=job.id)
+            else:
+                messages.error(request, "Please correct the errors below.")
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            # Log the error for debugging
+            logger.error(f"Error in add_task_to_job: {str(e)}", exc_info=True)
+    else:
+        task_formset = TaskFormSet(instance=job)
 
     return render(request, 'add_task_to_job.html', {
         'task_formset': task_formset,
         'job': job,
     })
 
+# def add_task_to_job(request, job_id):
+#     job = get_object_or_404(Job, id=job_id)
+#
+#     TaskFormSet = inlineformset_factory(
+#         Job, Task,
+#         form=TaskForm,
+#         extra=1,
+#         can_delete=False
+#     )
+#
+#     task_formset = TaskFormSet(request.POST or None, instance=job)
+#
+#     if request.method == 'POST':
+#         if task_formset.is_valid():
+#             # Calculate total hours for all tasks related to the job
+#             existing_tasks = Task.objects.filter(job=job)
+#             existing_hours = existing_tasks.aggregate(total_hours=Sum('hours'))['total_hours'] or 0
+#
+#             # Calculate total hours from the submitted formset
+#             formset_hours = 0
+#             for form in task_formset:
+#                 if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+#                     hours = form.cleaned_data.get('hours', 0)
+#                     formset_hours += hours
+#
+#             total_hours = existing_hours + formset_hours
+#
+#             if total_hours == 0:
+#                 messages.error(request, "Total hours cannot be zero.")
+#                 return render(request, 'add_task_to_job.html', {
+#                     'task_formset': task_formset,
+#                     'job': job,
+#                 })
+#
+#             with transaction.atomic():
+#                 # Save each form in the formset
+#                 for form in task_formset:
+#                     if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+#                         task = form.save(commit=False)
+#                         hours = form.cleaned_data.get('hours', 0)
+#                         # Calculate task percentage based on total hours
+#                         task.task_percentage = (hours / total_hours) * 100
+#                         task.job = job  # Associate the task with the job
+#                         task.save()
+#                         form.save_m2m()  # Save many-to-many relationships
+#
+#                 # Update task percentages for existing tasks
+#                 for task in existing_tasks:
+#                     task.task_percentage = (task.hours / total_hours) * 100
+#                     task.save()
+#
+#                 logger.info(f"Tasks successfully added to job: {job.title}")
+#                 return redirect('job_list')
+#         else:
+#             logger.error("Formset validation failed.")
+#             logger.error(f"Formset errors: {task_formset.errors}")
+#             logger.error(f"Non-form errors: {task_formset.non_form_errors()}")
+#             for form in task_formset:
+#                 logger.error(f"Form errors: {form.errors}")
+#
+#     return render(request, 'add_task_to_job.html', {
+#         'task_formset': task_formset,
+#         'job': job,
+#     })
+#
 
 
 
@@ -1336,3 +1408,46 @@ def update_progress(request):
             messages.error(request, f"An error occurred: {str(e)}")
 
     return redirect('developer_tasks')
+
+
+@login_required
+def delete_job(request, job_id):
+    # Only allow POST requests for deletion
+    if request.method == 'POST':
+        # Only allow admin to delete jobs
+        if request.user.email == 'Admin@dbr.org':
+            job = get_object_or_404(Job, id=job_id)
+            job_title = job.title
+            job.delete()
+            messages.success(request, f'Проект "{job_title}" успешно удален.')
+        else:
+            messages.error(request, 'У вас нет прав для удаления проектов.')
+
+    return redirect('job_list')
+
+
+
+@login_required
+def change_task_status(request, task_id):
+    try:
+        if request.method == 'POST':
+            task = get_object_or_404(Task, id=task_id)
+
+            # Toggle the task type
+            if task.task_type == 'SIMPLE':
+                task.task_type = 'MONTHLY'
+                status_message = 'Задача изменена на ежемесячную'
+            else:
+                task.task_type = 'SIMPLE'
+                status_message = 'Задача изменена на простую'
+
+            task.save()
+            messages.success(request, status_message)
+
+            # Make sure we're returning to the correct job detail page
+            return redirect('job_details', job_id=task.job.id)
+
+    except Exception as e:
+        messages.error(request, f'Произошла ошибка: {str(e)}')
+        print(f"Error in change_task_status: {str(e)}")  # For debugging
+

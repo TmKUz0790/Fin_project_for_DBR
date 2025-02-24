@@ -65,7 +65,7 @@ urlpatterns = [
 
     # Deduct balance URL
     path('deduct_balance/<int:developer_id>/', views.deduct_balance, name='deduct_balance'),
-
+    path('task/<int:task_id>/change-status/', views.change_task_status, name='change_task_status'),
     path('deduction-logs/', all_deduction_logs, name='all_deduction_logs'),
     #path('deduction_logs/<int:developer_id>/', deduction_logs, name='deduction_logs'),
 
@@ -73,7 +73,7 @@ urlpatterns = [
     path('update_feedback/', views.update_feedback, name='update_feedback'),
     path('payment_load/', views.payment_load, name='payment_load'),
 
-
+    path('job/<int:job_id>/delete/', views.delete_job, name='delete_job'),
     path('update-progress/', views.update_progress, name='update_progress'),
 
 

@@ -1,3 +1,4 @@
+{##}
 {#{% load static %}#}
 {#<!DOCTYPE html>#}
 {#<html lang="en">#}
@@ -12,6 +13,10 @@
 {#      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"#}
 {#      crossorigin="anonymous"#}
 {#    />#}
+{#    <link#}
+{#      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"#}
+{#      rel="stylesheet"#}
+{#    />#}
 {##}
 {#    <!-- Custom CSS -->#}
 {#    <link#}
@@ -25,19 +30,28 @@
 {#    <!-- Particles Container -->#}
 {#    <div id="particles-js"></div>#}
 {#    <section class="container main_content relative">#}
-{#      <h1>Progress for Job: {{ job.title }}</h1>#}
+{#       <div class="d-flex justify-content-between align-items-center">#}
+{#        #}
+{#        <h1>Прогресс по задаче: {{ job.title }}</h1>#}
+{#        #}
+{#        <div>#}
+{#      <button class="btn btn-outline-success text-white" style="background-color: #20c997;"><a class="text-decoration-none text-white" href="{% url 'client_progress' %}"><i class="bi bi-house"></i>#}
+{# #}
+{# На главную</a></button>#}
+{#        </div>#}
+{##}
+{#      </div>#}
 {##}
 {#      <div class="overall-progress-container">#}
 {#        <h3 class="text-center mb-4">Overall Progress</h3>#}
 {#        <div id="overallProgressChart">#}
-{##}
 {#        </div>#}
 {#        #}
 {#<p class="text-center mt-3" id="progressText">Выполнено: {{ job.get_overall_progress|default:"0" }}% | Осталось: </p>#}
 {#   #}
 {#      </div>#}
 {#      <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>#}
-{#<dotlottie-player class="dottie_player" src="https://lottie.host/58a43bb0-7bf6-47b2-83d3-08efcbfc47ca/lW03hugphB.lottie" background="transparent" speed="1" style="width: 100%; height: 500px" loop autoplay></dotlottie-player>#}
+{#<dotlottie-player class="dottie_player" src="https://lottie.host/58a43bb0-7bf6-47b2-83d3-08efcbfc47ca/lW03hugphB.lottie" background="transparent" speed="1" style="max-width:500px;width: 100%; height: 500px" loop autoplay></dotlottie-player>#}
 {#      <div class="container-fluid">#}
 {#        <div class="row">#}
 {#          <div id="chartsContainer" class="container"></div>#}
@@ -283,6 +297,9 @@
 {#    </script>#}
 {#  </body>#}
 {#</html>#}
+
+
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -302,43 +319,202 @@
       rel="stylesheet"
     />
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <!-- Custom CSS -->
-    <link
-      rel="stylesheet"
-      href="{% static 'css/style.css' %}"
-    />
+    <style>
+      :root {
+        --primary-color: #20c997;
+        --secondary-color: #6c757d;
+        --background-light: #f4f6f9;
+        --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background-light);
+        color: #333;
+        line-height: 1.6;
+      }
+
+      #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+      }
+
+      .main_content {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        margin-top: 30px;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .overall-progress-container {
+        background-color: #f8f9fa;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+      }
+
+      .overall-progress-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      }
+
+      #overallProgressChart {
+        max-height: 350px;
+      }
+
+      .dottie_player {
+        max-width: 400px;
+        margin: 20px auto;
+        display: block;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+      }
+
+      .task-card {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .task-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+
+      .task-title {
+        background-color: #f1f3f5;
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        font-weight: 600;
+        color: #343a40;
+      }
+
+      .task-chart-container {
+        padding: 15px;
+        background-color: #f8f9fa;
+      }
+
+      .task-info {
+        background-color: #fa0606;
+        padding: 15px;
+        border-top: 1px solid #e9ecef;
+      }
+
+      .btn-home {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-home:hover {
+        background-color: #17a2b8;
+        transform: translateY(-2px);
+      }
+
+      #progressText {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #495057;
+      }
+
+      .chart-container {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .chart-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: #495057;
+      }
+    </style>
 
     <title>Client Progress Details</title>
   </head>
   <body>
     <!-- Particles Container -->
     <div id="particles-js"></div>
-    <section class="container main_content relative">
-       <div class="d-flex justify-content-between align-items-center">
-        
-        <h1>Прогресс по задаче: {{ job.title }}</h1>
+    
+    <section class="container main_content position-relative">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-dark fw-bold">Прогресс по задаче: {{ job.title }}</h1>
         
         <div>
-      <button class="btn btn-outline-success text-white" style="background-color: #20c997;"><a class="text-decoration-none text-white" href="{% url 'client_progress' %}"><i class="bi bi-house"></i>
- 
- На главную</a></button>
+          <a href="{% url 'client_progress' %}" class="btn btn-home text-white">
+            <i class="bi bi-house"></i>
+            На главную
+          </a>
         </div>
-
       </div>
 
       <div class="overall-progress-container">
-        <h3 class="text-center mb-4">Overall Progress</h3>
-        <div id="overallProgressChart">
-        </div>
+        <h3 class="text-center mb-4 fw-bold">Общий прогресс</h3>
+        <div id="overallProgressChart" class="mb-3"></div>
         
-<p class="text-center mt-3" id="progressText">Выполнено: {{ job.get_overall_progress|default:"0" }}% | Осталось: </p>
-   
+        <p class="text-center mt-3" id="progressText">Выполнено: {{ job.get_overall_progress|default:"0" }}% | Осталось: </p>
       </div>
+
       <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-<dotlottie-player class="dottie_player" src="https://lottie.host/58a43bb0-7bf6-47b2-83d3-08efcbfc47ca/lW03hugphB.lottie" background="transparent" speed="1" style="max-width:500px;width: 100%; height: 500px" loop autoplay></dotlottie-player>
+      <dotlottie-player 
+        class="dottie_player" 
+        src="https://lottie.host/58a43bb0-7bf6-47b2-83d3-08efcbfc47ca/lW03hugphB.lottie" 
+        background="transparent" 
+        speed="1" 
+        loop 
+        autoplay>
+      </dotlottie-player>
+
       <div class="container-fluid">
-        <div class="row">
-          <div id="chartsContainer" class="container"></div>
+        <div id="chartsContainer" class="row row-cols-1 row-cols-md-3 g-4"></div>
+      </div>
+
+      <!-- Additional Charts Section -->
+      <div class="row mt-4">
+        <!-- Task Progress Distribution Chart -->
+        <div class="col-md-6">
+          <div class="chart-container">
+            <h3 class="chart-title">Распределение прогресса задач</h3>
+            <canvas id="taskProgressChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Time-based Progress Chart -->
+        <div class="col-md-6">
+          <div class="chart-container">
+            <h3 class="chart-title">Прогресс по времени</h3>
+            <canvas id="timeProgressChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Comparative Progress Chart -->
+        <div class="col-md-12">
+          <div class="chart-container">
+            <h3 class="chart-title">Сравнительный прогресс задач</h3>
+            <canvas id="comparativeProgressChart"></canvas>
+          </div>
         </div>
       </div>
     </section>
@@ -444,42 +620,48 @@
 
           if (tasks.length > 0) {
             var chartsContainer = document.getElementById('chartsContainer');
-            chartsContainer.className = 'row row-cols-3 g-4';
+            chartsContainer.className = 'row row-cols-1 row-cols-md-3 g-4';
             tasks.forEach(function(task, index) {
               var chartDivId = 'chartdiv-' + index;
               var colDiv = document.createElement('div');
-              colDiv.className = 'col';
+              colDiv.className = 'col task-card';
 
-              var title = document.createElement('h5');
-              title.textContent = task.title;
-              title.className = 'text-center mb-3 fw-bold';
-              title.style.backgroundColor = '#f8f9fa';
-              title.style.padding = '5px'
-              title.style.borderRadius = '0';
-              title.style.boxShadow = '0px 2px 5px rgba(0, 0, 0, 0.1)';
-              colDiv.appendChild(title);
+              var titleDiv = document.createElement('div');
+              titleDiv.textContent = task.title;
+              titleDiv.className = 'task-title text-center';
+              colDiv.appendChild(titleDiv);
 
+              var chartContainer = document.createElement('div');
+              chartContainer.className = 'task-chart-container';
               var chartDiv = document.createElement('div');
               chartDiv.id = chartDivId;
               chartDiv.style.width = '100%';
               chartDiv.style.height = '300px';
-              // chartDiv.style.border = '1px solid #e0e0e0'; // Removed border to make the appearance cleaner
-              chartDiv.style.borderRadius = '0';
-              chartDiv.style.padding = '15px';
-              chartDiv.style.boxShadow = '0px 2px 5px rgba(0, 0, 0, 0.1)';
-              colDiv.appendChild(chartDiv);
+              chartContainer.appendChild(chartDiv);
+              colDiv.appendChild(chartContainer);
 
               var infoDiv = document.createElement('div');
               infoDiv.className = 'task-info';
-              infoDiv.innerHTML = `<h6>INFO</h6>
-                                  <ul>
-                                    <li>Прогресс выполнен на ${task.progress}% </li>
-                                    <li>Осталось выполнить ${100 - task.progress}%</li>
-                                  </ul>`;
-              infoDiv.style.padding = '10px';
-              infoDiv.style.backgroundColor = '#f8f9fa';
-              infoDiv.style.border = 'none'; // Removed border
-              infoDiv.style.boxShadow = '0px 2px 5px rgba(0, 0, 0, 0.1)';
+              infoDiv.innerHTML = `
+                <div class="row">
+                  <div class="col-6">
+                    <small class="text-muted">Прогресс</small>
+                    <div class="progress">
+                      <div class="progress-bar bg-success" role="progressbar" 
+                           style="width: ${task.progress}%" 
+                           aria-valuenow="${task.progress}" 
+                           aria-valuemin="0" 
+                           aria-valuemax="100">
+                        ${task.progress}%
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6 text-end">
+                    <small class="text-muted">Осталось</small>
+                    <p class="mb-0">${100 - task.progress}%</p>
+                  </div>
+                </div>
+              `;
               colDiv.appendChild(infoDiv);
 
               chartsContainer.appendChild(colDiv);
@@ -491,7 +673,7 @@
 
               console.log('Создание диаграммы для задачи:', task.title);
 
-              // Создаем корень для диаграммы задачи
+             // Создаем корень для диаграммы задачи
               var taskRoot = am5.Root.new(chartDivId);
               taskRoot._logo && taskRoot._logo.dispose();
               var taskChart = taskRoot.container.children.push(am5percent.PieChart.new(taskRoot, {
@@ -573,11 +755,146 @@
       });
 
       document.addEventListener('DOMContentLoaded', function() {
-    var overallProgress = parseFloat('{{ job.get_overall_progress|default:"0" }}');
-    if (isNaN(overallProgress)) overallProgress = 0;
-    var remainingProgress = 100 - overallProgress;
-    document.getElementById('progressText').innerHTML += remainingProgress + '%';
-  });
+        var overallProgress = parseFloat('{{ job.get_overall_progress|default:"0" }}');
+        if (isNaN(overallProgress)) overallProgress = 0;
+        var remainingProgress = 100 - overallProgress;
+        document.getElementById('progressText').innerHTML += remainingProgress + '%';
+      });
+
+      // Дополнительные диаграммы с использованием Chart.js
+      document.addEventListener('DOMContentLoaded', function() {
+        const tasks = JSON.parse('{{ tasks|escapejs }}');
+
+        // Диаграмма распределения прогресса задач
+        const taskProgressCtx = document.getElementById('taskProgressChart').getContext('2d');
+        new Chart(taskProgressCtx, {
+          type: 'doughnut',
+          data: {
+            labels: tasks.map(task => task.title),
+            datasets: [{
+              data: tasks.map(task => task.progress),
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              },
+              title: {
+                display: true,
+                text: 'Распределение прогресса задач'
+              }
+            }
+          }
+        });
+
+        // Линейная диаграмма прогресса по времени
+        const timeProgressCtx = document.getElementById('timeProgressChart').getContext('2d');
+        new Chart(timeProgressCtx, {
+          type: 'line',
+          data: {
+            labels: tasks.map(task => task.title),
+            datasets: [
+              {
+                label: 'Выполнено',
+                data: tasks.map(task => task.progress),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.1
+              },
+              {
+                label: 'Осталось',
+                data: tasks.map(task => 100 - task.progress),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Прогресс по времени'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                title: {
+                  display: true,
+                  text: 'Процент выполнения'
+                }
+              }
+            }
+          }
+        });
+
+        // Сравнительная диаграмма прогресса
+        const comparativeProgressCtx = document.getElementById('comparativeProgressChart').getContext('2d');
+        new Chart(comparativeProgressCtx, {
+          type: 'bar',
+          data: {
+            labels: tasks.map(task => task.title),
+            datasets: [
+              {
+                label: 'Выполнено',
+                data: tasks.map(task => task.progress),
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              },
+              {
+                label: 'Осталось',
+                data: tasks.map(task => 100 - task.progress),
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Сравнительный прогресс задач'
+              },
+              legend: {
+                position: 'bottom'
+              }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                title: {
+                  display: true,
+                  text: 'Задачи'
+                }
+              },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                max: 100,
+                title: {
+                  display: true,
+                  text: 'Процент выполнения'
+                }
+              }
+            }
+          }
+        });
+      });
     </script>
   </body>
 </html>
