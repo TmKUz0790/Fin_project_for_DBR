@@ -1451,3 +1451,219 @@ def change_task_status(request, task_id):
         messages.error(request, f'Произошла ошибка: {str(e)}')
         print(f"Error in change_task_status: {str(e)}")  # For debugging
 
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.utils import timezone
+from .models import Task
+from datetime import timedelta
+from django.contrib.auth.decorators import login_required
+
+from django.utils import timezone
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.db.models import Count, Q
+from .models import Task
+from datetime import timedelta
+
+from django.contrib.auth.decorators import login_required
+
+from django.utils import timezone
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.db.models import Count, Q
+from .models import Task
+from datetime import timedelta
+
+
+@login_required
+def all_developer_tasks(request):
+    """
+    View to show daily tasks for all developers with pagination and filtering.
+    Uses summary data instead of loading all task details at once.
+    """
+    # Only allow admin to view all developer tasks
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("You are not authorized to view all developer tasks.")
+
+    today = timezone.now().date()
+
+    # Get selected filters
+    selected_developer_id = request.GET.get('developer')
+    selected_category = request.GET.get('category', 'today')  # Default to today's tasks
+
+    # Get all developers
+    developers = User.objects.annotate(
+        task_count=Count('developer_tasks'),
+        overdue_count=Count('developer_tasks',
+                            filter=Q(developer_tasks__deadline__lt=today, developer_tasks__progress__lt=100)),
+        today_count=Count('developer_tasks',
+                          filter=Q(developer_tasks__deadline=today)),
+        tomorrow_count=Count('developer_tasks',
+                             filter=Q(developer_tasks__deadline=today + timedelta(days=1))),
+        week_count=Count('developer_tasks',
+                         filter=Q(
+                             developer_tasks__deadline__gt=today + timedelta(days=1),
+                             developer_tasks__deadline__lte=today + timedelta(days=7)
+                         ))
+    ).order_by('username')
+
+    # Filter developers if needed
+    if selected_developer_id:
+        developers = developers.filter(id=selected_developer_id)
+
+    # Paginate developers - show 5 per page
+    developers_paginator = Paginator(developers, 5)
+    developers_page = request.GET.get('page', 1)
+    page_developers = developers_paginator.get_page(developers_page)
+
+    # Get tasks for the selected category for visible developers only
+    developer_tasks = {}
+
+    for developer in page_developers:
+        if selected_category == 'overdue':
+            tasks = Task.objects.filter(
+                assigned_users=developer,
+                deadline__lt=today,
+                progress__lt=100
+            )
+        elif selected_category == 'today':
+            tasks = Task.objects.filter(
+                assigned_users=developer,
+                deadline=today
+            )
+        elif selected_category == 'tomorrow':
+            tasks = Task.objects.filter(
+                assigned_users=developer,
+                deadline=today + timedelta(days=1)
+            )
+        elif selected_category == 'week':
+            tasks = Task.objects.filter(
+                assigned_users=developer,
+                deadline__gt=today + timedelta(days=1),
+                deadline__lte=today + timedelta(days=7)
+            )
+        else:
+            # Default to all tasks
+            tasks = Task.objects.filter(assigned_users=developer)
+
+        # Select related data to reduce queries
+        tasks = tasks.select_related('job').order_by('deadline')
+
+        # Process tasks to add status information
+        for task in tasks:
+            if task.deadline:
+                days_until_deadline = (task.deadline - today).days
+                if days_until_deadline < 0:
+                    task.status = 'overdue'
+                    task.status_display = f'Overdue by {abs(days_until_deadline)} days'
+                elif days_until_deadline == 0:
+                    task.status = 'due_today'
+                    task.status_display = 'Due today'
+                elif days_until_deadline == 1:
+                    task.status = 'due_tomorrow'
+                    task.status_display = 'Due tomorrow'
+                elif days_until_deadline <= 5:
+                    task.status = 'task_red'
+                    task.status_display = f'Due in {days_until_deadline} days'
+                elif days_until_deadline <= 10:
+                    task.status = 'task_yellow'
+                    task.status_display = f'Due in {days_until_deadline} days'
+                else:
+                    task.status = 'task_green'
+                    task.status_display = f'Due in {days_until_deadline} days'
+            else:
+                task.status = 'no_deadline'
+                task.status_display = 'No deadline'
+
+        developer_tasks[developer] = tasks
+
+    context = {
+        'today': today,
+        'developers': page_developers,
+        'developer_tasks': developer_tasks,
+        'all_developers': developers,
+        'selected_developer_id': selected_developer_id,
+        'selected_category': selected_category,
+        'active_page': 'all_developer_tasks',
+    }
+
+    return render(request, 'all_developer_tasks.html', context)
+
+
+@login_required
+def enhanced_tasks_view(request):
+    """
+    Enhanced view for tasks with date filtering capabilities.
+    Allows viewing today's tasks, specific dates, this week, and future tasks.
+    """
+    # Only allow admin access
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    today = timezone.now().date()
+
+    # Initialize date filtering variables
+    filter_type = request.GET.get('filter_type', 'today')  # Default to today's tasks
+    custom_date = request.GET.get('custom_date', None)
+
+    # Date range for this week (from today to end of week)
+    week_end = today + timedelta(days=(6 - today.weekday()))
+
+    # Set the title and tasks based on filter type
+    if filter_type == 'today':
+        title = f"Today's Tasks ({today.strftime('%A, %B %d, %Y')})"
+        tasks = Task.objects.filter(deadline=today)
+    elif filter_type == 'tomorrow':
+        tomorrow = today + timedelta(days=1)
+        title = f"Tomorrow's Tasks ({tomorrow.strftime('%A, %B %d, %Y')})"
+        tasks = Task.objects.filter(deadline=tomorrow)
+    elif filter_type == 'week':
+        title = f"This Week's Tasks ({today.strftime('%b %d')} - {week_end.strftime('%b %d, %Y')})"
+        tasks = Task.objects.filter(deadline__gte=today, deadline__lte=week_end)
+    elif filter_type == 'future':
+        next_week_start = week_end + timedelta(days=1)
+        next_month_end = (today.replace(day=1) + timedelta(days=60)).replace(day=1) - timedelta(days=1)
+        title = f"Future Tasks ({next_week_start.strftime('%b %d')} - {next_month_end.strftime('%b %d, %Y')})"
+        tasks = Task.objects.filter(deadline__gt=week_end, deadline__lte=next_month_end)
+    elif filter_type == 'custom' and custom_date:
+        try:
+            # Parse the custom date from the input
+            parsed_date = datetime.strptime(custom_date, '%Y-%m-%d').date()
+            title = f"Tasks for {parsed_date.strftime('%A, %B %d, %Y')}"
+            tasks = Task.objects.filter(deadline=parsed_date)
+        except ValueError:
+            # If date parsing fails, default to today
+            title = f"Today's Tasks ({today.strftime('%A, %B %d, %Y')})"
+            tasks = Task.objects.filter(deadline=today)
+            messages.error(request, "Invalid date format. Showing today's tasks instead.")
+    else:
+        # Default fallback
+        title = f"Today's Tasks ({today.strftime('%A, %B %d, %Y')})"
+        tasks = Task.objects.filter(deadline=today)
+
+    # Get full task data with prefetching to minimize database hits
+    tasks = tasks.select_related('job').prefetch_related('assigned_users').order_by('job__title', 'title')
+
+    # Get stats for quick links
+    today_count = Task.objects.filter(deadline=today).count()
+    tomorrow_count = Task.objects.filter(deadline=today + timedelta(days=1)).count()
+    week_count = Task.objects.filter(deadline__gte=today, deadline__lte=week_end).count()
+    future_count = Task.objects.filter(deadline__gt=week_end).count()
+
+    context = {
+        'title': title,
+        'tasks': tasks,
+        'filter_type': filter_type,
+        'custom_date': custom_date,
+        'today': today,
+        'today_count': today_count,
+        'tomorrow_count': tomorrow_count,
+        'week_count': week_count,
+        'future_count': future_count,
+        'active_page': 'enhanced_tasks',
+    }
+
+    return render(request, 'enhanced_tasks.html', context)
+
+

@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% block title %}All Developer Tasks{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">All Developer Tasks</h1>
+        
+        <!-- Filters -->
+        <div class="d-flex">
+            <form method="GET" class="form-inline mr-2">
+                <!-- Preserve other parameters when changing category -->
+                {% if selected_developer_id %}
+                <input type="hidden" name="developer" value="{{ selected_developer_id }}">
+                {% endif %}
+                
+                <select name="category" class="form-control" onchange="this.form.submit()">
+                    <option value="overdue" {% if selected_category == 'overdue' %}selected{% endif %}>Overdue Tasks</option>
+                    <option value="today" {% if selected_category == 'today' %}selected{% endif %}>Today's Tasks</option>
+                    <option value="tomorrow" {% if selected_category == 'tomorrow' %}selected{% endif %}>Tomorrow's Tasks</option>
+                    <option value="week" {% if selected_category == 'week' %}selected{% endif %}>This Week's Tasks</option>
+                </select>
+            </form>
+            
+            <form method="GET" class="form-inline">
+                <!-- Preserve other parameters when changing developer -->
+                {% if selected_category %}
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                {% endif %}
+                
+                <select name="developer" class="form-control" onchange="this.form.submit()">
+                    <option value="">All Developers</option>
+                    {% for dev in all_developers %}
+                        <option value="{{ dev.id }}" {% if selected_developer_id == dev.id|stringformat:"i" %}selected{% endif %}>
+                            {{ dev.username }} ({{ dev.task_count }} tasks)
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Date Information -->
+    <div class="alert alert-info mb-4">
+        <p class="mb-0">
+            Viewing <strong>{{ selected_category }}</strong> tasks for <strong>{% if selected_developer_id %}selected developer{% else %}all developers{% endif %}</strong> | 
+            Today's Date: {{ today|date:"l, F d, Y" }}
+        </p>
+    </div>
+    
+    <!-- Task Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-danger text-white mb-3">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-0">Overdue Tasks</h5>
+                            <p class="card-text">Needs immediate attention</p>
+                        </div>
+                        <div class="h1 mb-0">
+                            {{ all_developers.aggregate.overdue_count|default:"0" }}
+                        </div>
+                    </div>
+                    <a href="?category=overdue{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-white stretched-link">View all</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-0">Today's Tasks</h5>
+                            <p class="card-text">Due on {{ today|date:"M d" }}</p>
+                        </div>
+                        <div class="h1 mb-0">
+                            {{ all_developers.aggregate.today_count|default:"0" }}
+                        </div>
+                    </div>
+                    <a href="?category=today{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-dark stretched-link">View all</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-info text-white mb-3">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-0">Tomorrow's Tasks</h5>
+                            <p class="card-text">Due tomorrow</p>
+                        </div>
+                        <div class="h1 mb-0">
+                            {{ all_developers.aggregate.tomorrow_count|default:"0" }}
+                        </div>
+                    </div>
+                    <a href="?category=tomorrow{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-white stretched-link">View all</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title mb-0">This Week's Tasks</h5>
+                            <p class="card-text">Due in the next 7 days</p>
+                        </div>
+                        <div class="h1 mb-0">
+                            {{ all_developers.aggregate.week_count|default:"0" }}
+                        </div>
+                    </div>
+                    <a href="?category=week{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-white stretched-link">View all</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Developer Task Tables -->
+    {% for developer, tasks in developer_tasks.items %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ developer.username }} ({{ developer.email }})</h5>
+                
+                <!-- Task counts badge group -->
+                <div>
+                    <span class="badge badge-danger mr-1" title="Overdue tasks">{{ developer.overdue_count }}</span>
+                    <span class="badge badge-warning mr-1" title="Today's tasks">{{ developer.today_count }}</span>
+                    <span class="badge badge-info mr-1" title="Tomorrow's tasks">{{ developer.tomorrow_count }}</span>
+                    <span class="badge badge-primary" title="This week's tasks">{{ developer.week_count }}</span>
+                </div>
+            </div>
+            
+            <div class="card-body p-0">
+                <!-- Task Table -->
+                {% if tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Project</th>
+                                    <th>Status</th>
+                                    <th>Deadline</th>
+                                    <th>Progress</th>
+                                    <th>Payment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in tasks %}
+                                    <tr class="{% if task.status == 'overdue' %}table-danger{% elif task.status == 'due_today' %}table-warning{% endif %}">
+                                        <td>{{ task.title }}</td>
+                                        <td>{{ task.job.title }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ task.status }}">{{ task.status_display }}</span>
+                                        </td>
+                                        <td>{{ task.deadline|date:"M d, Y" }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-{% if task.progress == 100 %}success{% elif task.status == 'overdue' %}danger{% elif task.status == 'due_today' %}warning{% else %}primary{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ task.progress }}%;" 
+                                                     aria-valuenow="{{ task.progress }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    {{ task.progress }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${{ task.money_for_task }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info m-3">
+                        No {{ selected_category }} tasks for this developer.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info">
+            No developers found with the current filter criteria.
+        </div>
+    {% endfor %}
+    
+    <!-- Pagination -->
+    {% if developers.has_other_pages %}
+        <nav aria-label="Developer pagination">
+            <ul class="pagination justify-content-center">
+                {% if developers.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">&laquo; First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ developers.previous_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo; First</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+                
+                {% for i in developers.paginator.page_range %}
+                    {% if developers.number == i %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ i }}</span>
+                        </li>
+                    {% elif i > developers.number|add:'-3' and i < developers.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if developers.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ developers.next_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ developers.paginator.num_pages }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Last &raquo;</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">Last &raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

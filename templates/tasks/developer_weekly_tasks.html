@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Weekly Developer Tasks{% endblock %}
+
+{% block extra_css %}
+<style>
+    .task-card {
+        margin-bottom: 10px;
+        border-left: 4px solid #007bff;
+    }
+    .task-card.monthly {
+        border-left-color: #ffc107;
+    }
+    .task-card.completed {
+        border-left-color: #28a745;
+    }
+    .date-header {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa;
+        z-index: 10;
+        padding: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .today-column {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    .day-column {
+        min-height: 500px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Weekly Developer Tasks: {{ start_date|date:"M d" }} - {{ end_date|date:"M d, Y" }}</h4>
+                    <div>
+                        <a href="{% url 'developer_tasks' %}" class="btn btn-sm btn-outline-light">Switch to Daily View</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Week Navigation and Filters -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 d-flex">
+                            <a href="?start_date={{ prev_week|date:'Y-m-d' }}{% if selected_developer %}&developer={{ selected_developer.id }}{% endif %}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-chevron-left"></i> Previous Week
+                            </a>
+                            <form class="d-flex me-2">
+                                <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" class="form-control">
+                                {% if selected_developer %}
+                                <input type="hidden" name="developer" value="{{ selected_developer.id }}">
+                                {% endif %}
+                                <button type="submit" class="btn btn-primary ms-2">Go</button>
+                            </form>
+                            <a href="?start_date={{ next_week|date:'Y-m-d' }}{% if selected_developer %}&developer={{ selected_developer.id }}{% endif %}" class="btn btn-outline-secondary">
+                                Next Week <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <form class="d-flex justify-content-end">
+                                <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                                <select name="developer" class="form-select me-2" style="max-width: 250px;">
+                                    <option value="">All Developers</option>
+                                    {% for dev in all_developers %}
+                                    <option value="{{ dev.id }}" {% if selected_developer.id == dev.id %}selected{% endif %}>
+                                        {% if dev.first_name %}{{ dev.first_name }} {{ dev.last_name }}{% else %}{{ dev.username }}{% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Calendar View -->
+                    <div class="row">
+                        {% for day in week_data %}
+                        <div class="col day-column {% if day.date|date:'Y-m-d' == today|date:'Y-m-d' %}today-column{% endif %}">
+                            <div class="date-header">
+                                <h5 class="text-center">
+                                    {{ day.day_name }}<br>
+                                    <small>{{ day.date|date:"M d" }}</small>
+                                </h5>
+                            </div>
+                            
+                            {% if day.tasks %}
+                                {% for task in day.tasks %}
+                                <div class="card task-card {% if task.task_type == 'Monthly Task' %}monthly{% endif %} {% if task.task_progress == 100 %}completed{% endif %}">
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title">
+                                            {{ task.task_title }}
+                                            <span class="badge {% if task.task_type == 'Monthly Task' %}bg-warning{% else %}bg-info{% endif %} float-end">
+                                                {{ task.task_type|slice:":1" }}
+                                            </span>
+                                        </h6>
+                                        <p class="card-text small mb-1">
+                                            <strong>Job:</strong> {{ task.job_title }}
+                                        </p>
+                                        <p class="card-text small mb-1">
+                                            <strong>Dev:</strong> {{ task.developer_name }}
+                                        </p>
+                                        <div class="progress mb-1" style="height: 5px;">
+                                            <div class="progress-bar {% if task.task_progress < 30 %}bg-danger{% elif task.task_progress < 70 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                role="progressbar" style="width: {{ task.task_progress }}%;" 
+                                                aria-valuenow="{{ task.task_progress }}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge {% if task.task_paid %}bg-success{% else %}bg-secondary{% endif %}">
+                                                {% if task.task_paid %}Paid{% else %}${{ task.task_payment }}{% endif %}
+                                            </span>
+                                            <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#descriptionModal{{ day.date|date:'Ymd' }}_{{ task.task_id }}">
+                                                Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Description Modal -->
+                                <div class="modal fade" id="descriptionModal{{ day.date|date:'Ymd' }}_{{ task.task_id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">{{ task.task_title }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p><strong>Developer:</strong> {{ task.developer_name }}</p>
+                                                        <p><strong>Job/Company:</strong> {{ task.job_title }}</p>
+                                                        <p><strong>Task Type:</strong> {{ task.task_type }}</p>
+                                                        <p><strong>Payment:</strong> ${{ task.task_payment }} ({% if task.task_paid %}Paid{% else %}Unpaid{% endif %})</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p><strong>Progress:</strong> {{ task.task_progress }}%</p>
+                                                        <div class="progress mb-3" style="height: 20px;">
+                                                            <div class="progress-bar {% if task.task_progress < 30 %}bg-danger{% elif task.task_progress < 70 %}bg-warning{% else %}bg-success{% endif %}" 
+                                                                role="progressbar" style="width: {{ task.task_progress }}%;" 
+                                                                aria-valuenow="{{ task.task_progress }}" aria-valuemin="0" aria-valuemax="100">
+                                                                {{ task.task_progress }}%
+                                                            </div>
+                                                        </div>
+                                                        <p><strong>Deadline:</strong> {% if task.task_deadline %}{{ task.task_deadline|date:"M d, Y" }}{% else %}No deadline{% endif %}</p>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <h6>Description:</h6>
+                                                <div class="task-description">
+                                                    {{ task.task_description|linebreaks }}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="{% url 'developer_tasks' %}?date={{ day.date|date:'Y-m-d' }}&developer={{ task.developer_id }}" class="btn btn-primary">View in Daily View</a>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center text-muted mt-3">
+                                    <i class="fas fa-calendar-day fa-2x mb-2"></i>
+                                    <p>No tasks</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Highlight today's column
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('.day-column').forEach(column => {
+            if (column.querySelector('.date-header small')?.textContent.trim() === today) {
+                column.classList.add('today-column');
+            }
+        });
+        
+        // Equal height for all day columns
+        function equalizeColumnHeights() {
+            let maxHeight = 0;
+            const columns = document.querySelectorAll('.day-column');
+            
+            // Reset heights
+            columns.forEach(col => {
+                col.style.height = 'auto';
+            });
+            
+            // Find max height
+            columns.forEach(col => {
+                const height = col.offsetHeight;
+                if (height > maxHeight) {
+                    maxHeight = height;
+                }
+            });
+            
+            // Set equal heights
+            if (maxHeight > 0) {
+                columns.forEach(col => {
+                    col.style.minHeight = `${maxHeight}px`;
+                });
+            }
+        }
+        
+        // Call on load and resize
+        equalizeColumnHeights();
+        window.addEventListener('resize', equalizeColumnHeights);
+    });
+</script>
+{% endblock %}

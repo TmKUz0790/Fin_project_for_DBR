@@ -1,0 +1,487 @@
+
+{% block title %}Weekly Tasks{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Minimalist color scheme */
+    :root {
+        --primary: #3a86ff;
+        --secondary: #f8f9fa;
+        --accent: #4361ee;
+        --text: #333;
+        --light-text: #666;
+        --border: #e9ecef;
+        --progress-bg: #f1f3f5;
+        --success: #2ecc71;
+        --warning: #f39c12;
+        --danger: #e74c3c;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    
+    .week-container {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background-color: var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .day-column {
+        background-color: white;
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+    
+    .date-header {
+        padding: 12px 8px;
+        text-align: center;
+        font-weight: 500;
+        background-color: var(--secondary);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+    
+    .today .date-header {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .day-name {
+        font-size: 14px;
+        display: block;
+    }
+    
+    .date-num {
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    .task-list {
+        padding: 8px;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+    
+    .task-card {
+        background-color: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        padding: 10px;
+        margin-bottom: 8px;
+        border-left: 3px solid var(--primary);
+        transition: all 0.2s ease;
+    }
+    
+    .task-card:hover {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .task-card.monthly {
+        border-left-color: var(--warning);
+    }
+    
+    .task-card.completed {
+        border-left-color: var(--success);
+    }
+    
+    .task-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+    
+    .task-badge {
+        display: inline-block;
+        font-size: 10px;
+        padding: 1px 5px;
+        border-radius: 12px;
+        background-color: var(--secondary);
+        color: var(--light-text);
+        font-weight: 600;
+        margin-left: 4px;
+    }
+    
+    .task-info {
+        font-size: 12px;
+        color: var(--light-text);
+        margin-bottom: 5px;
+    }
+    
+    .progress-mini {
+        height: 4px;
+        background-color: var(--progress-bg);
+        border-radius: 2px;
+        overflow: hidden;
+        margin: 5px 0;
+    }
+    
+    .progress-bar-mini {
+        height: 100%;
+        background-color: var(--primary);
+    }
+    
+    .progress-bar-mini.warning {
+        background-color: var(--warning);
+    }
+    
+    .progress-bar-mini.success {
+        background-color: var(--success);
+    }
+    
+    .progress-bar-mini.danger {
+        background-color: var(--danger);
+    }
+    
+    .task-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+    }
+    
+    .payment-badge {
+        font-size: 11px;
+        padding: 1px 5px;
+        border-radius: 4px;
+    }
+    
+    .task-details-btn {
+        background: none;
+        border: none;
+        font-size: 11px;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 2px 5px;
+    }
+    
+    .empty-day {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100px;
+        color: #ccc;
+        font-size: 12px;
+    }
+    
+    /* Filter controls */
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        gap: 10px;
+    }
+    
+    .date-nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .date-nav-btn {
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .date-nav-btn:hover {
+        background-color: var(--secondary);
+    }
+    
+    .date-label {
+        font-weight: 500;
+        padding: 5px 10px;
+        border-radius: 4px;
+        background-color: var(--secondary);
+        min-width: 180px;
+        text-align: center;
+    }
+    
+    .filter-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .filter-control select {
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+    }
+    
+    .filter-control button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    
+    /* Modal styles */
+    .modal-title {
+        font-weight: 600;
+        font-size: 18px;
+    }
+    
+    .task-details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .detail-group {
+        margin-bottom: 10px;
+    }
+    
+    .detail-label {
+        font-size: 12px;
+        color: var(--light-text);
+        margin-bottom: 2px;
+    }
+    
+    .detail-value {
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .description-area {
+        background-color: var(--secondary);
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 15px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .week-container {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .week-container {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .week-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .task-details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="controls">
+        <div class="date-nav">
+            <a href="?start_date={{ prev_week|date:'Y-m-d' }}{% if selected_developer %}&developer={{ selected_developer.id }}{% endif %}" class="date-nav-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                </svg>
+            </a>
+            <span class="date-label">{{ start_date|date:"M d" }} - {{ end_date|date:"M d, Y" }}</span>
+            <a href="?start_date={{ next_week|date:'Y-m-d' }}{% if selected_developer %}&developer={{ selected_developer.id }}{% endif %}" class="date-nav-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+            </a>
+        </div>
+        
+        <div class="filter-control">
+            <form class="d-flex align-items-center">
+                <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                <select name="developer" class="form-select">
+                    <option value="">All Developers</option>
+                    {% for dev in all_developers %}
+                    <option value="{{ dev.id }}" {% if selected_developer.id == dev.id %}selected{% endif %}>
+                        {% if dev.first_name %}{{ dev.first_name }} {{ dev.last_name }}{% else %}{{ dev.username }}{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Apply</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="week-container">
+        {% for day in week_data %}
+        <div class="day-column {% if day.date|date:'Y-m-d' == today|date:'Y-m-d' %}today{% endif %}">
+            <div class="date-header">
+                <span class="day-name">{{ day.day_name|slice:":3" }}</span>
+                <span class="date-num">{{ day.date|date:"d" }}</span>
+            </div>
+            
+            <div class="task-list">
+                {% if day.tasks %}
+                    {% for task in day.tasks %}
+                    <div class="task-card {% if task.task_type == 'Monthly Task' %}monthly{% endif %} {% if task.task_progress == 100 %}completed{% endif %}">
+                        <div class="task-title">
+                            {{ task.task_title }}
+                            <span class="task-badge">{{ task.task_type|slice:":1" }}</span>
+                        </div>
+                        <div class="task-info">{{ task.job_title }}</div>
+                        <div class="task-info">{{ task.developer_name }}</div>
+                        
+                        <div class="progress-mini">
+                            <div class="progress-bar-mini 
+                                {% if task.task_progress < 30 %}danger
+                                {% elif task.task_progress < 70 %}warning
+                                {% else %}success{% endif %}" 
+                                style="width: {{ task.task_progress }}%;">
+                            </div>
+                        </div>
+                        
+                        <div class="task-footer">
+                            <span class="payment-badge {% if task.task_paid %}bg-success text-white{% else %}bg-light{% endif %}">
+                                {% if task.task_paid %}Paid{% else %}${{ task.task_payment }}{% endif %}
+                            </span>
+                            <button type="button" class="task-details-btn" data-bs-toggle="modal" data-bs-target="#taskModal{{ day.date|date:'Ymd' }}_{{ task.task_id }}">
+                                Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Task Modal -->
+                    <div class="modal fade" id="taskModal{{ day.date|date:'Ymd' }}_{{ task.task_id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">{{ task.task_title }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="task-details-grid">
+                                        <div class="detail-group">
+                                            <div class="detail-label">Developer</div>
+                                            <div class="detail-value">{{ task.developer_name }}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <div class="detail-label">Company</div>
+                                            <div class="detail-value">{{ task.job_title }}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <div class="detail-label">Task Type</div>
+                                            <div class="detail-value">{{ task.task_type }}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <div class="detail-label">Deadline</div>
+                                            <div class="detail-value">{% if task.task_deadline %}{{ task.task_deadline|date:"M d, Y" }}{% else %}No deadline{% endif %}</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <div class="detail-label">Payment</div>
+                                            <div class="detail-value">${{ task.task_payment }} ({% if task.task_paid %}Paid{% else %}Unpaid{% endif %})</div>
+                                        </div>
+                                        <div class="detail-group">
+                                            <div class="detail-label">Progress</div>
+                                            <div class="detail-value">{{ task.task_progress }}%</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="progress-mini mt-3" style="height: 8px;">
+                                        <div class="progress-bar-mini 
+                                            {% if task.task_progress < 30 %}danger
+                                            {% elif task.task_progress < 70 %}warning
+                                            {% else %}success{% endif %}" 
+                                            style="width: {{ task.task_progress }}%;">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="description-area">
+                                        {{ task.task_description|linebreaks }}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'developer_tasks' %}?date={{ day.date|date:'Y-m-d' }}&developer={{ task.developer_id }}" class="btn btn-sm btn-primary">View Daily</a>
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-day">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
+                            <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4z"/>
+                        </svg>
+                        <span class="mt-2">No tasks</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="d-flex justify-content-start mt-3">
+        <a href="{% url 'developer_tasks' %}" class="date-nav-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"/>
+                <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4z"/>
+            </svg>
+            Switch to Daily View
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adjust height of task lists for better scrolling
+        function adjustTaskListHeight() {
+            const viewportHeight = window.innerHeight;
+            const dateHeaders = document.querySelectorAll('.date-header');
+            const headerHeight = dateHeaders.length > 0 ? dateHeaders[0].offsetHeight : 0;
+            const controlsHeight = document.querySelector('.controls').offsetHeight;
+            const offset = 100; // For padding, margins, etc.
+            
+            const taskLists = document.querySelectorAll('.task-list');
+            const availableHeight = viewportHeight - headerHeight - controlsHeight - offset;
+            
+            taskLists.forEach(list => {
+                list.style.maxHeight = `${availableHeight}px`;
+            });
+        }
+        
+        // Call on load and resize
+        adjustTaskListHeight();
+        window.addEventListener('resize', adjustTaskListHeight);
+    });
+</script>
+{% endblock %}
