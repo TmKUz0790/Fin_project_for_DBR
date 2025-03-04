@@ -1,3 +1,540 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Developer Workspace</title>#}
+{#    <script src="https://cdn.tailwindcss.com"></script>#}
+{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>#}
+{#    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">#}
+{#    <script>#}
+{#        tailwind.config = {#}
+{#            theme: {#}
+{#                extend: {#}
+{#                    colors: {#}
+{#                        'deep-navy': '#0F172A',#}
+{#                        'midnight-blue': '#1E293B',#}
+{#                        'electric-blue': '#38BDF8',#}
+{#                        'neon-green': '#22D3EE',#}
+{#                        'royal-purple': '#8B5CF6',#}
+{#                        'luxe-gold': '#F59E0B',#}
+{#                        'accent-text': '#F8FAFC'#}
+{#                    }#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    </script>#}
+{#    <style>#}
+{#        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');#}
+{#        body {#}
+{#            font-family: 'Space Grotesk', sans-serif;#}
+{#            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);#}
+{#            color: #F8FAFC;#}
+{#        }#}
+{#        .glass-morphism {#}
+{#            background: rgba(30, 41, 59, 0.7);#}
+{#            backdrop-filter: blur(15px);#}
+{#            border: 1px solid rgba(56, 189, 248, 0.2);#}
+{#        }#}
+{#        .task-card {#}
+{#            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);#}
+{#        }#}
+{#        .task-card:hover {#}
+{#            transform: scale(1.03);#}
+{#            box-shadow: 0 20px 30px rgba(0,0,0,0.3);#}
+{#        }#}
+{#        .progress-bar {#}
+{#            background: linear-gradient(90deg, #38BDF8 0%, #22D3EE 100%);#}
+{#        }#}
+{#        .animate-pulse-slow {#}
+{#            animation: pulse 4s infinite;#}
+{#        }#}
+{#        @keyframes pulse {#}
+{#            0%, 100% { opacity: 1; }#}
+{#            50% { opacity: 0.7; }#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+{#<body class="min-h-screen">#}
+{#    <div class="container mx-auto px-6 py-8 max-w-full">#}
+{#        <!-- Header -->#}
+{#        <header class="flex justify-between items-center mb-12 glass-morphism rounded-2xl p-6">#}
+{#            <div>#}
+{#                <h1 class="text-5xl font-bold text-electric-blue">HR Finance</h1>#}
+{#                <p class="text-accent-text/70 text-xl mt-2">Добро пожаловать, {{ user.username }}</p>#}
+{#            </div>#}
+{#            <div class="flex items-center space-x-6">#}
+{#                <div class="bg-midnight-blue rounded-full px-6 py-3 text-accent-text border border-electric-blue/30">#}
+{#                    <span class="text-luxe-gold mr-3">Баланс:</span>#}
+{#                    <span class="font-bold">{{ balance }} USD</span>#}
+{#                </div>#}
+{#                <div class="flex space-x-5">#}
+{#                    <a href="#" class="text-electric-blue hover:text-neon-green transition-colors">#}
+{#                        <i class="fas fa-bell text-3xl animate-pulse-slow"></i>#}
+{#                    </a>#}
+{#                    <a href="#" class="text-royal-purple hover:text-electric-blue transition-colors">#}
+{#                        <i class="fas fa-cog text-3xl"></i>#}
+{#                    </a>#}
+{#                </div>#}
+{#            </div>#}
+{#        </header>#}
+{##}
+{#        <!-- Main Dashboard Grid -->#}
+{#        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">#}
+{#            <!-- Tasks Section -->#}
+{#        #}
+{#            <div class="lg:col-span-2 space-y-8">#}
+{#                <!-- Task Filters -->#}
+{#                <div class="flex justify-between items-center glass-morphism rounded-2xl p-6">#}
+{#                    <h2 class="text-3xl font-semibold text-accent-text">Активные проекты</h2>#}
+{#                    <div class="flex space-x-4">#}
+{#                        <button onclick="filterTasks('all')" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors">Все</button>#}
+{#                        <button onclick="filterTasks('done')" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-neon-green transition-colors">Завершенный</button>#}
+{#                        <button onclick="filterTasks('undone')" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-royal-purple transition-colors">Непрерывный</button>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#                <!-- Task List -->#}
+{#                <div id="task-list" class="space-y-6">#}
+{#                    {% for task in tasks %}#}
+{#                    <div class="task-card glass-morphism rounded-2xl p-6 flex items-center justify-between" data-progress="{{ task.progress }}">#}
+{#                        <div class="flex-grow mr-6">#}
+{#                            <div class="mb-2">#}
+{#        <span class="text-luxe-gold text-sm">{{ task.job.title }}</span>#}
+{#    </div>#}
+{#                            <h3 class="text-2xl font-semibold text-electric-blue mb-4">{{ task.title }}</h3>#}
+{#                            <div class="w-full bg-deep-navy rounded-full h-3 overflow-hidden mb-3">#}
+{#                                <div class="progress-bar h-3 rounded-full" style="width: {{ task.progress }}%"></div>#}
+{#                            </div>#}
+{#                            <div class="flex justify-between text-accent-text/70">#}
+{#                                <span>Project Details</span>#}
+{#                                <span>{{ task.progress }}% Complete</span>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="flex items-center space-x-6">#}
+{#                            <div class="text-center">#}
+{#                                <span class="countdown block text-xl mb-2" data-deadline="{{ task.deadline }}"></span>#}
+{#                                <span class="text-sm {% if task.paid %}text-neon-green{% else %}text-luxe-gold{% endif %}">#}
+{#                                    {{ task.paid|yesno:"Paid,Pending" }}#}
+{#                                </span>#}
+{#                            </div>#}
+{#                            <div class="flex flex-col space-y-2">#}
+{#                                <button #}
+{#                                    onclick="showUpdateProgressForm('{{ task.id }}')" #}
+{#                                    class="px-3 py-1 bg-electric-blue text-deep-navy rounded-md hover:opacity-90 transition-colors flex items-center justify-center"#}
+{#                                >#}
+{#                                    <i class="fas fa-chart-line mr-2"></i>Прогресс обновления#}
+{#                                </button>#}
+{#                                <button #}
+{#                                    onclick="showFeedbackForm('{{ task.id }}')" #}
+{#                                    class="px-3 py-1 bg-neon-green text-deep-navy rounded-md hover:opacity-90 transition-colors flex items-center justify-center"#}
+{#                                >#}
+{#                                    <i class="fas fa-comment-dots mr-2"></i>Оставить отзыв#}
+{#                                </button>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    {% empty %}#}
+{#                    <div class="glass-morphism rounded-2xl p-8 text-center">#}
+{#                        <p class="text-accent-text/50 text-2xl">No tasks available</p>#}
+{#                    </div>#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{##}
+{#                <!-- Pagination -->#}
+{#                <div class="flex justify-center glass-morphism rounded-2xl p-4">#}
+{#                    <nav>#}
+{#                        <ul class="flex space-x-2">#}
+{#                            {% if tasks.has_previous %}#}
+{#                            <li>#}
+{#                                <a href="?page={{ tasks.previous_page_number }}" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors">#}
+{#                                    Previous#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            {% endif %}#}
+{#                            {% for num in tasks.paginator.page_range %}#}
+{#                            <li>#}
+{#                                <a href="?page={{ num }}" class="px-4 py-2 {% if tasks.number == num %}bg-electric-blue text-deep-navy{% else %}bg-midnight-blue text-accent-text{% endif %} rounded-full hover:bg-electric-blue transition-colors">#}
+{#                                    {{ num }}#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            {% endfor %}#}
+{#                            {% if tasks.has_next %}#}
+{#                            <li>#}
+{#                                <a href="?page={{ tasks.next_page_number }}" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors">#}
+{#                                    Next#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            {% endif %}#}
+{#                        </ul>#}
+{#                    </nav>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <!-- Analytics and Quick Actions -->#}
+{#            <div class="space-y-8">#}
+{#                <!-- Performance Chart -->#}
+{#                <div class="glass-morphism rounded-2xl p-6">#}
+{#                    <h3 class="text-2xl font-semibold text-electric-blue mb-6">Выполнение проекта</h3>#}
+{#                    <canvas id="performanceChart" width="400" height="300"></canvas>#}
+{#                </div> #}
+{#                #}
+{#                 <!-- Earnings Chart -->#}
+{#                 <div class="glass-morphism rounded-2xl p-6">#}
+{#                   <h3 class="text-2xl font-semibold text-electric-blue mb-6">Обзор доходов</h3>#}
+{#                   <canvas id="earningsChart" width="400" height="300"></canvas>#}
+{#                 </div>#}
+{##}
+{#                <!-- Quick Actions -->#}
+{#                <div class="glass-morphism rounded-2xl p-6">#}
+{#                    <h3 class="text-2xl font-semibold text-electric-blue mb-6">Quick Actions</h3>#}
+{#                    <div class="space-y-4">#}
+{#                        <button class="w-full px-6 py-3 bg-neon-green text-deep-navy rounded-full hover:opacity-90 transition-opacity">#}
+{#                            <i class="fas fa-plus mr-3"></i>Create New Project#}
+{#                        </button>#}
+{#                        <button class="w-full px-6 py-3 bg-royal-purple text-accent-text rounded-full hover:opacity-90 transition-opacity">#}
+{#                            <i class="fas fa-upload mr-3"></i>Upload Project Files#}
+{#                        </button>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <!-- Progress Update Modal -->#}
+{#{% for task in tasks %}#}
+{#<div id="update-progress-form-{{ task.id }}" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center" onclick="event.target === this && hideUpdateProgressForm('{{ task.id }}')">#}
+{#    <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4" onclick="event.stopPropagation()">#}
+{#        <h3 class="text-3xl font-semibold text-electric-blue mb-6">Update Progress: {{ task.title }}</h3>#}
+{#        #}
+{#        <form method="POST" action="{% url 'update_progress' %}" class="progress-update-form">#}
+{#            {% csrf_token %}#}
+{#            <div class="mb-6">#}
+{#                <label for="progress_{{ task.id }}" class="block text-accent-text/70 mb-3">Процент прогресса:</label>#}
+{#                <input #}
+{#                    type="range" #}
+{#                    id="progress_{{ task.id }}" #}
+{#                    name="progress" #}
+{#                    min="0" #}
+{#                    max="100" #}
+{#                    value="{{ task.progress }}" #}
+{#                    class="w-full h-3 bg-deep-navy rounded-full appearance-none cursor-pointer progress-range"#}
+{#                >#}
+{#                <div class="flex justify-between text-accent-text/70 mt-4">#}
+{#                    <span>0%</span>#}
+{#                    <span id="progressValue_{{ task.id }}" class="text-electric-blue font-bold">{{ task.progress }}%</span>#}
+{#                    <span>100%</span>#}
+{#                </div>#}
+{#            </div>#}
+{#            <input type="hidden" name="task_id" value="{{ task.id }}">#}
+{#            <div class="flex justify-end space-x-4">#}
+{#                <button #}
+{#                    type="button" #}
+{#                    onclick="hideUpdateProgressForm('{{ task.id }}')" #}
+{#                    class="px-6 py-3 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors"#}
+{#                >#}
+{#                    Cancel#}
+{#                </button>#}
+{#                <button #}
+{#                    type="submit" #}
+{#                    class="px-6 py-3 bg-electric-blue text-deep-navy rounded-full hover:opacity-90 transition-colors submit-progress"#}
+{#                >#}
+{#                    Прогресс обновления#}
+{#                </button>#}
+{#            </div>#}
+{#        </form>#}
+{#    </div>#}
+{#</div>#}
+{#{% endfor %}#}
+{##}
+{#    <!-- Feedback Modals -->#}
+{#    {% for task in tasks %}#}
+{#    <div id="feedback-form-{{ task.id }}" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center" onclick="event.target === this && hideFeedbackForm('{{ task.id }}')">#}
+{#        <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4">#}
+{#            <h3 class="text-3xl font-semibold text-electric-blue mb-6">Feedback для: {{ task.title }}</h3>#}
+{#            <form method="post" action="{% url 'update_feedback' %}">#}
+{#                {% csrf_token %}#}
+{#                <div class="mb-6">#}
+{#                    <label for="feedback_{{ task.id }}" class="block text-accent-text/70 mb-3">Твой Feedback:</label>#}
+{#                    <textarea #}
+{#                        id="feedback_{{ task.id }}" #}
+{#                        name="feedback" #}
+{#                        rows="5" #}
+{#                        class="w-full bg-deep-navy text-accent-text rounded-2xl p-4 border border-electric-blue/30 focus:ring-2 focus:ring-electric-blue"#}
+{#                        placeholder="Write your detailed feedback here..."#}
+{#                    >{{ task.feedback }}</textarea>#}
+{#                </div>#}
+{#                <input type="hidden" name="task_id" value="{{ task.id }}">#}
+{#                <div class="flex justify-end space-x-4">#}
+{#                    <button #}
+{#                        type="button" #}
+{#                        onclick="hideFeedbackForm('{{ task.id }}')" #}
+{#                        class="px-6 py-3 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors"#}
+{#                    >#}
+{#                        Cancel#}
+{#                    </button>#}
+{#                    <button #}
+{#                        type="submit" #}
+{#                        class="px-6 py-3 bg-electric-blue text-deep-navy rounded-full hover:opacity-90 transition-colors"#}
+{#                    >#}
+{#                        Submit Feedback#}
+{#                    </button>#}
+{#                </div>#}
+{#            </form>#}
+{#        </div>#}
+{#    </div>#}
+{#    {% endfor %}#}
+{##}
+{#    <script>#}
+{#        // Performance Chart#}
+{#        document.addEventListener('DOMContentLoaded', function() {#}
+{#            const ctx = document.getElementById('performanceChart').getContext('2d');#}
+{#            new Chart(ctx, {#}
+{#                type: 'line',#}
+{#                data: {#}
+{#                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],#}
+{#                    datasets: [{#}
+{#                        label: 'Project Completion',#}
+{#                        data: [65, 59, 80, 81, 56, 55],#}
+{#                        borderColor: '#38BDF8',#}
+{#                        backgroundColor: 'rgba(56, 189, 248, 0.2)',#}
+{#                        tension: 0.4#}
+{#                    }]#}
+{#                },#}
+{#                options: {#}
+{#                    responsive: true,#}
+{#                    plugins: {#}
+{#                        legend: {#}
+{#                            display: false#}
+{#                        }#}
+{#                    },#}
+{#                    scales: {#}
+{#                        y: {#}
+{#                            beginAtZero: true,#}
+{#                            ticks: {#}
+{#                                color: '#F8FAFC'#}
+{#                            }#}
+{#                        },#}
+{#                        x: {#}
+{#                            ticks: {#}
+{#                                color: '#F8FAFC'#}
+{#                            }#}
+{#                        }#}
+{#                    }#}
+{#                }#}
+{#            });#}
+{#            document.addEventListener('DOMContentLoaded', function() {#}
+{#    // Existing Performance Chart code...#}
+{##}
+{#    // Earnings Chart#}
+{#        const earningsCtx = document.getElementById('earningsChart').getContext('2d');#}
+{#        new Chart(earningsCtx, {#}
+{#         type: 'bar',#}
+{#         data: {#}
+{#            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],#}
+{#            datasets: [#}
+{#                {#}
+{#                    label: 'Earned',#}
+{#                    data: tasks.map(task => task.paid ? task.money_for_task : 0),#}
+{#                    backgroundColor: '#22D3EE',  // neon-green#}
+{#                    borderRadius: 8,#}
+{#                },#}
+{#                {#}
+{#                    label: 'Pending',#}
+{#                    data: tasks.map(task => !task.paid ? task.money_for_task : 0),#}
+{#                    backgroundColor: '#F59E0B',  // luxe-gold#}
+{#                    borderRadius: 8,#}
+{#                }#}
+{#            ]#}
+{#         },#}
+{#         options: {#}
+{#            responsive: true,#}
+{#            plugins: {#}
+{#                legend: {#}
+{#                    display: true,#}
+{#                    position: 'top',#}
+{#                    labels: {#}
+{#                        color: '#F8FAFC',#}
+{#                        font: {#}
+{#                            family: 'Space Grotesk'#}
+{#                        }#}
+{#                    }#}
+{#                },#}
+{#                tooltip: {#}
+{#                    callbacks: {#}
+{#                        label: function(context) {#}
+{#                            return `${context.dataset.label}: $${context.raw}`;#}
+{#                        }#}
+{#                    }#}
+{#                }#}
+{#            },#}
+{#            scales: {#}
+{#                y: {#}
+{#                    beginAtZero: true,#}
+{#                    grid: {#}
+{#                        color: 'rgba(248, 250, 252, 0.1)'#}
+{#                    },#}
+{#                    ticks: {#}
+{#                        color: '#F8FAFC',#}
+{#                        callback: function(value) {#}
+{#                            return '$' + value;#}
+{#                        }#}
+{#                    }#}
+{#                },#}
+{#                x: {#}
+{#                    grid: {#}
+{#                        color: 'rgba(248, 250, 252, 0.1)'#}
+{#                    },#}
+{#                    ticks: {#}
+{#                        color: '#F8FAFC'#}
+{#                    }#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    });#}
+{#});#}
+{##}
+{#            // Range input live update#}
+{#            const rangeInputs = document.querySelectorAll('.progress-range');#}
+{#            rangeInputs.forEach(input => {#}
+{#                input.addEventListener('input', function() {#}
+{#                    const progressValue = document.getElementById('progressValue_' + this.id.split('_')[1]);#}
+{#                    progressValue.textContent = this.value + '%';#}
+{#                });#}
+{#            });#}
+{##}
+{#            // Optional: Add client-side progress submission handling#}
+{#            const progressForms = document.querySelectorAll('form[action$="update_progress"]');#}
+{#            #}
+{#            progressForms.forEach(form => {#}
+{#                form.addEventListener('submit', function(e) {#}
+{#                    const progressInput = this.querySelector('input[type="range"]');#}
+{#                    const progressValue = parseInt(progressInput.value);#}
+{##}
+{#                    // Basic client-side validation#}
+{#                    if (progressValue < 0 || progressValue > 100) {#}
+{#                        e.preventDefault();#}
+{#                        alert('Progress must be between 0 and 100%.');#}
+{#                        progressInput.focus();#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{##}
+{#            // Optional: Add client-side feedback submission handling#}
+{#            const feedbackForms = document.querySelectorAll('form[action$="update_feedback"]');#}
+{#            #}
+{#            feedbackForms.forEach(form => {#}
+{#                form.addEventListener('submit', function(e) {#}
+{#                    const taskId = this.querySelector('input[name="task_id"]').value;#}
+{#                    const feedbackTextarea = this.querySelector('textarea[name="feedback"]');#}
+{##}
+{#                    // Basic client-side validation#}
+{#                    if (feedbackTextarea.value.trim() === '') {#}
+{#                        e.preventDefault();#}
+{#                        alert('Please provide feedback before submitting.');#}
+{#                        feedbackTextarea.focus();#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#        });#}
+{##}
+{#        // Filtering Tasks#}
+{#        function filterTasks(filter) {#}
+{#            const taskItems = document.querySelectorAll('.task-card');#}
+{#            taskItems.forEach(item => {#}
+{#                const progress = parseInt(item.getAttribute('data-progress'));#}
+{#                const deadlineElement = item.querySelector('.countdown');#}
+{#                const deadlineText = deadlineElement ? deadlineElement.textContent.toLowerCase() : '';#}
+{#                let shouldDisplay = false;#}
+{##}
+{#                if (filter === 'all') shouldDisplay = true;#}
+{#                else if (filter === 'done' && progress === 100) shouldDisplay = true;#}
+{#                else if (filter === 'undone' && progress < 100) shouldDisplay = true;#}
+{#                else if (filter === 'deadline_passed' && deadlineText.includes('deadline passed')) shouldDisplay = true;#}
+{##}
+{#                item.style.display = shouldDisplay ? 'flex' : 'none';#}
+{#            });#}
+{#        }#}
+{##}
+{#        // Countdown Update#}
+{#        function updateCountdowns() {#}
+{#            const countdownElements = document.querySelectorAll('.countdown');#}
+{#            countdownElements.forEach(countdownElement => {#}
+{#                const deadlineDate = new Date(countdownElement.getAttribute('data-deadline'));#}
+{#                const today = new Date();#}
+{#                const timeDiff = deadlineDate - today;#}
+{#                const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));#}
+{##}
+{#                // Remove existing classes#}
+{#                countdownElement.classList.remove('text-neon-green', 'text-luxe-gold', 'text-royal-purple', 'text-accent-text/50');#}
+{##}
+{#                if (daysLeft > 10) {#}
+{#                    countdownElement.textContent = `${daysLeft} days left`;#}
+{#                    countdownElement.classList.add('text-neon-green');#}
+{#                } else if (daysLeft > 5) {#}
+{#                    countdownElement.textContent = `${daysLeft} days left`;#}
+{#                    countdownElement.classList.add('text-luxe-gold');#}
+{#                } else if (daysLeft > 0) {#}
+{#                    countdownElement.textContent = `${daysLeft} days left`;#}
+{#                    countdownElement.classList.add('text-royal-purple');#}
+{#                } else {#}
+{#                    countdownElement.textContent = "Deadline passed";#}
+{#                    countdownElement.classList.add('text-accent-text/50');#}
+{#                }#}
+{#            });#}
+{#        }#}
+{##}
+{#        // Navigation and Form Functions#}
+{#        function showUpdateProgressForm(taskId) {#}
+{#            const form = document.getElementById('update-progress-form-' + taskId);#}
+{#            form.classList.remove('hidden');#}
+{#            form.classList.add('flex');#}
+{#        }#}
+{##}
+{#        function hideUpdateProgressForm(taskId) {#}
+{#            const form = document.getElementById('update-progress-form-' + taskId);#}
+{#            form.classList.remove('flex');#}
+{#            form.classList.add('hidden');#}
+{#        }#}
+{##}
+{#        function showFeedbackForm(taskId) {#}
+{#            const form = document.getElementById('feedback-form-' + taskId);#}
+{#            form.classList.remove('hidden');#}
+{#            form.classList.add('flex');#}
+{#        }#}
+{##}
+{#        function hideFeedbackForm(taskId) {#}
+{#            const form = document.getElementById('feedback-form-' + taskId);#}
+{#            form.classList.remove('flex');#}
+{#            form.classList.add('hidden');#}
+{#        }#}
+{##}
+{#        // Search and Filter Functionality#}
+{#        function searchTasks() {#}
+{#            const searchInput = document.getElementById('task-search-input');#}
+{#            const searchTerm = searchInput.value.toLowerCase();#}
+{#            const taskItems = document.querySelectorAll('.task-card');#}
+{##}
+{#            taskItems.forEach(item => {#}
+{#                const title = item.querySelector('h3').textContent.toLowerCase();#}
+{#                const shouldDisplay = title.includes(searchTerm);#}
+{#                item.style.display = shouldDisplay ? 'flex' : 'none';#}
+{#            });#}
+{#        }#}
+{##}
+{#        // Initialize on page load#}
+{#        document.addEventListener('DOMContentLoaded', function() {#}
+{#            updateCountdowns();#}
+{##}
+{#            // Add search input event listener#}
+{#            const searchInput = document.getElementById('task-search-input');#}
+{#            if (searchInput) {#}
+{#                searchInput.addEventListener('input', searchTasks);#}
+{#            }#}
+{#        });#}
+{#    </script>#}
+{#</body>#}
+{#</html>#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -323,76 +860,73 @@
                     }
                 }
             });
-            document.addEventListener('DOMContentLoaded', function() {
-    // Existing Performance Chart code...
-
-    // Earnings Chart
-        const earningsCtx = document.getElementById('earningsChart').getContext('2d');
-        new Chart(earningsCtx, {
-         type: 'bar',
-         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [
-                {
-                    label: 'Earned',
-                    data: tasks.map(task => task.paid ? task.money_for_task : 0),
-                    backgroundColor: '#22D3EE',  // neon-green
-                    borderRadius: 8,
-                },
-                {
-                    label: 'Pending',
-                    data: tasks.map(task => !task.paid ? task.money_for_task : 0),
-                    backgroundColor: '#F59E0B',  // luxe-gold
-                    borderRadius: 8,
-                }
-            ]
-         },
-         options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        color: '#F8FAFC',
-                        font: {
-                            family: 'Space Grotesk'
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: $${context.raw}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(248, 250, 252, 0.1)'
+            
+            // Earnings Chart
+            const earningsCtx = document.getElementById('earningsChart').getContext('2d');
+            new Chart(earningsCtx, {
+             type: 'bar',
+             data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Earned',
+                        data: [1200, 1500, 1800, 1300, 1650, 1900],
+                        backgroundColor: '#22D3EE',  // neon-green
+                        borderRadius: 8,
                     },
-                    ticks: {
-                        color: '#F8FAFC',
-                        callback: function(value) {
-                            return '$' + value;
+                    {
+                        label: 'Pending',
+                        data: [800, 600, 400, 700, 500, 300],
+                        backgroundColor: '#F59E0B',  // luxe-gold
+                        borderRadius: 8,
+                    }
+                ]
+             },
+             options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#F8FAFC',
+                            font: {
+                                family: 'Space Grotesk'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: $${context.raw}`;
+                            }
                         }
                     }
                 },
-                x: {
-                    grid: {
-                        color: 'rgba(248, 250, 252, 0.1)'
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(248, 250, 252, 0.1)'
+                        },
+                        ticks: {
+                            color: '#F8FAFC',
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
                     },
-                    ticks: {
-                        color: '#F8FAFC'
+                    x: {
+                        grid: {
+                            color: 'rgba(248, 250, 252, 0.1)'
+                        },
+                        ticks: {
+                            color: '#F8FAFC'
+                        }
                     }
                 }
             }
-        }
-    });
-});
+        });
 
             // Range input live update
             const rangeInputs = document.querySelectorAll('.progress-range');
@@ -456,7 +990,7 @@
             });
         }
 
-        // Countdown Update
+        // Countdown Update - UPDATED to show actual deadline date
         function updateCountdowns() {
             const countdownElements = document.querySelectorAll('.countdown');
             countdownElements.forEach(countdownElement => {
@@ -465,20 +999,24 @@
                 const timeDiff = deadlineDate - today;
                 const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
+                // Format the date to display
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                const formattedDate = deadlineDate.toLocaleDateString('en-US', options);
+
                 // Remove existing classes
                 countdownElement.classList.remove('text-neon-green', 'text-luxe-gold', 'text-royal-purple', 'text-accent-text/50');
 
+                // Display the actual deadline date instead of days left
+                countdownElement.textContent = `Due: ${formattedDate}`;
+                
+                // Still use color coding based on urgency
                 if (daysLeft > 10) {
-                    countdownElement.textContent = `${daysLeft} days left`;
                     countdownElement.classList.add('text-neon-green');
                 } else if (daysLeft > 5) {
-                    countdownElement.textContent = `${daysLeft} days left`;
                     countdownElement.classList.add('text-luxe-gold');
                 } else if (daysLeft > 0) {
-                    countdownElement.textContent = `${daysLeft} days left`;
                     countdownElement.classList.add('text-royal-purple');
                 } else {
-                    countdownElement.textContent = "Deadline passed";
                     countdownElement.classList.add('text-accent-text/50');
                 }
             });
