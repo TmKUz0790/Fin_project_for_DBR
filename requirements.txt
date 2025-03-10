@@ -23,9 +23,11 @@ protobuf==5.29.1
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pyparsing==3.2.0
+python-dateutil==2.9.0.post0
 requests==2.32.3
 requests-oauthlib==2.0.0
 rsa==4.9
+six==1.17.0
 soupsieve==2.6
 sqlparse==0.5.1
 typing_extensions==4.12.2
