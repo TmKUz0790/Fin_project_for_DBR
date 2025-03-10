@@ -1,5 +1,5 @@
 
-from datetime import timezone
+from datetime import timezone, datetime
 from django.db.models import F, Sum, Q
 from django.utils.timezone import now
 from django.core.paginator import Paginator
@@ -122,31 +122,7 @@ def create_tasks(request, job_id):
 
 
 
-# def create_tasks(request, job_id):
-#     job = get_object_or_404(Job, id=job_id)
-#
-#     if request.method == 'POST':
-#         task_formset = TaskFormSet(request.POST, instance=job)
-#
-#         if task_formset.is_valid():
-#             # Calculate total hours for all tasks
-#             total_hours = sum([form.cleaned_data['hours'] for form in task_formset if form.cleaned_data.get('hours')])
-#
-#             # Iterate over the formset and calculate the percentage for each task
-#             for form in task_formset:
-#                 task = form.save(commit=False)
-#                 task.task_percentage = (form.cleaned_data['hours'] / total_hours) * 100
-#                 task.save()
-#                 form.save_m2m()  # Save ManyToMany relationships, such as assigned users
-#
-#             return redirect('job_list')  # Redirect to job list after saving tasks
-#     else:
-#         task_formset = TaskFormSet(instance=job)
-#
-#     return render(request, 'create_tasks.html', {
-#         'task_formset': task_formset,
-#         'job': job,
-#     })
+
 
 
 def job_list(request):
@@ -229,19 +205,439 @@ def get_tasks_data(job):
         for task in job.tasks.all()
     ]
 
+# def client_progress(request):
+#     job_id = request.session.get('client_job_id')
+#     if not job_id:
+#         return redirect('client_login')
+#
+#     job = get_object_or_404(Job, id=job_id)
+#     tasks_data = get_tasks_data(job)
+#
+#     context = {
+#         'job': job,
+#         'tasks': mark_safe(json.dumps(tasks_data))
+#     }
+#     return render(request, 'client_progress.html', context)
+
+
+# def client_progress(request):
+#     job_id = request.session.get('client_job_id')
+#     if not job_id:
+#         return redirect('client_login')
+#
+#     job = get_object_or_404(Job, id=job_id)
+#     tasks_data = get_tasks_data(job)
+#
+#     # Add sheet view data similar to job_details view
+#     # Retrieve PATPIS (follow) tasks
+#     follow_tasks = Task.objects.filter(job=job, task_type='PATPIS').select_related()
+#
+#     # Initialize variables for sheet view
+#     all_months = []
+#     task_groups = {}
+#     task_matrix = []
+#     show_follow_tasks = follow_tasks.exists()
+#
+#     # Process follow tasks for sheet view (same logic as in job_details)
+#     if show_follow_tasks:
+#         import re
+#         from datetime import datetime, timedelta
+#
+#         # Find earliest and latest deadlines
+#         from django.db.models import Min, Max
+#         follow_task_stats = follow_tasks.aggregate(
+#             earliest_deadline=Min('deadline'),
+#             latest_follow_deadline=Max('deadline')
+#         )
+#
+#         earliest_deadline = follow_task_stats['earliest_deadline']
+#         latest_follow_deadline = follow_task_stats['latest_follow_deadline']
+#
+#         if earliest_deadline and latest_follow_deadline:
+#             # Ensure we have at least 12 months from earliest date
+#             min_end_date = earliest_deadline + timedelta(days=365)
+#             if latest_follow_deadline < min_end_date:
+#                 latest_follow_deadline = min_end_date
+#
+#             # Generate all months between earliest and latest deadline
+#             current_date = earliest_deadline.replace(day=1)
+#             while current_date <= latest_follow_deadline:
+#                 month_str = current_date.strftime("%B %Y")
+#                 all_months.append(month_str)
+#                 # Move to next month
+#                 if current_date.month == 12:
+#                     current_date = current_date.replace(year=current_date.year + 1, month=1)
+#                 else:
+#                     current_date = current_date.replace(month=current_date.month + 1)
+#
+#         # Compile regex once outside the loop
+#         pattern = re.compile(r'(.*) \((.*)\)')
+#
+#         # Extract all months and base names from tasks
+#         for task in follow_tasks:
+#             match = pattern.match(task.title)
+#             if match:
+#                 base_name = match.group(1)
+#                 month = match.group(2)
+#
+#                 # If month isn't in our all_months list, add it
+#                 if month not in all_months:
+#                     all_months.append(month)
+#
+#                 # Initialize the task group if it doesn't exist
+#                 if base_name not in task_groups:
+#                     task_groups[base_name] = {}
+#
+#                 # For each base_name+month combination, store related tasks
+#                 if month not in task_groups[base_name]:
+#                     task_groups[base_name][month] = []
+#
+#                 # Add this task to the list for this month
+#                 task_groups[base_name][month].append(task)
+#
+#         # Cache for parsed dates to avoid repeated parsing
+#         month_cache = {}
+#
+#         # Sort months chronologically
+#         def month_sort_key(month_str):
+#             if month_str in month_cache:
+#                 return month_cache[month_str]
+#
+#             try:
+#                 date_obj = datetime.strptime(month_str, "%B %Y")
+#                 month_cache[month_str] = date_obj
+#                 return date_obj
+#             except ValueError:
+#                 try:
+#                     date_obj = datetime.strptime(month_str, "%B")
+#                     date_obj = date_obj.replace(year=datetime.now().year)
+#                     month_cache[month_str] = date_obj
+#                     return date_obj
+#                 except ValueError:
+#                     month_cache[month_str] = datetime.now()
+#                     return datetime.now()
+#
+#         all_months.sort(key=month_sort_key)
+#
+#         # Build the matrix
+#         for base_name in sorted(task_groups.keys()):
+#             row = {
+#                 'base_name': base_name,
+#                 'cells': []
+#             }
+#
+#             # Find when this task type first appears
+#             first_task_month = None
+#             for month in all_months:
+#                 if month in task_groups[base_name]:
+#                     first_task_month = month
+#                     break
+#
+#             first_month_found = False
+#
+#             for month in all_months:
+#                 # If we haven't found the first month for this task yet, and this isn't it,
+#                 # add empty cell to create gap
+#                 if not first_month_found and month != first_task_month:
+#                     row['cells'].append({
+#                         'tasks': [],
+#                         'empty': True
+#                     })
+#                 # Once we find the first month or have already found it, process normally
+#                 elif month in task_groups[base_name] or first_month_found:
+#                     first_month_found = True
+#                     if month in task_groups[base_name]:
+#                         row['cells'].append({
+#                             'tasks': task_groups[base_name][month],
+#                             'empty': False
+#                         })
+#                     else:
+#                         row['cells'].append({
+#                             'tasks': [],
+#                             'empty': True
+#                         })
+#
+#             task_matrix.append(row)
+#
+#     context = {
+#         'job': job,
+#         'tasks': mark_safe(json.dumps(tasks_data)),
+#         # Add sheet view data to context
+#         'show_follow_tasks': show_follow_tasks,
+#         'all_months': all_months,
+#         'task_matrix': task_matrix,
+#     }
+#
+#     return render(request, 'client_progress.html', context)
+
+from django.db.models import Max
+
+
+
+from django import template
+
+register = template.Library()
+
+@register.filter
+def get_item(list_obj, index):
+    try:
+        return list_obj[index]
+    except:
+        return None
+
+
 def client_progress(request):
     job_id = request.session.get('client_job_id')
     if not job_id:
         return redirect('client_login')
 
     job = get_object_or_404(Job, id=job_id)
-    tasks_data = get_tasks_data(job)
 
+    # Import Sum for calculating total hours
+    from django.db.models import Sum
+
+    # Filter tasks by type - only get SIMPLE tasks for list view
+    simple_tasks = Task.objects.filter(job=job, task_type='SIMPLE')
+
+    # Calculate total hours for simple tasks
+    total_simple_hours = simple_tasks.aggregate(Sum('hours'))['hours__sum'] or 0
+
+    # Max hours quota (120)
+    max_hours = 120
+
+    # Convert queryset to list of task data dictionaries
+    simple_tasks_data = []
+    for task in simple_tasks:
+        # Get assigned users emails
+        assigned_users = [user.email for user in task.assigned_users.all()]
+
+        # Format deadline (if exists)
+        deadline = None
+        if task.deadline:
+            deadline = task.deadline.strftime('%Y-%m-%d')
+
+        # Create task data object
+        task_data = {
+            'id': task.id,
+            'title': task.title,
+            'description': task.description,
+            'progress': task.progress,
+            'task_percentage': task.task_percentage,
+            'money_for_task': task.money_for_task,
+            'deadline': deadline,
+            'assigned_users': assigned_users,
+            'task_type': task.task_type,
+            'hours': task.hours  # Include hours
+        }
+
+        simple_tasks_data.append(task_data)
+
+    # Get PATPIS (Follow) tasks for timeline view
+    follow_tasks = Task.objects.filter(job=job, task_type='PATPIS').select_related()
+
+    # Initialize variables for sheet view
+    all_months = []
+    task_groups = {}
+    task_matrix = []
+    show_follow_tasks = follow_tasks.exists()
+
+    # Process follow tasks for sheet view
+    if show_follow_tasks:
+        import re
+        from datetime import datetime, timedelta
+
+        # Find earliest and latest deadlines
+        from django.db.models import Min, Max
+        follow_task_stats = follow_tasks.aggregate(
+            earliest_deadline=Min('deadline'),
+            latest_follow_deadline=Max('deadline')
+        )
+
+        earliest_deadline = follow_task_stats['earliest_deadline']
+        latest_follow_deadline = follow_task_stats['latest_follow_deadline']
+
+        # Get current month for timeline color coding
+        current_month = datetime.now().strftime("%B %Y")
+
+        if earliest_deadline and latest_follow_deadline:
+            # Ensure we have at least 12 months from earliest date
+            min_end_date = earliest_deadline + timedelta(days=365)
+            if latest_follow_deadline < min_end_date:
+                latest_follow_deadline = min_end_date
+
+            # Generate all months between earliest and latest deadline
+            current_date = earliest_deadline.replace(day=1)
+            while current_date <= latest_follow_deadline:
+                month_str = current_date.strftime("%B %Y")
+                all_months.append(month_str)
+                # Move to next month
+                if current_date.month == 12:
+                    current_date = current_date.replace(year=current_date.year + 1, month=1)
+                else:
+                    current_date = current_date.replace(month=current_date.month + 1)
+
+        # Compile regex once outside the loop
+        pattern = re.compile(r'(.*) \((.*)\)')
+
+        # Extract all months and base names from tasks
+        for task in follow_tasks:
+            match = pattern.match(task.title)
+            if match:
+                base_name = match.group(1)
+                month = match.group(2)
+
+                # If month isn't in our all_months list, add it
+                if month not in all_months:
+                    all_months.append(month)
+
+                # Initialize the task group if it doesn't exist
+                if base_name not in task_groups:
+                    task_groups[base_name] = {}
+
+                # For each base_name+month combination, store related tasks
+                if month not in task_groups[base_name]:
+                    task_groups[base_name][month] = []
+
+                # Add this task to the list for this month
+                task_groups[base_name][month].append(task)
+
+        # Cache for parsed dates to avoid repeated parsing
+        month_cache = {}
+
+        # Sort months chronologically
+        def month_sort_key(month_str):
+            if month_str in month_cache:
+                return month_cache[month_str]
+
+            try:
+                date_obj = datetime.strptime(month_str, "%B %Y")
+                month_cache[month_str] = date_obj
+                return date_obj
+            except ValueError:
+                try:
+                    date_obj = datetime.strptime(month_str, "%B")
+                    date_obj = date_obj.replace(year=datetime.now().year)
+                    month_cache[month_str] = date_obj
+                    return date_obj
+                except ValueError:
+                    month_cache[month_str] = datetime.now()
+                    return datetime.now()
+
+        all_months.sort(key=month_sort_key)
+
+        # Build the matrix with month type information for color coding
+        for base_name in sorted(task_groups.keys()):
+            row = {
+                'base_name': base_name,
+                'cells': []
+            }
+
+            # Find when this task type first appears
+            first_task_month = None
+            for month in all_months:
+                if month in task_groups[base_name]:
+                    first_task_month = month
+                    break
+
+            first_month_found = False
+
+            for i, month in enumerate(all_months):
+                # If we haven't found the first month for this task yet, and this isn't it,
+                # add empty cell to create gap
+                if not first_month_found and month != first_task_month:
+                    row['cells'].append({
+                        'tasks': [],
+                        'empty': True,
+                        'month_type': None  # No month type for empty cells
+                    })
+                # Once we find the first month or have already found it, process normally
+                elif month in task_groups[base_name] or first_month_found:
+                    first_month_found = True
+                    if month in task_groups[base_name]:
+                        # Determine month type for color coding
+                        task_progress = task_groups[base_name][month][0].progress
+
+                        if task_progress == 100:
+                            month_type = "completed"
+                        elif month == current_month:
+                            month_type = "current"
+                        elif month_sort_key(month) < month_sort_key(current_month):
+                            month_type = "past"
+                        else:
+                            month_type = "future"
+
+                        row['cells'].append({
+                            'tasks': task_groups[base_name][month],
+                            'empty': False,
+                            'month_type': month_type  # Add month type to each cell
+                        })
+                    else:
+                        row['cells'].append({
+                            'tasks': [],
+                            'empty': True,
+                            'month_type': None
+                        })
+
+            task_matrix.append(row)
+
+    # Prepare context with hours tracking data
+    latest_deadline = Task.objects.filter(job=job).aggregate(Max('deadline'))['deadline__max']
+    current_date = datetime.now()
+
+    # Format the latest deadline for display (if it exists)
+    formatted_latest_deadline = None
+    if latest_deadline:
+        formatted_latest_deadline = latest_deadline.strftime("%b %d, %Y")  # e.g., "Mar 25, 2025"
+
+    # Add it to your context
     context = {
         'job': job,
-        'tasks': mark_safe(json.dumps(tasks_data)) 
+        'tasks': mark_safe(json.dumps(simple_tasks_data)),  # Only simple tasks for list view
+        'latest_deadline': latest_deadline,
+        'formatted_latest_deadline': formatted_latest_deadline,
+        'current_date': current_date,
+        'show_follow_tasks': show_follow_tasks,
+        'all_months': all_months,
+        'task_matrix': task_matrix,
+        'total_simple_hours': total_simple_hours,  # Add total hours to context
+        'max_hours': max_hours,  # Add max hours to context
+        'hours_percentage': int((total_simple_hours / max_hours) * 100) if max_hours > 0 else 0  # Calculate percentage
     }
+
     return render(request, 'client_progress.html', context)
+
+def get_tasks_data(tasks_queryset):
+    """
+    Converts a tasks queryset to a JSON-serializable format for the client.
+    Fixed to properly iterate through the queryset.
+    """
+    tasks_data = []
+
+    for task in tasks_queryset:
+        # Get assigned users emails
+        assigned_users = [user.email for user in task.assigned_users.all()]
+
+        # Format deadline (if exists)
+        deadline = None
+        if task.deadline:
+            deadline = task.deadline.strftime('%Y-%m-%d')
+
+        # Create task data object
+        task_data = {
+            'id': task.id,
+            'title': task.title,
+            'description': task.description,
+            'progress': task.progress,
+            'task_percentage': task.task_percentage,
+            'money_for_task': task.money_for_task,
+            'deadline': deadline,
+            'assigned_users': assigned_users,
+            'task_type': task.task_type
+        }
+
+        tasks_data.append(task_data)
+
+    return tasks_data
 
 def client_progress_details(request):
     job_id = request.session.get('client_job_id')
@@ -277,37 +673,7 @@ def developer_login(request):
     return render(request, 'developer_login.html')
 
 
-# @login_required
-# def developer_tasks(request):
-#     developer = request.user  # Assuming each developer is logged in
-#     tasks = Task.objects.filter(assigned_users=developer)
-#     balance = sum(task.money_for_task for task in tasks if task.paid)
-#     deduction_logs = DeductionLog.objects.filter(developer=developer).order_by('-deduction_date')
-#
-#     if request.method == 'POST':
-#         task_id = request.POST.get('task_id')
-#         progress = request.POST.get('progress')
-#
-#         # Ensure you are fetching the correct task assigned to the developer
-#         task = get_object_or_404(Task, id=task_id, assigned_users=developer)
-#
-#         # Update progress only if valid
-#         if progress is not None:
-#             task.progress = int(progress)
-#             task.save()
-#
-#             # Check if the developer has completed the task (progress = 100%) and handle payment if needed
-#             if task.progress == 100:
-#                 task.check_and_pay_developer()  # Optional logic for payment
-#
-#         return redirect('developer_tasks')
-#
-#     return render(request, 'developer_tasks.html', {
-#         'developer': developer,
-#         'tasks': tasks,
-#         'balance': balance,
-#         'deduction_logs': deduction_logs
-#     })
+
 
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
@@ -439,250 +805,20 @@ def payment_history(request):
         'deduction_logs': deduction_logs
     })
 
-# def admin_dashboard(request):
-#     # Get all developers
-#     developers = User.objects.all()
-#     developer_data = []
-#
-#     # Loop through each developer to gather task data
-#     for developer in developers:
-#         assigned_tasks = Task.objects.filter(assigned_users=developer)
-#
-#         # Count task statuses for all tasks assigned to the developer
-#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0})
-#
-#         for task in assigned_tasks:
-#             days_until_deadline = None
-#             if task.deadline:
-#                 days_until_deadline = (task.deadline - timezone.now().date()).days
-#
-#             # Determine task color based on deadline or completion
-#             task_color = None
-#             if task.progress == 100:
-#                 task_color = 'done'
-#             elif days_until_deadline is not None:
-#                 if days_until_deadline > 10:
-#                     task_color = 'task_green'
-#                 elif 5 < days_until_deadline <= 10:
-#                     task_color = 'task_yellow'
-#                 elif 0 <= days_until_deadline <= 5:
-#                     task_color = 'task_red'
-#                 else:
-#                     task_color = 'overdue'
-#
-#             if task_color and task_color != 'done':  # Only count tasks that aren't marked as 'done'
-#                 status_counter[task_color] += 1
-#
-#         # Paginate tasks for each developer (5 tasks per page for each developer)
-#         task_paginator = Paginator(assigned_tasks, 5)
-#         page_number = request.GET.get(f'page_{developer.id}', 1)
-#         page_obj = task_paginator.get_page(page_number)
-#
-#         # Create task info including days until deadline
-#         task_info = [{
-#             'task': task,
-#             'days_until_deadline': (task.deadline - timezone.now().date()).days if task.deadline else None
-#         } for task in page_obj]
-#
-#         # Calculate the balance based on paid tasks
-#         balance = sum(task.money_for_task for task in assigned_tasks if task.paid)
-#
-#         developer_data.append({
-#             'developer': developer,
-#             'tasks': task_info,
-#             'balance': balance,
-#             'paginator': task_paginator,
-#             'page_obj': page_obj,
-#             'status_counts': status_counter,  # Pass the full task status count
-#         })
-#
-#     # Paginate the list of developers (5 developers per page)
-#     developers_paginator = Paginator(developer_data, 2)
-#     developers_page_number = request.GET.get('developer_page', 1)
-#     developers_page_obj = developers_paginator.get_page(developers_page_number)
-#
-#     # Unassigned tasks and all deduction logs
-#     unassigned_tasks = Task.objects.filter(assigned_users=None)
-#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
-#
-#     context = {
-#         'developer_data': developers_page_obj,  # Pass paginated developer data
-#         'unassigned_tasks': unassigned_tasks,
-#         'all_deduction_logs': all_deduction_logs,
-#     }
-#
-#     return render(request, 'admin_dashboard.html', context)
-#
+
 
 from collections import Counter
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils import timezone
 from .models import User, Task, DeductionLog
-#
-# def admin_dashboard(request):
-#     # Get all developers
-#     developers = User.objects.all()
-#     developer_data = []
-#
-#     # Loop through each developer to gather task data
-#     for developer in developers:
-#         assigned_tasks = Task.objects.filter(assigned_users=developer)
-#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0})
-#
-#         # Prepare task info with color coding and deadline calculation
-#         task_info = []
-#         for task in assigned_tasks:
-#             days_until_deadline = (task.deadline - timezone.now().date()).days if task.deadline else None
-#             task_color = 'done' if task.progress == 100 else None
-#
-#             # Set task color based on deadline and progress
-#             if task_color is None and days_until_deadline is not None:
-#                 if days_until_deadline > 10:
-#                     task_color = 'task_green'
-#                 elif 5 < days_until_deadline <= 10:
-#                     task_color = 'task_yellow'
-#                 elif 0 <= days_until_deadline <= 5:
-#                     task_color = 'task_red'
-#                 else:
-#                     task_color = 'overdue'
-#
-#             # Add non-done tasks to the status counter
-#             if task_color and task_color != 'done':
-#                 status_counter[task_color] += 1
-#
-#             task_info.append({
-#                 'task': task,
-#                 'days_until_deadline': days_until_deadline,
-#                 'color': task_color  # Pass color for easier frontend rendering
-#             })
-#
-#         # Paginate tasks per developer (5 tasks per page)
-#         task_paginator = Paginator(task_info, 5)
-#         page_number = request.GET.get(f'page_{developer.id}', 1)
-#         page_obj = task_paginator.get_page(page_number)
-#
-#         # Calculate balance based on paid tasks
-#         balance = sum(task.money_for_task for task in assigned_tasks if task.paid)
-#
-#         developer_data.append({
-#             'developer': developer,
-#             'tasks': page_obj,
-#             'balance': balance,
-#             'status_counts': status_counter,
-#         })
-#
-#     # Paginate developers (5 developers per page)
-#     developers_paginator = Paginator(developer_data, 10)
-#     developers_page_number = request.GET.get('developer_page', 1)
-#     developers_page_obj = developers_paginator.get_page(developers_page_number)
-#
-#     # Fetch unassigned tasks and deduction logs
-#     unassigned_tasks = Task.objects.filter(assigned_users=None)
-#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
-#
-#     context = {
-#         'developer_data': developers_page_obj,
-#         'unassigned_tasks': unassigned_tasks,
-#         'all_deduction_logs': all_deduction_logs,
-#     }
-#
-#     return render(request, 'admin_dashboard.html', context)
-#
+
 
 
 
 
 from django.db.models import Count
-#
-# def admin_dashboard(request):
-#     # Fetch all jobs and developers
-#     jobs = Job.objects.all()
-#     developers = User.objects.prefetch_related('developer_tasks')
-#
-#     # Calculate total jobs and total income
-#     total_jobs = jobs.count()
-#     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
-#
-#     # Calculate total remaining income
-#     total_remaining_income = calculate_income_balance()["income_balance"]
-#
-#     # Calculate the count of all overdue tasks
-#     overdue_task_count = Task.objects.filter(
-#         progress__lt=100,  # Tasks not completed
-#         deadline__lt=now().date()  # Deadline in the past
-#     ).count()
-#
-#     # Developer task data and pagination
-#     developer_data = []
-#     for developer in developers:
-#         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
-#
-#         # Categorize tasks by status
-#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
-#         task_info = []
-#         for task in assigned_tasks:
-#             days_until_deadline = None
-#             if task.deadline:
-#                 days_until_deadline = (task.deadline - now().date()).days
-#
-#             task_color = None
-#             if task.progress == 100:
-#                 task_color = 'done'
-#                 status_counter['done'] += 1
-#             elif days_until_deadline is not None:
-#                 if days_until_deadline > 10:
-#                     task_color = 'task_green'
-#                     status_counter['task_green'] += 1
-#                 elif 5 < days_until_deadline <= 10:
-#                     task_color = 'task_yellow'
-#                     status_counter['task_yellow'] += 1
-#                 elif 0 <= days_until_deadline <= 5:
-#                     task_color = 'task_red'
-#                     status_counter['task_red'] += 1
-#                 else:
-#                     task_color = 'overdue'
-#                     status_counter['overdue'] += 1
-#
-#             task_info.append({
-#                 'task': task,
-#                 'days_until_deadline': days_until_deadline,
-#                 'color': task_color
-#             })
-#
-#         task_paginator = Paginator(task_info, 5)
-#         page_number = request.GET.get(f'page_{developer.id}', 1)
-#         page_obj = task_paginator.get_page(page_number)
-#
-#         balance = assigned_tasks.filter(paid=True).aggregate(
-#             total_balance=Sum('money_for_task')
-#         )['total_balance'] or 0
-#
-#         developer_data.append({
-#             'developer': developer,
-#             'tasks': page_obj,
-#             'balance': balance,
-#             'status_counts': status_counter,
-#         })
-#
-#     developers_paginator = Paginator(developer_data, 10)
-#     developers_page_number = request.GET.get('developer_page', 1)
-#     developers_page_obj = developers_paginator.get_page(developers_page_number)
-#
-#     unassigned_tasks = Task.objects.filter(assigned_users=None)
-#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
-#
-#     context = {
-#         'total_jobs': total_jobs,
-#         'total_income': total_income,
-#         'in_time_processes_money': total_remaining_income,
-#         'overdue_task_count': overdue_task_count,  # Add overdue task count
-#         'developer_data': developers_page_obj,
-#         'unassigned_tasks': unassigned_tasks,
-#         'all_deduction_logs': all_deduction_logs,
-#     }
-#
-#     return render(request, 'admin_dashboard.html', context)
+
 
 from django.db.models import Sum
 from django.utils.timezone import now
@@ -788,44 +924,191 @@ from django.shortcuts import render, get_object_or_404
 from .models import Job, Task
 from django.db.models import Max, Sum
 
+from django.core.paginator import Paginator
+from django.shortcuts import render, get_object_or_404
+from .models import Job, Task
+from django.db.models import Max, Sum
+
+
+
 def job_details(request, job_id):
     # Fetch the specific job or return a 404 error if not found
-    job = get_object_or_404(Job, id=job_id)
+    job = get_object_or_404(Job.objects.select_related(), id=job_id)
 
-    # Retrieve all tasks associated with this job
-    tasks = Task.objects.filter(job=job)
+    # Retrieve all tasks associated with this job, keeping the original filtering
+    regular_tasks = Task.objects.filter(job=job, task_type__in=['SIMPLE', 'MONTHLY']).select_related()
+    follow_tasks = Task.objects.filter(job=job, task_type='PATPIS').select_related()
 
-    # Set up pagination for tasks (10 tasks per page)
-    paginator = Paginator(tasks, 10)  # Show 10 tasks per page
-    page_number = request.GET.get('page')
-    page_tasks = paginator.get_page(page_number)
+    from django.db.models import Min, Max, Sum
 
-    # Calculate the latest deadline across all tasks if tasks are available
-    latest_deadline = tasks.aggregate(Max('deadline'))['deadline__max'] if tasks else None
+    # Set up pagination for regular tasks
+    regular_paginator = Paginator(regular_tasks, 10)  # Show 10 tasks per page
+    regular_page_number = request.GET.get('page')
+    page_regular_tasks = regular_paginator.get_page(regular_page_number)
+
+    # Set up pagination for follow tasks
+    follow_paginator = Paginator(follow_tasks, 10)  # Show 10 tasks per page
+    follow_page_number = request.GET.get('follow_page')
+    page_follow_tasks = follow_paginator.get_page(follow_page_number)
+
+    # Combine aggregations into a single query
+    task_stats = Task.objects.filter(job=job).aggregate(
+        latest_deadline=Max('deadline'),
+        total_payment=Sum('money_for_task')
+    )
+
+    # Get values from the aggregation
+    latest_deadline = task_stats['latest_deadline']
+    total_task_payment = task_stats['total_payment'] or 0
 
     # Get the overall progress of the job
-    overall_progress = job.get_overall_progress() if job.get_overall_progress() else 0 
-
-
-
-
-    # Calculate the total payment for all tasks
-    total_task_payment = tasks.aggregate(Sum('money_for_task'))['money_for_task__sum'] or 0
+    overall_progress = job.get_overall_progress() if job.get_overall_progress() else 0
 
     # Calculate the remaining income
     remaining_income = job.over_all_income - total_task_payment
 
+    # Process follow tasks for sheet view
+    all_months = []
+    task_groups = {}
+    task_matrix = []
+
+    if follow_tasks:
+        import re
+        from datetime import datetime, timedelta
+
+        # Find earliest and latest deadlines to create a complete month range
+        follow_task_stats = follow_tasks.aggregate(
+            earliest_deadline=Min('deadline'),
+            latest_follow_deadline=Max('deadline')
+        )
+
+        earliest_deadline = follow_task_stats['earliest_deadline']
+        latest_follow_deadline = follow_task_stats['latest_follow_deadline']
+
+        if earliest_deadline and latest_follow_deadline:
+            # Ensure we have at least 12 months from earliest date
+            min_end_date = earliest_deadline + timedelta(days=365)
+            if latest_follow_deadline < min_end_date:
+                latest_follow_deadline = min_end_date
+
+            # Generate all months between earliest and latest deadline
+            current_date = earliest_deadline.replace(day=1)
+            while current_date <= latest_follow_deadline:
+                month_str = current_date.strftime("%B %Y")
+                all_months.append(month_str)
+                # Move to next month
+                if current_date.month == 12:
+                    current_date = current_date.replace(year=current_date.year + 1, month=1)
+                else:
+                    current_date = current_date.replace(month=current_date.month + 1)
+
+        # Compile regex once outside the loop
+        pattern = re.compile(r'(.*) \((.*)\)')
+
+        # Extract all months and base names from tasks
+        for task in follow_tasks:
+            match = pattern.match(task.title)
+            if match:
+                base_name = match.group(1)
+                month = match.group(2)
+
+                # If month isn't in our all_months list (might happen with unusual formatting),
+                # add it to ensure all task data is displayed
+                if month not in all_months:
+                    all_months.append(month)
+
+                # Initialize the task group if it doesn't exist
+                if base_name not in task_groups:
+                    task_groups[base_name] = {}
+
+                # For each base_name+month combination, store all related tasks in a list
+                if month not in task_groups[base_name]:
+                    task_groups[base_name][month] = []
+
+                # Add this task to the list for this month
+                task_groups[base_name][month].append(task)
+
+        # Cache for parsed dates to avoid repeated parsing
+        month_cache = {}
+
+        # Sort months chronologically
+        def month_sort_key(month_str):
+            if month_str in month_cache:
+                return month_cache[month_str]
+
+            try:
+                date_obj = datetime.strptime(month_str, "%B %Y")
+                month_cache[month_str] = date_obj
+                return date_obj
+            except ValueError:
+                try:
+                    date_obj = datetime.strptime(month_str, "%B")
+                    date_obj = date_obj.replace(year=datetime.now().year)
+                    month_cache[month_str] = date_obj
+                    return date_obj
+                except ValueError:
+                    month_cache[month_str] = datetime.now()
+                    return datetime.now()
+
+        all_months.sort(key=month_sort_key)
+
+        # Build the matrix
+        for base_name in sorted(task_groups.keys()):
+            row = {
+                'base_name': base_name,
+                'cells': []
+            }
+
+            # Find when this task type first appears
+            first_task_month = None
+            for month in all_months:
+                if month in task_groups[base_name]:
+                    first_task_month = month
+                    break
+
+            first_month_found = False
+
+            for month in all_months:
+                # If we haven't found the first month for this task yet, and this isn't it,
+                # add empty cell to create gap
+                if not first_month_found and month != first_task_month:
+                    row['cells'].append({
+                        'tasks': [],
+                        'empty': True
+                    })
+                # Once we find the first month or have already found it, process normally
+                elif month in task_groups[base_name] or first_month_found:
+                    first_month_found = True
+                    if month in task_groups[base_name]:
+                        row['cells'].append({
+                            'tasks': task_groups[base_name][month],
+                            'empty': False
+                        })
+                    else:
+                        row['cells'].append({
+                            'tasks': [],
+                            'empty': True
+                        })
+
+            task_matrix.append(row)
+
     return render(request, 'job_details.html', {
         'job': job,
-        'tasks': page_tasks,  # Pass the paginated tasks
+        'regular_tasks': page_regular_tasks,
+        'follow_tasks': page_follow_tasks,
         'latest_deadline': latest_deadline,
         'overall_progress': overall_progress,
         'total_task_payment': total_task_payment,
         'remaining_income': remaining_income,
+        'show_follow_tasks': follow_tasks.exists(),
+        # Sheet view data
+        'all_months': all_months,
+        'task_matrix': task_matrix,
     })
 
-from django.shortcuts import render
-from .models import DeductionLog
+
+
+
 
 
 def deduction_logs_admin(request):
@@ -1059,188 +1342,216 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+
 @login_required
 def add_task_to_job(request, job_id):
+    """Optimized view for adding tasks to a job without loading existing tasks in the form"""
+    # Quick permission check
     if request.user.email != 'Admin@dbr.org':
         return HttpResponseForbidden("You are not authorized to add tasks.")
 
+    # Get job with minimal query
     job = get_object_or_404(Job, id=job_id)
 
+    # Create the form without the non-editable start_date field
     TaskFormSet = inlineformset_factory(
         Job, Task,
         form=TaskForm,
+        exclude=['start_date'],
         extra=1,
-        can_delete=False
+        can_delete=False,
+        max_num=1
     )
 
     if request.method == 'POST':
-        task_formset = TaskFormSet(request.POST, instance=job)
+        # Initialize formset without querying existing tasks
+        task_formset = TaskFormSet(request.POST, instance=job, queryset=Task.objects.none())
 
-        try:
-            if task_formset.is_valid():
-                # Get existing tasks and their total hours
-                existing_tasks = Task.objects.filter(job=job)
-                existing_hours = existing_tasks.aggregate(
-                    total_hours=Sum('hours'))['total_hours'] or 0
+        if task_formset.is_valid():
+            try:
+                # Get date range directly from POST data
+                range_start_date_str = request.POST.get('range_start_date')
+                range_end_date_str = request.POST.get('range_end_date')
 
-                # Calculate new hours from the formset
-                new_hours = 0
-                for form in task_formset:
-                    if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                        new_hours += form.cleaned_data.get('hours', 0)
+                # Parse dates
+                from datetime import datetime
+                start_date = None
+                end_date = None
 
-                # Calculate total hours
-                total_hours = existing_hours + new_hours
+                if range_start_date_str:
+                    try:
+                        start_date = datetime.strptime(range_start_date_str, '%Y-%m-%d').date()
+                    except ValueError:
+                        messages.error(request, "Invalid start date format")
+                        return render(request, 'add_task_to_job.html', {
+                            'task_formset': task_formset,
+                            'job': job,
+                        })
 
-                if total_hours <= 0:
-                    messages.error(request, "Total hours must be greater than zero.")
+                if range_end_date_str:
+                    try:
+                        end_date = datetime.strptime(range_end_date_str, '%Y-%m-%d').date()
+                    except ValueError:
+                        messages.error(request, "Invalid end date format")
+                        return render(request, 'add_task_to_job.html', {
+                            'task_formset': task_formset,
+                            'job': job,
+                        })
+
+                # Default dates if not provided
+                if not start_date:
+                    start_date = timezone.now().date()
+
+                if not end_date:
+                    end_date = start_date.replace(year=start_date.year + 1)
+
+                # Check if start date is before end date
+                if start_date > end_date:
+                    messages.error(request, "Start date must be before end date")
                     return render(request, 'add_task_to_job.html', {
                         'task_formset': task_formset,
                         'job': job,
                     })
 
+                # Process tasks
                 with transaction.atomic():
-                    # Save new tasks
+                    # Get total existing hours with a simple aggregation query
+                    from django.db.models import Sum
+                    existing_hours = Task.objects.filter(job=job).aggregate(Sum('hours'))['hours__sum'] or 0
+
+                    # Get the new tasks
+                    new_tasks = []
+                    new_tasks_hours = 0
+
                     for form in task_formset:
                         if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-                            task = form.save(commit=False)
-                            task.job = job
-                            task.task_percentage = (form.cleaned_data.get('hours', 0) / total_hours) * 100
-                            task.save()
-                            form.save_m2m()
+                            new_task = form.save(commit=False)
+                            new_task.job = job
+                            new_tasks.append((form, new_task))
+                            new_tasks_hours += new_task.hours
 
-                    # Update existing task percentages
-                    for task in existing_tasks:
+                    # Calculate total hours
+                    total_hours = existing_hours + new_tasks_hours
+
+                    if total_hours <= 0:
+                        messages.error(request, "Total hours must be greater than zero.")
+                        return render(request, 'add_task_to_job.html', {
+                            'task_formset': task_formset,
+                            'job': job,
+                        })
+
+                    # Save new tasks
+                    for form, task in new_tasks:
+                        # Set percentage
                         task.task_percentage = (task.hours / total_hours) * 100
+
+                        # Special handling for PATPIS tasks
+                        if task.task_type == 'PATPIS':
+                            # Set deadline to start date
+                            task.deadline = start_date
+
+                            # Format title for first task
+                            base_title = task.title
+                            if '(' in base_title and ')' in base_title:
+                                base_title = base_title[:base_title.rfind('(')].strip()
+
+                            month_year = start_date.strftime('%B %Y')
+                            task.title = f"{base_title} ({month_year})"
+
+                        # Save first task
                         task.save()
 
+                        # Save many-to-many relationships
+                        form.save_m2m()
+
+                        # Create recurring tasks if needed
+                        if task.task_type == 'PATPIS' and start_date and end_date and start_date < end_date:
+                            from dateutil.relativedelta import relativedelta
+                            import calendar
+
+                            base_date = start_date
+                            day_of_month = base_date.day
+                            current_date = base_date + relativedelta(months=1)
+
+                            # Store assigned users
+                            assigned_users = list(task.assigned_users.all())
+
+                            # Create tasks for each month individually with proper assignments
+                            month_count = 0
+                            task_count = 1  # Starting at 1 to account for the first task
+
+                            while current_date <= end_date:
+                                month_count += 1
+                                if month_count > 100:  # Safety limit
+                                    break
+
+                                # Adjust day for month length
+                                max_day = calendar.monthrange(current_date.year, current_date.month)[1]
+                                actual_day = min(day_of_month, max_day)
+                                target_date = current_date.replace(day=actual_day)
+
+                                if target_date > end_date:
+                                    break
+
+                                month_year = target_date.strftime('%B %Y')
+
+                                # Create and save each recurring task individually
+                                recurring_task = Task(
+                                    job=job,
+                                    title=f"{base_title} ({month_year})",
+                                    hours=task.hours,
+                                    description=task.description,
+                                    task_percentage=task.task_percentage,
+                                    money_for_task=task.money_for_task,
+                                    task_type='PATPIS',
+                                    deadline=target_date
+                                )
+                                # Save immediately to get an ID
+                                recurring_task.save()
+                                task_count += 1
+
+                                # Assign users to the saved task
+                                if assigned_users:
+                                    for user in assigned_users:
+                                        recurring_task.assigned_users.add(user)
+
+                                # Move to next month
+                                current_date = current_date + relativedelta(months=1)
+
+                    # Update existing task percentages
+                    if existing_hours > 0 and new_tasks_hours > 0:
+                        # Update all existing tasks in one query using Django's update method
+                        from django.db.models import F, ExpressionWrapper, FloatField
+                        Task.objects.filter(job=job).exclude(
+                            id__in=[t[1].id for t in new_tasks]
+                        ).update(
+                            task_percentage=ExpressionWrapper(
+                                (F('hours') * 100) / total_hours,
+                                output_field=FloatField()
+                            )
+                        )
+
+                # Success - redirect to job details
                 messages.success(request, "Tasks successfully added to the job.")
                 return redirect('job_details', job_id=job.id)
-            else:
-                messages.error(request, "Please correct the errors below.")
-        except Exception as e:
-            messages.error(request, f"An error occurred: {str(e)}")
-            # Log the error for debugging
-            logger.error(f"Error in add_task_to_job: {str(e)}", exc_info=True)
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                messages.error(request, f"An error occurred: {str(e)}")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
-        task_formset = TaskFormSet(instance=job)
+        # For GET requests, don't load existing tasks
+        task_formset = TaskFormSet(instance=job, queryset=Task.objects.none())
 
     return render(request, 'add_task_to_job.html', {
         'task_formset': task_formset,
         'job': job,
     })
 
-# def add_task_to_job(request, job_id):
-#     job = get_object_or_404(Job, id=job_id)
-#
-#     TaskFormSet = inlineformset_factory(
-#         Job, Task,
-#         form=TaskForm,
-#         extra=1,
-#         can_delete=False
-#     )
-#
-#     task_formset = TaskFormSet(request.POST or None, instance=job)
-#
-#     if request.method == 'POST':
-#         if task_formset.is_valid():
-#             # Calculate total hours for all tasks related to the job
-#             existing_tasks = Task.objects.filter(job=job)
-#             existing_hours = existing_tasks.aggregate(total_hours=Sum('hours'))['total_hours'] or 0
-#
-#             # Calculate total hours from the submitted formset
-#             formset_hours = 0
-#             for form in task_formset:
-#                 if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-#                     hours = form.cleaned_data.get('hours', 0)
-#                     formset_hours += hours
-#
-#             total_hours = existing_hours + formset_hours
-#
-#             if total_hours == 0:
-#                 messages.error(request, "Total hours cannot be zero.")
-#                 return render(request, 'add_task_to_job.html', {
-#                     'task_formset': task_formset,
-#                     'job': job,
-#                 })
-#
-#             with transaction.atomic():
-#                 # Save each form in the formset
-#                 for form in task_formset:
-#                     if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
-#                         task = form.save(commit=False)
-#                         hours = form.cleaned_data.get('hours', 0)
-#                         # Calculate task percentage based on total hours
-#                         task.task_percentage = (hours / total_hours) * 100
-#                         task.job = job  # Associate the task with the job
-#                         task.save()
-#                         form.save_m2m()  # Save many-to-many relationships
-#
-#                 # Update task percentages for existing tasks
-#                 for task in existing_tasks:
-#                     task.task_percentage = (task.hours / total_hours) * 100
-#                     task.save()
-#
-#                 logger.info(f"Tasks successfully added to job: {job.title}")
-#                 return redirect('job_list')
-#         else:
-#             logger.error("Formset validation failed.")
-#             logger.error(f"Formset errors: {task_formset.errors}")
-#             logger.error(f"Non-form errors: {task_formset.non_form_errors()}")
-#             for form in task_formset:
-#                 logger.error(f"Form errors: {form.errors}")
-#
-#     return render(request, 'add_task_to_job.html', {
-#         'task_formset': task_formset,
-#         'job': job,
-#     })
-#
 
 
-
-#
-#
-#
-# def developer_payment_sheet(request):
-#     developers = User.objects.prefetch_related('developer_tasks')
-#
-#     developer_data = []
-#
-#     for developer in developers:
-#         # Get all tasks assigned to this developer
-#         tasks = Task.objects.filter(assigned_users=developer).select_related('job')
-#
-#         # Calculate total money earned by completed tasks (progress = 100%)
-#         total_earned = tasks.filter(progress=100).aggregate(total=Sum('money_for_task'))['total'] or 0
-#
-#         # Calculate total money paid to the developer
-#         total_paid = tasks.filter(paid=True).aggregate(total=Sum('money_for_task'))['total'] or 0
-#
-#         # Calculate total deductions for the developer
-#         total_deductions = DeductionLog.objects.filter(developer=developer).aggregate(total=Sum('deduction_amount'))['total'] or 0
-#
-#         # Calculate remaining balance
-#         balance = total_paid - total_deductions
-#
-#         # Gather task details
-#         task_details = [{
-#             'job_title': task.job.title,
-#             'task_title': task.title,
-#             'money_for_task': task.money_for_task,
-#             'progress': task.progress,
-#             'paid': task.money_for_task if task.paid else 0,  # Show the amount paid if `paid=True`
-#         } for task in tasks]
-#
-#         developer_data.append({
-#             'developer': developer,
-#             'total_earned': total_earned,
-#             'total_paid': total_paid,
-#             'total_deductions': total_deductions,
-#             'balance': balance,
-#             'tasks': task_details,
-#         })
-#
-#     return render(request, 'developer_balance_sheet.html', {'developer_data': developer_data})
 
 
 from django.db.models import Sum
@@ -1337,20 +1648,7 @@ def delete_task(request, task_id):
         'job': job
     })
 
-# def payment_load(request):
-#     job_id = request.session.get('client_job_id')
-#     if not job_id:
-#         return redirect('client_login')
-#
-#     job = get_object_or_404(Job, id=job_id)
-#     tasks_data = get_tasks_data(job)
-#
-#     context = {
-#         'job': job,
-#         # 'tasks': mark_safe(json.dumps(tasks_data))  # Сериализуем данные в JSON
-#     }
-#     # Логика обработки запроса
-#     return render(request, 'payment_load.html')
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 
@@ -1667,3 +1965,41 @@ def enhanced_tasks_view(request):
     return render(request, 'enhanced_tasks.html', context)
 
 
+# Add this to your views.py file
+
+@login_required
+def change_task_status(request, task_id):
+    try:
+        if request.method == 'POST':
+            task = get_object_or_404(Task, id=task_id)
+
+            # Get the original task type to check if it's changing to PATPIS
+            original_type = task.task_type
+
+            # Toggle the task type
+            if task.task_type == 'SIMPLE':
+                task.task_type = 'MONTHLY'
+                status_message = 'Задача изменена на ежемесячную'
+            elif task.task_type == 'MONTHLY':
+                task.task_type = 'PATPIS'
+                status_message = 'Задача изменена на повторяющуюся (Follow Task)'
+            else:
+                task.task_type = 'SIMPLE'
+                status_message = 'Задача изменена на простую'
+
+            task.save()
+
+            # If task was changed to PATPIS, create recurring tasks
+            if original_type != 'PATPIS' and task.task_type == 'PATPIS':
+                task.create_monthly_recurring_tasks()
+                status_message += ' и созданы повторения на год'
+
+            messages.success(request, status_message)
+
+            # Make sure we're returning to the correct job detail page
+            return redirect('job_details', job_id=task.job.id)
+
+    except Exception as e:
+        messages.error(request, f'Произошла ошибка: {str(e)}')
+        print(f"Error in change_task_status: {str(e)}")  # For debugging
+        return redirect('job_list')  # Fallback redirect

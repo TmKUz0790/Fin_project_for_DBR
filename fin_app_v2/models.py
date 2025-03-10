@@ -125,6 +125,7 @@ class Task(models.Model):
     TASK_TYPE_CHOICES = [
         ('SIMPLE', 'Simple Task'),
         ('MONTHLY', 'Monthly Task'),
+        ('PATPIS', 'Follow Task')
     ]
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='tasks')
@@ -186,3 +187,56 @@ def calculate_income_balance():
         "total_job_income": total_job_income,
         "income_balance": income_balance,
     }
+
+
+# Add this to your models.py file
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta, date
+import calendar
+
+
+# Add this method to your Task model
+def create_monthly_recurring_tasks(self):
+    """Create recurring monthly tasks for a year if task type is PATPIS (Follow Task)"""
+    if self.task_type == 'PATPIS':
+        # Get today's date
+        today = timezone.now().date()
+        # Get the base task name (without month name)
+        base_title = self.title
+
+        # Create tasks for the next 12 months (including current month)
+        for i in range(12):
+            # Calculate target month's date
+            target_date = today.replace(day=1) + timedelta(days=32 * i)
+            target_date = target_date.replace(
+                day=min(today.day, calendar.monthrange(target_date.year, target_date.month)[1]))
+
+            # Get month name
+            month_name = target_date.strftime('%B')
+
+            # Skip creating duplicate for current month as the current task serves for it
+            if i == 0:
+                # Update current task's title to include current month
+                self.title = f"{base_title} ({month_name})"
+                self.save()
+                continue
+
+            # Create a new task for each future month
+            new_task = Task(
+                job=self.job,
+                title=f"{base_title} ({month_name})",
+                hours=self.hours,
+                description=self.description,
+                task_percentage=self.task_percentage,
+                money_for_task=self.money_for_task,
+                task_type='PATPIS',
+                deadline=target_date  # Set deadline to the same day in the target month
+            )
+            new_task.save()
+
+            # Copy assigned users
+            for user in self.assigned_users.all():
+                new_task.assigned_users.add(user)
