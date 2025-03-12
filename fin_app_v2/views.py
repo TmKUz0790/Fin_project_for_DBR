@@ -2019,3 +2019,69 @@ def change_task_status(request, task_id):
         messages.error(request, f'Произошла ошибка: {str(e)}')
         print(f"Error in change_task_status: {str(e)}")  # For debugging
         return redirect('job_list')  # Fallback redirect
+
+
+@login_required
+def edit_task(request, task_id):
+    """
+    View for editing an existing task.
+    Only admin users can edit tasks.
+    """
+    # Permission check
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("You are not authorized to edit tasks.")
+
+    # Get the task instance
+    task = get_object_or_404(Task, id=task_id)
+    job = task.job  # Get the associated job
+
+    if request.method == 'POST':
+        # Create a form instance with the POST data
+        form = TaskForm(request.POST, instance=task)
+
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    # Get the original hours
+                    original_hours = task.hours
+
+                    # Save the form but don't commit yet
+                    updated_task = form.save(commit=False)
+
+                    # Check if hours have changed
+                    if original_hours != updated_task.hours:
+                        # Recalculate all task percentages for this job
+                        all_job_tasks = Task.objects.filter(job=job)
+                        total_hours = sum(t.hours for t in all_job_tasks if t.id != task.id) + updated_task.hours
+
+                        # Update percentages
+                        for job_task in all_job_tasks:
+                            if job_task.id == task.id:
+                                job_task.task_percentage = (updated_task.hours / total_hours) * 100
+                            else:
+                                job_task.task_percentage = (job_task.hours / total_hours) * 100
+                            job_task.save()
+                    else:
+                        # If hours haven't changed, just save the task
+                        updated_task.save()
+
+                    # Save many-to-many relationships
+                    form.save_m2m()
+
+                    messages.success(request, f"Task '{task.title}' has been successfully updated.")
+                    return redirect('job_details', job_id=job.id)
+            except Exception as e:
+                messages.error(request, f"An error occurred: {str(e)}")
+                import traceback
+                traceback.print_exc()  # Print detailed error for debugging
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        # Create a form pre-populated with task data
+        form = TaskForm(instance=task)
+
+    return render(request, 'edit_task.html', {
+        'form': form,
+        'task': task,
+        'job': job,
+    })

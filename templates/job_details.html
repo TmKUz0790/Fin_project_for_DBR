@@ -1,3 +1,904 @@
+{#{% load static %}#}
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>{{ job.title }} - Project Details</title>#}
+{#    <!-- Bootstrap CSS -->#}
+{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">#}
+{#    <!-- Font Awesome -->#}
+{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">#}
+{#    <!-- Google Fonts -->#}
+{#    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">#}
+{#    <style>#}
+{#        :root {#}
+{#            --primary-blue: #4361ee;#}
+{#            --light-gray: #f8f9fc;#}
+{#            --dark-text: #333;#}
+{#            --medium-gray: #6c757d;#}
+{#            --success-green: #2ecc71;#}
+{#            --danger-red: #e74c3c;#}
+{#            --border-color: #e0e0e0;#}
+{#            --light-border: #efefef;#}
+{#        }#}
+{#        #}
+{#        body {#}
+{#            font-family: 'Inter', sans-serif;#}
+{#            background-color: var(--light-gray);#}
+{#            color: var(--dark-text);#}
+{#            line-height: 1.6;#}
+{#        }#}
+{#        #}
+{#        .container-fluid {#}
+{#            padding: 0;#}
+{#        }#}
+{#        #}
+{#        .main-content {#}
+{#            padding: 25px;#}
+{#            max-width: 1200px;#}
+{#            margin: 0 auto;#}
+{#        }#}
+{#        #}
+{#        /* Sidebar styles */#}
+{#        .sidebar {#}
+{#            background-color: #2c3e50;#}
+{#            color: white;#}
+{#            min-height: 100vh;#}
+{#            width: 240px;#}
+{#            position: fixed;#}
+{#            left: 0;#}
+{#            top: 0;#}
+{#            padding: 20px 0;#}
+{#        }#}
+{#        #}
+{#        .sidebar-title {#}
+{#            padding: 0 20px 20px;#}
+{#            border-bottom: 1px solid rgba(255, 255, 255, 0.1);#}
+{#            margin-bottom: 20px;#}
+{#        }#}
+{#        #}
+{#        .sidebar-menu {#}
+{#            list-style: none;#}
+{#            padding: 0;#}
+{#            margin: 0;#}
+{#        }#}
+{#        #}
+{#        .sidebar-menu li {#}
+{#            padding: 10px 20px;#}
+{#            display: flex;#}
+{#            align-items: center;#}
+{#        }#}
+{#        #}
+{#        .sidebar-menu li i {#}
+{#            margin-right: 10px;#}
+{#            width: 20px;#}
+{#            text-align: center;#}
+{#        }#}
+{#        #}
+{#        .sidebar-menu li.active {#}
+{#            background-color: rgba(255, 255, 255, 0.1);#}
+{#        }#}
+{#        #}
+{#        .content-wrapper {#}
+{#            margin-left: 240px;#}
+{#            min-height: 100vh;#}
+{#        }#}
+{#        #}
+{#        /* Project Header (ENLARGED) */#}
+{#        .project-header {#}
+{#            background-color: white;#}
+{#            padding: 30px;#}
+{#            border-radius: 10px;#}
+{#            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);#}
+{#            margin-bottom: 25px;#}
+{#        }#}
+{#        #}
+{#        .project-title-section {#}
+{#            display: flex;#}
+{#            justify-content: space-between;#}
+{#            align-items: center;#}
+{#            margin-bottom: 25px;#}
+{#        }#}
+{#        #}
+{#        .project-title {#}
+{#            font-weight: 600;#}
+{#            font-size: 28px;#}
+{#            margin-bottom: 5px;#}
+{#        }#}
+{#        #}
+{#        .project-email {#}
+{#            color: var(--medium-gray);#}
+{#            font-size: 16px;#}
+{#        }#}
+{#        #}
+{#        /* Stats cards (ENLARGED) */#}
+{#        .stats-row {#}
+{#            display: flex;#}
+{#            gap: 20px;#}
+{#            margin-bottom: 30px;#}
+{#        }#}
+{#        #}
+{#        .stat-card {#}
+{#            background-color: white;#}
+{#            border-radius: 10px;#}
+{#            padding: 25px;#}
+{#            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);#}
+{#            flex: 1;#}
+{#            display: flex;#}
+{#            align-items: center;#}
+{#        }#}
+{#        #}
+{#        .stat-icon {#}
+{#            width: 50px;#}
+{#            height: 50px;#}
+{#            margin-right: 20px;#}
+{#            display: flex;#}
+{#            align-items: center;#}
+{#            justify-content: center;#}
+{#            border-radius: 8px;#}
+{#            font-size: 24px;#}
+{#        }#}
+{#        #}
+{#        .blue-icon {#}
+{#            background-color: rgba(67, 97, 238, 0.1);#}
+{#            color: var(--primary-blue);#}
+{#        }#}
+{#        #}
+{#        .green-icon {#}
+{#            background-color: rgba(46, 204, 113, 0.1);#}
+{#            color: var(--success-green);#}
+{#        }#}
+{#        #}
+{#        .orange-icon {#}
+{#            background-color: rgba(243, 156, 18, 0.1);#}
+{#            color: #f39c12;#}
+{#        }#}
+{#        #}
+{#        .aqua-icon {#}
+{#            background-color: rgba(52, 152, 219, 0.1);#}
+{#            color: #3498db;#}
+{#        }#}
+{#        #}
+{#        .stat-value {#}
+{#            font-size: 30px;#}
+{#            font-weight: 600;#}
+{#            margin-bottom: 5px;#}
+{#        }#}
+{#        #}
+{#        .stat-label {#}
+{#            color: var(--medium-gray);#}
+{#            font-size: 16px;#}
+{#        }#}
+{#        #}
+{#        /* Button styles */#}
+{#        .btn {#}
+{#            padding: 10px 18px;#}
+{#            border-radius: 6px;#}
+{#            font-weight: 500;#}
+{#            font-size: 16px;#}
+{#        }#}
+{#        #}
+{#        .btn-add {#}
+{#            background-color: #4e73df;#}
+{#            color: white;#}
+{#            border: none;#}
+{#        }#}
+{#        #}
+{#        .btn-add:hover {#}
+{#            background-color: #375ad3;#}
+{#            color: white;#}
+{#        }#}
+{#        #}
+{#        .btn-delete {#}
+{#            background-color: #e74a3b;#}
+{#            color: white;#}
+{#            border: none;#}
+{#        }#}
+{#        #}
+{#        .btn-delete:hover {#}
+{#            background-color: #d13426;#}
+{#            color: white;#}
+{#        }#}
+{#        #}
+{#        /* Table styles */#}
+{#        .table-card {#}
+{#            background-color: white;#}
+{#            border-radius: 8px;#}
+{#            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);#}
+{#            overflow: hidden;#}
+{#            margin-bottom: 30px;#}
+{#        }#}
+{#        #}
+{#        .table {#}
+{#            margin-bottom: 0;#}
+{#        }#}
+{#        #}
+{#        .table th {#}
+{#            font-weight: 600;#}
+{#            background-color: #f8f9fa;#}
+{#            border-top: none;#}
+{#            border-bottom: 1px solid var(--light-border);#}
+{#            padding: 15px 16px;#}
+{#            color: var(--medium-gray);#}
+{#            font-size: 14px;#}
+{#        }#}
+{#        #}
+{#        .table td {#}
+{#            padding: 15px 16px;#}
+{#            vertical-align: middle;#}
+{#            border-color: var(--light-border);#}
+{#            font-size: 14px;#}
+{#        }#}
+{#        #}
+{#        .table tr:hover {#}
+{#            background-color: #f9f9f9;#}
+{#        }#}
+{#        #}
+{#        /* Progress bar styles */#}
+{#        .progress {#}
+{#            height: 8px;#}
+{#            background-color: #f0f0f0;#}
+{#            border-radius: 4px;#}
+{#        }#}
+{#        #}
+{#        .progress-bar {#}
+{#            background-color: var(--primary-blue);#}
+{#            border-radius: 4px;#}
+{#        }#}
+{#        #}
+{#        .progress-complete .progress-bar {#}
+{#            background-color: var(--success-green);#}
+{#        }#}
+{#        #}
+{#        /* Badge styles */#}
+{#        .badge {#}
+{#            padding: 6px 10px;#}
+{#            font-weight: 500;#}
+{#            font-size: 12px;#}
+{#            border-radius: 4px;#}
+{#        }#}
+{#        #}
+{#        .badge-simple {#}
+{#            background-color: #e9ecef;#}
+{#            color: #495057;#}
+{#        }#}
+{#        #}
+{#        .badge-patpis {#}
+{#            background-color: #e3f2fd;#}
+{#            color: #0d6efd;#}
+{#        }#}
+{#        #}
+{#        /* View toggle styles */#}
+{#        .view-toggle {#}
+{#            display: flex;#}
+{#            justify-content: center;#}
+{#            margin-bottom: 20px;#}
+{#        }#}
+{#        #}
+{#        .toggle-btn {#}
+{#            background-color: white;#}
+{#            border: 1px solid #ddd;#}
+{#            padding: 8px 16px;#}
+{#            font-size: 14px;#}
+{#            font-weight: 500;#}
+{#            cursor: pointer;#}
+{#        }#}
+{#        #}
+{#        .toggle-btn:first-child {#}
+{#            border-top-left-radius: 6px;#}
+{#            border-bottom-left-radius: 6px;#}
+{#        }#}
+{#        #}
+{#        .toggle-btn:last-child {#}
+{#            border-top-right-radius: 6px;#}
+{#            border-bottom-right-radius: 6px;#}
+{#        }#}
+{#        #}
+{#        .toggle-btn.active {#}
+{#            background-color: var(--primary-blue);#}
+{#            color: white;#}
+{#            border-color: var(--primary-blue);#}
+{#        }#}
+{#        #}
+{#        /* Action button styles */#}
+{#        .action-btn {#}
+{#            color: var(--medium-gray);#}
+{#            background: none;#}
+{#            border: none;#}
+{#            cursor: pointer;#}
+{#            padding: 5px;#}
+{#            transition: color 0.2s;#}
+{#        }#}
+{#        #}
+{#        .action-btn:hover {#}
+{#            color: var(--danger-red);#}
+{#        }#}
+{#        #}
+{#        /* Checkbox custom styles */#}
+{#        .task-checkbox {#}
+{#            margin-right: 5px;#}
+{#        }#}
+{##}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#       /* Sheet View Styles - medium size */#}
+{#.sheet-view-container {#}
+{#    background-color: white;#}
+{#    border-radius: 6px;#}
+{#    box-shadow: 0 1px 2px rgba(0,0,0,0.1);#}
+{#    overflow: hidden;#}
+{#    margin-bottom: 30px;#}
+{#}#}
+{##}
+{#.sheet-table {#}
+{#    width: 100%;#}
+{#    border-collapse: collapse;#}
+{#}#}
+{##}
+{#.sheet-table th, #}
+{#.sheet-table td {#}
+{#    border: 1px solid #dee2e6;#}
+{#    padding: 16px 14px; /* Medium increased padding */#}
+{#    text-align: center;#}
+{#    position: relative;#}
+{#    min-width: 130px; /* Wider minimum width */#}
+{#}#}
+{##}
+{#.sheet-table th:first-child,#}
+{#.sheet-table td:first-child {#}
+{#    min-width: 200px; /* Wider first column */#}
+{#    text-align: left;#}
+{#    padding-left: 18px;#}
+{#}#}
+{##}
+{#.sheet-table th {#}
+{#    background-color: #f8f9fa;#}
+{#    font-weight: 600;#}
+{#    color: #495057;#}
+{#    position: sticky;#}
+{#    top: 0;#}
+{#    z-index: 1;#}
+{#}#}
+{##}
+{#.sheet-table td:first-child {#}
+{#    text-align: left;#}
+{#    font-weight: 500;#}
+{#    padding-left: 18px;#}
+{#    background-color: #f8f9fa;#}
+{#    position: sticky;#}
+{#    left: 0;#}
+{#    z-index: 2;#}
+{#}#}
+{##}
+{#/* Task cell styles */#}
+{#.progress-cell {#}
+{#    cursor: pointer;#}
+{#    transition: background-color 0.2s ease;#}
+{#    position: relative;#}
+{#    height: 70px; /* Add some height */#}
+{#}#}
+{##}
+{#.progress-cell:hover {#}
+{#    background-color: #f8f9fa;#}
+{#}#}
+{##}
+{#.progress-text {#}
+{#    font-weight: 600;#}
+{#    font-size: 18px; /* Medium larger text */#}
+{#}#}
+{##}
+{#/* Colored progress cells */#}
+{#.progress-cell-0 { background-color: #f7fafc; }#}
+{#.progress-cell-25 { background-color: #e6f7ff; }#}
+{#.progress-cell-50 { background-color: #d0f0fd; }#}
+{#.progress-cell-75 { background-color: #bae7ff; }#}
+{#.progress-cell-100 { background-color: #e6ffed; }#}
+{##}
+{#/* Task count badge */#}
+{#.task-count-badge {#}
+{#    background-color: #007bff;#}
+{#    color: white;#}
+{#    padding: 4px 10px;#}
+{#    border-radius: 12px;#}
+{#    font-size: 13px;#}
+{#    font-weight: bold;#}
+{#}#}
+{##}
+{#/* Task details popup */#}
+{#.task-details-popup {#}
+{#    display: none;#}
+{#    position: absolute;#}
+{#    top: calc(100% + 5px);#}
+{#    left: 0;#}
+{#    background: white;#}
+{#    border: 1px solid #dee2e6;#}
+{#    border-radius: 4px;#}
+{#    padding: 14px;#}
+{#    box-shadow: 0 2px 8px rgba(0,0,0,0.15);#}
+{#    z-index: 100;#}
+{#    min-width: 240px; /* Medium wider popup */#}
+{#    text-align: left;#}
+{#}#}
+{##}
+{#.detail-header {#}
+{#    display: flex;#}
+{#    justify-content: space-between;#}
+{#    align-items: center;#}
+{#    border-bottom: 1px solid #eee;#}
+{#    padding-bottom: 10px;#}
+{#    margin-bottom: 10px;#}
+{#}#}
+{##}
+{#.detail-row {#}
+{#    display: flex;#}
+{#    justify-content: space-between;#}
+{#    margin-bottom: 8px;#}
+{#}#}
+{##}
+{#.detail-label {#}
+{#    color: #666;#}
+{#    font-size: 13px;#}
+{#}#}
+{##}
+{#.detail-value {#}
+{#    font-weight: 500;#}
+{#    font-size: 14px;#}
+{#}#}
+{##}
+{#/* Multi-task list */#}
+{#.multi-task-list {#}
+{#    max-height: 230px;#}
+{#    overflow-y: auto;#}
+{#}#}
+{##}
+{#.multi-task-item {#}
+{#    border-bottom: 1px solid #eee;#}
+{#    padding: 10px 0;#}
+{#}#}
+{##}
+{#.multi-task-item:last-child {#}
+{#    border-bottom: none;#}
+{#}#}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#        #}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{#    <div class="container-fluid">#}
+{#        <!-- Sidebar (optional) -->#}
+{#        <aside class="sidebar d-none d-md-block">#}
+{#            <div class="sidebar-title">#}
+{#                <h4>Детали проекта</h4>#}
+{#            </div>#}
+{#            <ul class="sidebar-menu">#}
+{#                <li class="active"><i class="fas fa-home"></i> Главная</li>#}
+{#                <li><i class="fas fa-project-diagram"></i> Проекты</li>#}
+{#            </ul>#}
+{#        </aside>#}
+{#        #}
+{#        <!-- Main Content -->#}
+{#        <div class="content-wrapper">#}
+{#            <div class="main-content">#}
+{#                <!-- Project Header (ENLARGED) -->#}
+{#                <div class="project-header">#}
+{#                    <div class="project-title-section">#}
+{#                        <div>#}
+{#                            <h2 class="project-title">{{ job.title }}</h2>#}
+{#                            <div class="project-email">{{ job.client_email }}</div>#}
+{#                        </div>#}
+{#                        <div>#}
+{#                            <a href="{% url 'add_task_to_job' job.id %}" class="btn btn-add">#}
+{#                                <i class="fas fa-plus me-2"></i> Добавить задачу#}
+{#                            </a>#}
+{#                           <!-- Replace the existing delete button in your job_details.html template -->#}
+{#<form method="post" action="{% url 'delete_job' job.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project? This action cannot be undone.');">#}
+{#    {% csrf_token %}#}
+{#    <button type="submit" class="btn btn-delete ms-2">#}
+{#        <i class="fas fa-trash me-2"></i> Удалить проект#}
+{#    </button>#}
+{#</form>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    #}
+{#                    <!-- Stats Cards (ENLARGED) -->#}
+{#                    <div class="stats-row">#}
+{#                        <div class="stat-card">#}
+{#                            <div class="stat-icon blue-icon">#}
+{#                                <i class="fas fa-file-invoice-dollar"></i>#}
+{#                            </div>#}
+{#                            <div>#}
+{#                                <div class="stat-value">${{ job.over_all_income }}</div>#}
+{#                                <div class="stat-label">Общий доход</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="stat-card">#}
+{#                            <div class="stat-icon green-icon">#}
+{#                                <i class="fas fa-wallet"></i>#}
+{#                            </div>#}
+{#                            <div>#}
+{#                                <div class="stat-value">${{ remaining_income }}</div>#}
+{#                                <div class="stat-label">Остаток</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="stat-card">#}
+{#                            <div class="stat-icon orange-icon">#}
+{#                                <i class="fas fa-chart-line"></i>#}
+{#                            </div>#}
+{#                            <div>#}
+{#                                <div class="stat-value">{{ overall_progress }}%</div>#}
+{#                                <div class="stat-label">Общий прогресс</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="stat-card">#}
+{#                            <div class="stat-icon aqua-icon">#}
+{#                                <i class="fas fa-calendar-alt"></i>#}
+{#                            </div>#}
+{#                            <div>#}
+{#                                <div class="stat-value">{{ latest_deadline|date:"d.m.Y" }}</div>#}
+{#                                <div class="stat-label">Дедлайн</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                #}
+{#                <!-- View Toggle Buttons (Added for Sheet View) -->#}
+{#                {% if show_follow_tasks %}#}
+{#                <div class="view-toggle">#}
+{#                    <button type="button" class="toggle-btn active" id="list-view-btn">Список</button>#}
+{#                    <button type="button" class="toggle-btn" id="sheet-view-btn">Таблица</button>#}
+{#                </div>#}
+{#                {% endif %}#}
+{#                #}
+{#                <!-- List View -->#}
+{#                <div class="table-card" id="list-view">#}
+{#                    <table class="table">#}
+{#                        <thead>#}
+{#                            <tr>#}
+{#                                <th style="width: 30%">Задача</th>#}
+{#                                <th style="width: 15%">Разработчик</th>#}
+{#                                <th style="width: 15%">Прогресс</th>#}
+{#                                <th style="width: 10%">Оплата</th>#}
+{#                                <th style="width: 15%">Сроки</th>#}
+{#                                <th style="width: 8%">Статус</th>#}
+{#                                <th style="width: 7%">Действия</th>#}
+{#                            </tr>#}
+{#                        </thead>#}
+{#                        <tbody>#}
+{#                            {% for task in regular_tasks %}#}
+{#                            <tr>#}
+{#                                <td>#}
+{#                                    <div class="d-flex align-items-center">#}
+{#                                        <input type="checkbox" class="task-checkbox" {% if task.progress == 100 %}checked{% endif %}>#}
+{#                                        {{ task.title }}#}
+{#                                    </div>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    {% for user in task.assigned_users.all %}#}
+{#                                    <div class="small">{{ user.email }}</div>#}
+{#                                    {% empty %}#}
+{#                                    <span class="text-muted small">Не назначено</span>#}
+{#                                    {% endfor %}#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <div class="progress {% if task.progress == 100 %}progress-complete{% endif %}">#}
+{#                                        <div class="progress-bar" role="progressbar" #}
+{#                                             style="width: {{ task.progress }}%;" #}
+{#                                             aria-valuenow="{{ task.progress }}" #}
+{#                                             aria-valuemin="0" #}
+{#                                             aria-valuemax="100"></div>#}
+{#                                    </div>#}
+{#                                    <div class="text-end small mt-1">{{ task.progress }}%</div>#}
+{#                                </td>#}
+{#                                <td>${{ task.money_for_task }}</td>#}
+{#                                <td>#}
+{#                                    {% if task.deadline %}#}
+{#                                    <div class="small">{{ task.deadline|date:"d.m.Y" }} - {{ task.deadline|date:"d.m.Y" }}</div>#}
+{#                                    {% else %}#}
+{#                                    <span class="text-muted small">Нет дедлайна</span>#}
+{#                                    {% endif %}#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    {% if task.task_type == 'SIMPLE' %}#}
+{#                                        <span class="badge badge-simple">SIMPLE</span>#}
+{#                                    {% elif task.task_type == 'MONTHLY' %}#}
+{#                                        <span class="badge badge-simple">MONTHLY</span>#}
+{#                                    {% endif %}#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <div class="d-flex">#}
+{#                                        <form method="post" action="{% url 'delete_task' task.id %}" #}
+{#                                              onsubmit="return confirm('Are you sure you want to delete this task?');">#}
+{#                                            {% csrf_token %}#}
+{#                                            <button type="submit" class="action-btn">#}
+{#                                                <i class="fas fa-trash"></i>#}
+{#                                            </button>#}
+{#                                        </form>#}
+{#                                    </div>#}
+{#                                </td>#}
+{#                            </tr>#}
+{#                            {% endfor %}#}
+{#                            #}
+{#                            {% if show_follow_tasks %}#}
+{#                            {% for task in follow_tasks %}#}
+{#                            <tr>#}
+{#                                <td>#}
+{#                                    <div class="d-flex align-items-center">#}
+{#                                        <input type="checkbox" class="task-checkbox" {% if task.progress == 100 %}checked{% endif %}>#}
+{#                                        {{ task.title }}#}
+{#                                    </div>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    {% for user in task.assigned_users.all %}#}
+{#                                    <div class="small">{{ user.email }}</div>#}
+{#                                    {% empty %}#}
+{#                                    <span class="text-muted small">Не назначено</span>#}
+{#                                    {% endfor %}#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <div class="progress {% if task.progress == 100 %}progress-complete{% endif %}">#}
+{#                                        <div class="progress-bar" role="progressbar" #}
+{#                                             style="width: {{ task.progress }}%;" #}
+{#                                             aria-valuenow="{{ task.progress }}" #}
+{#                                             aria-valuemin="0" #}
+{#                                             aria-valuemax="100"></div>#}
+{#                                    </div>#}
+{#                                    <div class="text-end small mt-1">{{ task.progress }}%</div>#}
+{#                                </td>#}
+{#                                <td>${{ task.money_for_task }}</td>#}
+{#                                <td>#}
+{#                                    {% if task.deadline %}#}
+{#                                    <div class="small">{{ task.deadline|date:"d.m.Y" }} - {{ task.deadline|date:"d.m.Y" }}</div>#}
+{#                                    {% else %}#}
+{#                                    <span class="text-muted small">Нет дедлайна</span>#}
+{#                                    {% endif %}#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <span class="badge badge-patpis">PATPIS</span>#}
+{#                                </td>#}
+{#                                <td>#}
+{#                                    <div class="d-flex">#}
+{#                                        <form method="post" action="{% url 'delete_task' task.id %}" #}
+{#                                              onsubmit="return confirm('Are you sure you want to delete this follow task?');">#}
+{#                                            {% csrf_token %}#}
+{#                                            <button type="submit" class="action-btn">#}
+{#                                                <i class="fas fa-trash"></i>#}
+{#                                            </button>#}
+{#                                        </form>#}
+{#                                    </div>#}
+{#                                </td>#}
+{#                            </tr>#}
+{#                            {% endfor %}#}
+{#                            {% endif %}#}
+{#                        </tbody>#}
+{#                    </table>#}
+{#                </div>#}
+{#                #}
+{#                <!-- Sheet View (IMPROVED and LARGER) -->#}
+{#                {% if show_follow_tasks %}#}
+{#                <div class="sheet-view-container" id="sheet-view" style="display: none;">#}
+{#                    <div class="table-responsive">#}
+{#                        <table class="sheet-table">#}
+{#                            <thead>#}
+{#                                <tr>#}
+{#                                    <th>Задача</th>#}
+{#                                    {% for month in all_months %}#}
+{#                                        <th>{{ month }}</th>#}
+{#                                    {% endfor %}#}
+{#                                </tr>#}
+{#                            </thead>#}
+{#                            <tbody>#}
+{#                                {% for row in task_matrix %}#}
+{#                                    <tr>#}
+{#                                        <td>{{ row.base_name }}</td>#}
+{#                                        {% for cell in row.cells %}#}
+{#                                            {% if not cell.empty %}#}
+{#                                                <td class="progress-cell {% if cell.tasks.0.progress <= 0 %}progress-cell-0{% elif cell.tasks.0.progress <= 25 %}progress-cell-25{% elif cell.tasks.0.progress <= 50 %}progress-cell-50{% elif cell.tasks.0.progress <= 75 %}progress-cell-75{% else %}progress-cell-100{% endif %}" #}
+{#                                                    onclick="toggleTaskDetails('detail-{{ row.base_name|slugify }}-{{ forloop.counter }}')">#}
+{#                                                    #}
+{#                                                    <!-- Simple progress display or task count -->#}
+{#                                                    {% if cell.tasks|length == 1 %}#}
+{#                                                        <div class="progress-text">{{ cell.tasks.0.progress }}%</div>#}
+{#                                                    {% else %}#}
+{#                                                        <span class="task-count-badge">{{ cell.tasks|length }}</span>#}
+{#                                                    {% endif %}#}
+{#                                                    #}
+{#                                                    <!-- Task Details Popup -->#}
+{#                                                    <div id="detail-{{ row.base_name|slugify }}-{{ forloop.counter }}" class="task-details-popup">#}
+{#                                                        {% if cell.tasks|length == 1 %}#}
+{#                                                            <!-- Single task details -->#}
+{#                                                            <div class="detail-header">#}
+{#                                                                <span class="progress-text">{{ cell.tasks.0.progress }}%</span>#}
+{#                                                                <form method="post" action="{% url 'delete_task' cell.tasks.0.id %}" #}
+{#                                                                    onsubmit="return confirm('Are you sure you want to delete this task?');">#}
+{#                                                                    {% csrf_token %}#}
+{#                                                                    <button type="submit" class="btn btn-sm btn-outline-danger">#}
+{#                                                                        <i class="fas fa-trash"></i>#}
+{#                                                                    </button>#}
+{#                                                                </form>#}
+{#                                                            </div>#}
+{#                                                            #}
+{#                                                            <div class="detail-row">#}
+{#                                                                <span class="detail-label">Оплата:</span>#}
+{#                                                                <span class="detail-value">${{ cell.tasks.0.money_for_task }}</span>#}
+{#                                                            </div>#}
+{#                                                            #}
+{#                                                            <div class="detail-row">#}
+{#                                                                <span class="detail-label">Дедлайн:</span>#}
+{#                                                                <span class="detail-value">{{ cell.tasks.0.deadline|date:"d.m.Y" }}</span>#}
+{#                                                            </div>#}
+{#                                                            #}
+{#                                                            <div>#}
+{#                                                                <div class="detail-label">Разработчик:</div>#}
+{#                                                                {% for user in cell.tasks.0.assigned_users.all %}#}
+{#                                                                    <div>{{ user.email }}</div>#}
+{#                                                                {% empty %}#}
+{#                                                                    <div>Не назначено</div>#}
+{#                                                                {% endfor %}#}
+{#                                                            </div>#}
+{#                                                        {% else %}#}
+{#                                                            <!-- Multiple tasks details -->#}
+{#                                                            <div class="detail-header">#}
+{#                                                                <span>{{ cell.tasks|length }} задач</span>#}
+{#                                                            </div>#}
+{#                                                            #}
+{#                                                            <div class="multi-task-list">#}
+{#                                                                {% for task in cell.tasks %}#}
+{#                                                                    <div class="multi-task-item">#}
+{#                                                                        <div class="d-flex justify-content-between align-items-center mb-1">#}
+{#                                                                            <span class="progress-text">{{ task.progress }}%</span>#}
+{#                                                                            <form method="post" action="{% url 'delete_task' task.id %}" #}
+{#                                                                                onsubmit="return confirm('Are you sure?');">#}
+{#                                                                                {% csrf_token %}#}
+{#                                                                                <button type="submit" class="btn btn-sm btn-outline-danger">#}
+{#                                                                                    <i class="fas fa-trash"></i>#}
+{#                                                                                </button>#}
+{#                                                                            </form>#}
+{#                                                                        </div>#}
+{#                                                                        #}
+{#                                                                        <div class="detail-row">#}
+{#                                                                            <span class="detail-label">Оплата:</span>#}
+{#                                                                            <span class="detail-value">${{ task.money_for_task }}</span>#}
+{#                                                                        </div>#}
+{#                                                                        #}
+{#                                                                        <div>#}
+{#                                                                            <span class="detail-label">Разработчик:</span>#}
+{#                                                                            {% for user in task.assigned_users.all %}#}
+{#                                                                                <div>{{ user.email }}</div>#}
+{#                                                                            {% empty %}#}
+{#                                                                                <div>Не назначено</div>#}
+{#                                                                            {% endfor %}#}
+{#                                                                        </div>#}
+{#                                                                    </div>#}
+{#                                                                {% endfor %}#}
+{#                                                            </div>#}
+{#                                                        {% endif %}#}
+{#                                                    </div>#}
+{#                                                </td>#}
+{#                                            {% else %}#}
+{#                                                <td class="text-center text-muted">-</td>#}
+{#                                            {% endif %}#}
+{#                                        {% endfor %}#}
+{#                                    </tr>#}
+{#                                {% endfor %}#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                </div>#}
+{#                {% endif %}#}
+{#                #}
+{#                <!-- Pagination -->#}
+{#                {% if regular_tasks.has_other_pages or follow_tasks.has_other_pages %}#}
+{#                <nav aria-label="Task pagination" class="d-flex justify-content-center mb-4">#}
+{#                    <ul class="pagination">#}
+{#                        {% if regular_tasks.has_previous %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ regular_tasks.previous_page_number }}">&laquo;</a>#}
+{#                        </li>#}
+{#                        {% else %}#}
+{#                        <li class="page-item disabled">#}
+{#                            <span class="page-link">&laquo;</span>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{##}
+{#                        {% for i in regular_tasks.paginator.page_range %}#}
+{#                        <li class="page-item {% if regular_tasks.number == i %}active{% endif %}">#}
+{#                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>#}
+{#                        </li>#}
+{#                        {% endfor %}#}
+{##}
+{#                        {% if regular_tasks.has_next %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ regular_tasks.next_page_number }}">&raquo;</a>#}
+{#                        </li>#}
+{#                        {% else %}#}
+{#                        <li class="page-item disabled">#}
+{#                    <span class="page-link">&raquo;</span>#}
+{#                        </li>#}
+{#                        {% endif %}#}
+{#                    </ul>#}
+{#                </nav>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <!-- Bootstrap JS -->#}
+{#    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>#}
+{#    #}
+{#    <!-- Sheet View Toggle Script -->#}
+{#    <script>#}
+{#        document.addEventListener('DOMContentLoaded', function() {#}
+{#            const listViewBtn = document.getElementById('list-view-btn');#}
+{#            const sheetViewBtn = document.getElementById('sheet-view-btn');#}
+{#            const listView = document.getElementById('list-view');#}
+{#            const sheetView = document.getElementById('sheet-view');#}
+{#            #}
+{#            if (listViewBtn && sheetViewBtn) {#}
+{#                listViewBtn.addEventListener('click', function() {#}
+{#                    listView.style.display = 'block';#}
+{#                    sheetView.style.display = 'none';#}
+{#                    listViewBtn.classList.add('active');#}
+{#                    sheetViewBtn.classList.remove('active');#}
+{#                });#}
+{#                #}
+{#                sheetViewBtn.addEventListener('click', function() {#}
+{#                    listView.style.display = 'none';#}
+{#                    sheetView.style.display = 'block';#}
+{#                    sheetViewBtn.classList.add('active');#}
+{#                    listViewBtn.classList.remove('active');#}
+{#                });#}
+{#            }#}
+{#        });#}
+{#        #}
+{#        // Function to toggle task details popups#}
+{#        function toggleTaskDetails(detailId) {#}
+{#            const detailElement = document.getElementById(detailId);#}
+{#            #}
+{#            // First close any other open popups#}
+{#            document.querySelectorAll('.task-details-popup').forEach(popup => {#}
+{#                if (popup.id !== detailId) {#}
+{#                    popup.style.display = 'none';#}
+{#                }#}
+{#            });#}
+{#            #}
+{#            // Toggle this popup#}
+{#            if (detailElement) {#}
+{#                if (detailElement.style.display === 'block') {#}
+{#                    detailElement.style.display = 'none';#}
+{#                } else {#}
+{#                    detailElement.style.display = 'block';#}
+{#                }#}
+{#            }#}
+{#            #}
+{#            // Prevent the event from bubbling up#}
+{#            event.stopPropagation();#}
+{#        }#}
+{#        #}
+{#        // Close popups when clicking elsewhere on the document#}
+{#        document.addEventListener('click', function(event) {#}
+{#            if (!event.target.closest('.progress-cell')) {#}
+{#                document.querySelectorAll('.task-details-popup').forEach(popup => {#}
+{#                    popup.style.display = 'none';#}
+{#                });#}
+{#            }#}
+{#        });#}
+{#    </script>#}
+{#</body>#}
+{#</html>#}
+
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -312,6 +1213,10 @@
         }
         
         .action-btn:hover {
+            color: var(--primary-blue);
+        }
+        
+        .action-btn.delete-btn:hover {
             color: var(--danger-red);
         }
         
@@ -320,159 +1225,144 @@
             margin-right: 5px;
         }
 
-        
-        
-        
-        
-        
-        
-        
-       /* Sheet View Styles - medium size */
-.sheet-view-container {
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    overflow: hidden;
-    margin-bottom: 30px;
-}
+        /* Sheet View Styles - medium size */
+        .sheet-view-container {
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
 
-.sheet-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        .sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.sheet-table th, 
-.sheet-table td {
-    border: 1px solid #dee2e6;
-    padding: 16px 14px; /* Medium increased padding */
-    text-align: center;
-    position: relative;
-    min-width: 130px; /* Wider minimum width */
-}
+        .sheet-table th, 
+        .sheet-table td {
+            border: 1px solid #dee2e6;
+            padding: 16px 14px; /* Medium increased padding */
+            text-align: center;
+            position: relative;
+            min-width: 130px; /* Wider minimum width */
+        }
 
-.sheet-table th:first-child,
-.sheet-table td:first-child {
-    min-width: 200px; /* Wider first column */
-    text-align: left;
-    padding-left: 18px;
-}
+        .sheet-table th:first-child,
+        .sheet-table td:first-child {
+            min-width: 200px; /* Wider first column */
+            text-align: left;
+            padding-left: 18px;
+        }
 
-.sheet-table th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: #495057;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
+        .sheet-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
 
-.sheet-table td:first-child {
-    text-align: left;
-    font-weight: 500;
-    padding-left: 18px;
-    background-color: #f8f9fa;
-    position: sticky;
-    left: 0;
-    z-index: 2;
-}
+        .sheet-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            padding-left: 18px;
+            background-color: #f8f9fa;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
 
-/* Task cell styles */
-.progress-cell {
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    position: relative;
-    height: 70px; /* Add some height */
-}
+        /* Task cell styles */
+        .progress-cell {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: relative;
+            height: 70px; /* Add some height */
+        }
 
-.progress-cell:hover {
-    background-color: #f8f9fa;
-}
+        .progress-cell:hover {
+            background-color: #f8f9fa;
+        }
 
-.progress-text {
-    font-weight: 600;
-    font-size: 18px; /* Medium larger text */
-}
+        .progress-text {
+            font-weight: 600;
+            font-size: 18px; /* Medium larger text */
+        }
 
-/* Colored progress cells */
-.progress-cell-0 { background-color: #f7fafc; }
-.progress-cell-25 { background-color: #e6f7ff; }
-.progress-cell-50 { background-color: #d0f0fd; }
-.progress-cell-75 { background-color: #bae7ff; }
-.progress-cell-100 { background-color: #e6ffed; }
+        /* Colored progress cells */
+        .progress-cell-0 { background-color: #f7fafc; }
+        .progress-cell-25 { background-color: #e6f7ff; }
+        .progress-cell-50 { background-color: #d0f0fd; }
+        .progress-cell-75 { background-color: #bae7ff; }
+        .progress-cell-100 { background-color: #e6ffed; }
 
-/* Task count badge */
-.task-count-badge {
-    background-color: #007bff;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: bold;
-}
+        /* Task count badge */
+        .task-count-badge {
+            background-color: #007bff;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+        }
 
-/* Task details popup */
-.task-details-popup {
-    display: none;
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    z-index: 100;
-    min-width: 240px; /* Medium wider popup */
-    text-align: left;
-}
+        /* Task details popup */
+        .task-details-popup {
+            display: none;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 100;
+            min-width: 240px; /* Medium wider popup */
+            text-align: left;
+        }
 
-.detail-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-}
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
 
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
 
-.detail-label {
-    color: #666;
-    font-size: 13px;
-}
+        .detail-label {
+            color: #666;
+            font-size: 13px;
+        }
 
-.detail-value {
-    font-weight: 500;
-    font-size: 14px;
-}
+        .detail-value {
+            font-weight: 500;
+            font-size: 14px;
+        }
 
-/* Multi-task list */
-.multi-task-list {
-    max-height: 230px;
-    overflow-y: auto;
-}
+        /* Multi-task list */
+        .multi-task-list {
+            max-height: 230px;
+            overflow-y: auto;
+        }
 
-.multi-task-item {
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
-}
+        .multi-task-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
 
-.multi-task-item:last-child {
-    border-bottom: none;
-}
-        
-        
-        
-        
-        
-        
-        
-        
+        .multi-task-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -491,6 +1381,16 @@
         <!-- Main Content -->
         <div class="content-wrapper">
             <div class="main-content">
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
                 <!-- Project Header (ENLARGED) -->
                 <div class="project-header">
                     <div class="project-title-section">
@@ -502,13 +1402,12 @@
                             <a href="{% url 'add_task_to_job' job.id %}" class="btn btn-add">
                                 <i class="fas fa-plus me-2"></i> Добавить задачу
                             </a>
-                           <!-- Replace the existing delete button in your job_details.html template -->
-<form method="post" action="{% url 'delete_job' job.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project? This action cannot be undone.');">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-delete ms-2">
-        <i class="fas fa-trash me-2"></i> Удалить проект
-    </button>
-</form>
+                            <form method="post" action="{% url 'delete_job' job.id %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project? This action cannot be undone.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-delete ms-2">
+                                    <i class="fas fa-trash me-2"></i> Удалить проект
+                                </button>
+                            </form>
                         </div>
                     </div>
                     
@@ -604,7 +1503,7 @@
                                 <td>${{ task.money_for_task }}</td>
                                 <td>
                                     {% if task.deadline %}
-                                    <div class="small">{{ task.deadline|date:"d.m.Y" }} - {{ task.deadline|date:"d.m.Y" }}</div>
+                                    <div class="small">{{ task.deadline|date:"d.m.Y" }}</div>
                                     {% else %}
                                     <span class="text-muted small">Нет дедлайна</span>
                                     {% endif %}
@@ -618,10 +1517,13 @@
                                 </td>
                                 <td>
                                     <div class="d-flex">
+                                        <a href="{% url 'edit_task' task.id %}" class="action-btn me-2" title="Edit Task">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <form method="post" action="{% url 'delete_task' task.id %}" 
-                                              onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                              onsubmit="return confirm('Are you sure you want to delete this task?');" class="d-inline">
                                             {% csrf_token %}
-                                            <button type="submit" class="action-btn">
+                                            <button type="submit" class="action-btn delete-btn" title="Delete Task">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -659,7 +1561,7 @@
                                 <td>${{ task.money_for_task }}</td>
                                 <td>
                                     {% if task.deadline %}
-                                    <div class="small">{{ task.deadline|date:"d.m.Y" }} - {{ task.deadline|date:"d.m.Y" }}</div>
+                                    <div class="small">{{ task.deadline|date:"d.m.Y" }}</div>
                                     {% else %}
                                     <span class="text-muted small">Нет дедлайна</span>
                                     {% endif %}
@@ -669,10 +1571,13 @@
                                 </td>
                                 <td>
                                     <div class="d-flex">
+                                        <a href="{% url 'edit_task' task.id %}" class="action-btn me-2" title="Edit Task">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                         <form method="post" action="{% url 'delete_task' task.id %}" 
-                                              onsubmit="return confirm('Are you sure you want to delete this follow task?');">
+                                              onsubmit="return confirm('Are you sure you want to delete this follow task?');" class="d-inline">
                                             {% csrf_token %}
-                                            <button type="submit" class="action-btn">
+                                            <button type="submit" class="action-btn delete-btn" title="Delete Task">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -720,13 +1625,19 @@
                                                             <!-- Single task details -->
                                                             <div class="detail-header">
                                                                 <span class="progress-text">{{ cell.tasks.0.progress }}%</span>
-                                                                <form method="post" action="{% url 'delete_task' cell.tasks.0.id %}" 
-                                                                    onsubmit="return confirm('Are you sure you want to delete this task?');">
-                                                                    {% csrf_token %}
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <div>
+                                                                    <a href="{% url 'edit_task' cell.tasks.0.id %}" class="btn btn-sm btn-outline-primary me-1">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                    <form method="post" action="{% url 'delete_task' cell.tasks.0.id %}" 
+                                                                        class="d-inline"
+                                                                        onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
                                                             </div>
                                                             
                                                             <div class="detail-row">
@@ -758,13 +1669,19 @@
                                                                     <div class="multi-task-item">
                                                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                                                             <span class="progress-text">{{ task.progress }}%</span>
-                                                                            <form method="post" action="{% url 'delete_task' task.id %}" 
-                                                                                onsubmit="return confirm('Are you sure?');">
-                                                                                {% csrf_token %}
-                                                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                                                    <i class="fas fa-trash"></i>
-                                                                                </button>
-                                                                            </form>
+                                                                            <div>
+                                                                                <a href="{% url 'edit_task' task.id %}" class="btn btn-sm btn-outline-primary me-1">
+                                                                                    <i class="fas fa-edit"></i>
+                                                                                </a>
+                                                                                <form method="post" action="{% url 'delete_task' task.id %}" 
+                                                                                    class="d-inline"
+                                                                                    onsubmit="return confirm('Are you sure?');">
+                                                                                    {% csrf_token %}
+                                                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                    </button>
+                                                                                </form>
+                                                                            </div>
                                                                         </div>
                                                                         
                                                                         <div class="detail-row">
@@ -824,7 +1741,7 @@
                         </li>
                         {% else %}
                         <li class="page-item disabled">
-                    <span class="page-link">&raquo;</span>
+                            <span class="page-link">&raquo;</span>
                         </li>
                         {% endif %}
                     </ul>

@@ -72,6 +72,8 @@ urlpatterns = [
 
     path('update_feedback/', views.update_feedback, name='update_feedback'),
     path('payment_load/', views.payment_load, name='payment_load'),
+# Add this to your urls.py file
+    path('task/<int:task_id>/edit/', views.edit_task, name='edit_task'),
 
     path('job/<int:job_id>/delete/', views.delete_job, name='delete_job'),
     path('update-progress/', views.update_progress, name='update_progress'),

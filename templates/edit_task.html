@@ -1,0 +1,291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task - {{ task.title }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --light-gray: #f8f9fc;
+            --dark-text: #333;
+            --medium-gray: #6c757d;
+            --success-green: #2ecc71;
+            --danger-red: #e74c3c;
+            --border-color: #e0e0e0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: none;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        .form-title {
+            font-weight: 600;
+            font-size: 24px;
+            margin-bottom: 0;
+        }
+        
+        .form-subtitle {
+            color: var(--medium-gray);
+            margin-top: 5px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark-text);
+        }
+        
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.1);
+        }
+        
+        .form-select {
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            font-size: 16px;
+            height: auto;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .btn-outline-secondary {
+            color: var(--medium-gray);
+            border-color: var(--border-color);
+        }
+        
+        .help-text {
+            color: var(--medium-gray);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        
+        .invalid-feedback {
+            color: var(--danger-red);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        
+        .alert {
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        /* Content wrapper - similar to main layout */
+        .content-wrapper {
+            margin-left: 0;
+            min-height: 100vh;
+        }
+        
+        @media (min-width: 992px) {
+            .content-wrapper {
+                margin-left: 240px;
+            }
+        }
+        
+        /* Sidebar styles - only visible on larger screens */
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            min-height: 100vh;
+            width: 240px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 0;
+            display: none;
+        }
+        
+        @media (min-width: 992px) {
+            .sidebar {
+                display: block;
+            }
+        }
+        
+        .sidebar-title {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-menu li i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-menu li.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar (similar to main layout) -->
+        <aside class="sidebar d-none d-lg-block">
+            <div class="sidebar-title">
+                <h4>Edit Task</h4>
+            </div>
+            <ul class="sidebar-menu">
+                <li><i class="fas fa-home"></i> <a href="{% url 'job_list' %}" class="text-white text-decoration-none">Projects</a></li>
+                <li class="active"><i class="fas fa-tasks"></i> <a href="{% url 'job_details' job.id %}" class="text-white text-decoration-none">{{ job.title }}</a></li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="content-wrapper">
+            <div class="container">
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="form-title">Edit Task</h4>
+                        <p class="form-subtitle">Project: {{ job.title }}</p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Task Title</label>
+                                {{ form.title.errors }}
+                                {{ form.title }}
+                                {% if form.title.help_text %}<small class="help-text">{{ form.title.help_text }}</small>{% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                                {{ form.description.errors }}
+                                {{ form.description }}
+                                {% if form.description.help_text %}<small class="help-text">{{ form.description.help_text }}</small>{% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.hours.id_for_label }}" class="form-label">Hours</label>
+                                    {{ form.hours.errors }}
+                                    <input type="number" name="hours" value="{{ form.hours.value|default:'' }}" step="any" class="form-control {% if form.hours.errors %}is-invalid{% endif %}" id="{{ form.hours.id_for_label }}" required>
+                                    <small class="help-text">Note: Changing hours will recalculate percentages for all tasks in this job.</small>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.money_for_task.id_for_label }}" class="form-label">Payment Amount</label>
+                                    {{ form.money_for_task.errors }}
+                                    <input type="number" name="money_for_task" value="{{ form.money_for_task.value|default:'' }}" step="any" class="form-control {% if form.money_for_task.errors %}is-invalid{% endif %}" id="{{ form.money_for_task.id_for_label }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.deadline.id_for_label }}" class="form-label">Deadline</label>
+                                    {{ form.deadline.errors }}
+                                    {{ form.deadline }}
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.task_type.id_for_label }}" class="form-label">Task Type</label>
+                                    {{ form.task_type.errors }}
+                                    {{ form.task_type }}
+                                    {% if form.task_type.help_text %}<small class="help-text">{{ form.task_type.help_text }}</small>{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_progress" class="form-label">Progress (%)</label>
+                                {{ form.progress.errors }}
+                                <input type="number" name="progress" value="{{ task.progress|default:0 }}" min="0" max="100" class="form-control {% if form.progress.errors %}is-invalid{% endif %}" id="id_progress" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="{{ form.assigned_users.id_for_label }}" class="form-label">Assigned Developers</label>
+                                {{ form.assigned_users.errors }}
+                                {{ form.assigned_users }}
+                                <small class="help-text">Hold Ctrl (or Cmd on Mac) to select multiple developers</small>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end mt-4">
+                                <a href="{% url 'job_details' job.id %}" class="btn btn-outline-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
