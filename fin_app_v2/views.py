@@ -1708,22 +1708,38 @@ def update_progress(request):
     return redirect('developer_tasks')
 
 
+# @login_required
+# def delete_job(request, job_id):
+#     # Only allow POST requests for deletion
+#     if request.method == 'POST':
+#         # Only allow admin to delete jobs
+#         if request.user.email == 'Admin@dbr.org':
+#             job = get_object_or_404(Job, id=job_id)
+#             job_title = job.title
+#             job.delete()
+#             messages.success(request, f'Проект "{job_title}" успешно удален.')
+#         else:
+#             messages.error(request, 'У вас нет прав для удаления проектов.')
+#
+#     return redirect('job_list')
+
+
+
 @login_required
 def delete_job(request, job_id):
-    # Only allow POST requests for deletion
+    # Only allow POST requests for deletion (for security)
     if request.method == 'POST':
         # Only allow admin to delete jobs
         if request.user.email == 'Admin@dbr.org':
             job = get_object_or_404(Job, id=job_id)
             job_title = job.title
             job.delete()
-            messages.success(request, f'Проект "{job_title}" успешно удален.')
+            messages.success(request, f'Project "{job_title}" has been successfully deleted.')
         else:
-            messages.error(request, 'У вас нет прав для удаления проектов.')
+            messages.error(request, 'You do not have permission to delete projects.')
 
+    # Redirect back to the job list page
     return redirect('job_list')
-
-
 
 @login_required
 def change_task_status(request, task_id):
