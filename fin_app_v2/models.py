@@ -240,3 +240,5 @@ def create_monthly_recurring_tasks(self):
             # Copy assigned users
             for user in self.assigned_users.all():
                 new_task.assigned_users.add(user)
+
+

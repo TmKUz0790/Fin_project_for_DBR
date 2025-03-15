@@ -1,593 +1,3 @@
-{##}
-{#{% load static %}#}
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8" />#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0" />#}
-{#    <title>Прогресс клиента</title>#}
-{##}
-{#    <!-- CSS Dependencies -->#}
-{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">#}
-{#    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">#}
-{#    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">#}
-{#    <link rel="stylesheet" href="{% static 'css/style.css' %}">#}
-{##}
-{#    <style>#}
-{#        :root {#}
-{#            --primary: #1a1a1a;#}
-{#            --secondary: #2d2d2d;#}
-{#            --accent: #B8860B;#}
-{#            --accent-light: #DAA520;#}
-{#            --text: #FFFFFF;#}
-{#            --text-dark: #1a1a1a;#}
-{#            --surface: #2d2d2d;#}
-{#            --surface-light: #3d3d3d;#}
-{#            --background: #121212;#}
-{#        }#}
-{##}
-{#        body {#}
-{#            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);#}
-{#            font-family: 'Montserrat', sans-serif;#}
-{#            color: var(--text);#}
-{#            min-height: 100vh;#}
-{#            margin: 0;#}
-{#            padding: 0;#}
-{#            line-height: 1.6;#}
-{#        }#}
-{##}
-{#        h1, h2, h3, h4, h5, h6 {#}
-{#            font-family: 'Cormorant Garamond', serif;#}
-{#            font-weight: 600;#}
-{#            letter-spacing: 0.5px;#}
-{#        }#}
-{##}
-{#        #particles-js {#}
-{#            position: fixed;#}
-{#            width: 100%;#}
-{#            height: 100%;#}
-{#            z-index: 0;#}
-{#            opacity: 0.4;#}
-{#            pointer-events: none;#}
-{#        }#}
-{##}
-{#        .main_content {#}
-{#            position: relative;#}
-{#            z-index: 1;#}
-{#            padding: 2.5rem;#}
-{#            margin-top: 2rem;#}
-{#        }#}
-{##}
-{#        /* Card Styles */#}
-{#        .card {#}
-{#            background: rgba(45, 45, 45, 0.95);#}
-{#            border: 1px solid var(--accent);#}
-{#            border-radius: 20px;#}
-{#            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);#}
-{#            backdrop-filter: blur(10px);#}
-{#            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);#}
-{#            overflow: hidden;#}
-{#        }#}
-{##}
-{#        .card::before {#}
-{#            content: '';#}
-{#            position: absolute;#}
-{#            top: 0;#}
-{#            left: 0;#}
-{#            right: 0;#}
-{#            height: 3px;#}
-{#            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 50%, var(--accent) 100%);#}
-{#        }#}
-{##}
-{#        .card:hover {#}
-{#            transform: translateY(-5px);#}
-{#            box-shadow: 0 15px 40px rgba(184, 134, 11, 0.2);#}
-{#        }#}
-{##}
-{#        /* Header Card */#}
-{#        .header-card {#}
-{#            padding: 2.5rem;#}
-{#            margin-bottom: 2.5rem;#}
-{#        }#}
-{##}
-{#        .header-card h1 {#}
-{#            color: var(--accent-light);#}
-{#            font-size: 2.5rem;#}
-{#            margin-bottom: 0;#}
-{#            letter-spacing: 0.5px;#}
-{#        }#}
-{##}
-{#        /* Progress Card */#}
-{#        .progress-card {#}
-{#            padding: 2.5rem;#}
-{#            margin-bottom: 2.5rem;#}
-{#        }#}
-{##}
-{#        .progress-container {#}
-{#            background: rgba(255, 255, 255, 0.1);#}
-{#            border: 1px solid var(--accent);#}
-{#            border-radius: 15px;#}
-{#            height: 35px;#}
-{#            overflow: hidden;#}
-{#            margin: 2rem 0;#}
-{#            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);#}
-{#            position: relative;#}
-{#        }#}
-{##}
-{#        .progress-bar {#}
-{#            height: 100%;#}
-{#            background: linear-gradient(45deg, var(--accent), var(--accent-light));#}
-{#            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);#}
-{#            display: flex;#}
-{#            align-items: center;#}
-{#            justify-content: center;#}
-{#            color: var(--text);#}
-{#            font-weight: 600;#}
-{#            font-size: 1.1rem;#}
-{#            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);#}
-{#            position: relative;#}
-{#            overflow: hidden;#}
-{#        }#}
-{##}
-{#        .progress-bar::after {#}
-{#            content: '';#}
-{#            position: absolute;#}
-{#            top: 0;#}
-{#            left: 0;#}
-{#            right: 0;#}
-{#            bottom: 0;#}
-{#            background: linear-gradient(90deg, #}
-{#                rgba(255, 255, 255, 0) 0%, #}
-{#                rgba(255, 255, 255, 0.2) 50%, #}
-{#                rgba(255, 255, 255, 0) 100%);#}
-{#            animation: shimmer 2s infinite;#}
-{#        }#}
-{##}
-{#        /* Table Styles */#}
-{#        .table-card {#}
-{#            padding: 2.5rem;#}
-{#        }#}
-{##}
-{#        .table {#}
-{#            width: 100%;#}
-{#            margin-bottom: 0;#}
-{#            color: var(--text);#}
-{#            border-collapse: separate;#}
-{#            border-spacing: 0;#}
-{#        }#}
-{##}
-{#        .table th {#}
-{#            background: var(--surface);#}
-{#            color: var(--accent-light);#}
-{#            font-family: 'Cormorant Garamond', serif;#}
-{#            font-weight: 600;#}
-{#            font-size: 1.1rem;#}
-{#            padding: 1.5rem 1rem;#}
-{#            border-bottom: 2px solid var(--accent);#}
-{#            text-transform: uppercase;#}
-{#            letter-spacing: 1px;#}
-{#        }#}
-{##}
-{#        .table td {#}
-{#            padding: 1.25rem 1rem;#}
-{#            vertical-align: middle;#}
-{#            border-bottom: 1px solid rgba(184, 134, 11, 0.2);#}
-{#            font-size: 0.95rem;#}
-{#            transition: all 0.3s ease;#}
-{#        }#}
-{##}
-{#        .table tbody tr {#}
-{#            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);#}
-{#            background: rgba(45, 45, 45, 0.7);#}
-{#        }#}
-{##}
-{#        .table tbody tr:hover {#}
-{#            background: rgba(184, 134, 11, 0.1);#}
-{#            transform: scale(1.01);#}
-{#        }#}
-{##}
-{#        /* Button Styles */#}
-{#        .action-button {#}
-{#            background: transparent;#}
-{#            color: var(--accent-light);#}
-{#            border: 2px solid var(--accent);#}
-{#            padding: 0.875rem 1.75rem;#}
-{#            border-radius: 12px;#}
-{#            font-weight: 500;#}
-{#            letter-spacing: 1px;#}
-{#            text-transform: uppercase;#}
-{#            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);#}
-{#            display: inline-flex;#}
-{#            align-items: center;#}
-{#            gap: 0.75rem;#}
-{#        }#}
-{##}
-{#        .action-button:hover {#}
-{#            background: var(--accent);#}
-{#            color: var(--text);#}
-{#            transform: translateY(-2px);#}
-{#            box-shadow: 0 5px 15px rgba(184, 134, 11, 0.3);#}
-{#        }#}
-{##}
-{#        .btn-info, .btn-outline-info {#}
-{#            background: transparent;#}
-{#            color: var(--accent-light);#}
-{#            border: 1px solid var(--accent);#}
-{#            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);#}
-{#            padding: 0.625rem 1.25rem;#}
-{#            border-radius: 8px;#}
-{#        }#}
-{##}
-{#        .btn-info:hover, .btn-outline-info:hover {#}
-{#            background: var(--accent);#}
-{#            color: var(--text);#}
-{#            border-color: var(--accent);#}
-{#            transform: translateY(-2px);#}
-{#        }#}
-{##}
-{#        /* Badge Styles */#}
-{#        .badge {#}
-{#            padding: 0.75rem 1.5rem;#}
-{#            border-radius: 10px;#}
-{#            font-weight: 500;#}
-{#            letter-spacing: 0.5px;#}
-{#            text-transform: uppercase;#}
-{#        }#}
-{##}
-{#        .badge.bg-primary {#}
-{#            background: linear-gradient(135deg, var(--accent), var(--accent-light)) !important;#}
-{#            color: var(--text);#}
-{#        }#}
-{##}
-{#        .badge.bg-warning {#}
-{#            background: linear-gradient(135deg, #FF8C00, #FFA500) !important;#}
-{#            color: var(--text-dark);#}
-{#        }#}
-{##}
-{#        .badge.bg-danger {#}
-{#            background: linear-gradient(135deg, #8B0000, #DC143C) !important;#}
-{#            color: var(--text);#}
-{#        }#}
-{##}
-{#        .badge.bg-success {#}
-{#            background: linear-gradient(135deg, #006400, #228B22) !important;#}
-{#            color: var(--text);#}
-{#        }#}
-{##}
-{#        /* Modal Styles */#}
-{#        .custom-modal {#}
-{#            display: none;#}
-{#            position: fixed;#}
-{#            z-index: 1050;#}
-{#            left: 0;#}
-{#            top: 0;#}
-{#            width: 100%;#}
-{#            height: 100%;#}
-{#            background-color: rgba(0, 0, 0, 0.7);#}
-{#            backdrop-filter: blur(5px);#}
-{#        }#}
-{##}
-{#        .custom-modal-dialog {#}
-{#            background: var(--surface);#}
-{#            margin: 5% auto;#}
-{#            width: 90%;#}
-{#            max-width: 600px;#}
-{#            border-radius: 20px;#}
-{#            border: 1px solid var(--accent);#}
-{#            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);#}
-{#            transform: translateY(0);#}
-{#            transition: transform 0.3s ease;#}
-{#            overflow: hidden;#}
-{#        }#}
-{##}
-{#        .custom-modal-header {#}
-{#            background: var(--surface-light);#}
-{#            padding: 1.5rem;#}
-{#            border-bottom: 1px solid var(--accent);#}
-{#            position: relative;#}
-{#        }#}
-{##}
-{#        .custom-modal-title {#}
-{#            color: var(--accent-light);#}
-{#            font-family: 'Cormorant Garamond', serif;#}
-{#            margin: 0;#}
-{#            font-size: 1.5rem;#}
-{#        }#}
-{##}
-{#        .custom-modal-close {#}
-{#            background: none;#}
-{#            border: none;#}
-{#            color: var(--accent-light);#}
-{#            font-size: 1.5rem;#}
-{#            padding: 0;#}
-{#            opacity: 0.8;#}
-{#            transition: opacity 0.2s;#}
-{#            position: absolute;#}
-{#            right: 1.5rem;#}
-{#            top: 50%;#}
-{#            transform: translateY(-50%);#}
-{#        }#}
-{##}
-{#        .custom-modal-close:hover {#}
-{#            opacity: 1;#}
-{#            color: var(--accent);#}
-{#        }#}
-{##}
-{#        .custom-modal-body {#}
-{#            padding: 2rem;#}
-{#            color: var(--text);#}
-{#            font-size: 1rem;#}
-{#            line-height: 1.6;#}
-{#        }#}
-{##}
-{#        .custom-modal-footer {#}
-{#            padding: 1.5rem;#}
-{#            background: var(--surface-light);#}
-{#            border-top: 1px solid var(--accent);#}
-{#            display: flex;#}
-{#            justify-content: flex-end;#}
-{#            gap: 1rem;#}
-{#        }#}
-{##}
-{#        /* Animations */#}
-{#        @keyframes shimmer {#}
-{#            0% { transform: translateX(-100%); }#}
-{#            100% { transform: translateX(100%); }#}
-{#        }#}
-{##}
-{#        @keyframes modalShow {#}
-{#            from {#}
-{#                opacity: 0;#}
-{#                transform: translateY(-20px);#}
-{#            }#}
-{#            to {#}
-{#                opacity: 1;#}
-{#                transform: translateY(0);#}
-{#            }#}
-{#        }#}
-{##}
-{#        .show {#}
-{#            animation: modalShow 0.3s ease forwards;#}
-{#        }#}
-{##}
-{#        /* Responsive Adjustments */#}
-{#        @media (max-width: 768px) {#}
-{#            .main_content {#}
-{#                padding: 1rem;#}
-{#            }#}
-{##}
-{#            .header-card h1 {#}
-{#                font-size: 2rem;#}
-{#            }#}
-{##}
-{#            .action-button {#}
-{#                padding: 0.75rem 1.25rem;#}
-{#                font-size: 0.9rem;#}
-{#            }#}
-{##}
-{#            .table th {#}
-{#                font-size: 1rem;#}
-{#                padding: 1rem;#}
-{#            }#}
-{##}
-{#            .table td {#}
-{#                font-size: 0.9rem;#}
-{#                padding: 1rem;#}
-{#            }#}
-{##}
-{#            .badge {#}
-{#                padding: 0.5rem 1rem;#}
-{#                font-size: 0.8rem;#}
-{#            }#}
-{#        }#}
-{#    </style>#}
-{#</head>#}
-{#<body>#}
-{#    <div id="particles-js"></div>#}
-{##}
-{#    <section class="container main_content">#}
-{#        <!-- Header Card -->#}
-{#        <div class="card header-card">#}
-{#            <div class="d-flex justify-content-between align-items-center">#}
-{#                <h1 class="h3 mb-0">Прогресс по задаче: {{ job.title }}</h1>#}
-{#                <div class="actions-container">#}
-{#                    <a href="{% url 'payment_load' %}" class="action-button">#}
-{#                        <i class="bi bi-bank"></i>#}
-{#                        Платежи#}
-{#                    </a>#}
-{#                    <a href="{% url 'client_progress_details' %}" class="action-button">#}
-{#                        <i class="bi bi-info-circle"></i>#}
-{#                        Подробности#}
-{#                    </a>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#        <!-- Progress Card -->#}
-{#        <div class="card progress-card">#}
-{#            <h3 class="h5 mb-3">Общий прогресс:</h3>#}
-{#            <div class="progress-container">#}
-{#                <div class="progress-bar" style="width: {{ job.get_overall_progress }}%">#}
-{#                    {{ job.get_overall_progress }}%#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#        <!-- Table Card -->#}
-{#        <div class="card table-card">#}
-{#            <div class="table-responsive">#}
-{#                <table class="table">#}
-{#                    <thead>#}
-{#                        <tr>#}
-{#                            <th>№</th>#}
-{#                            <th>Название задачи</th>#}
-{#                            <th>Описание задачи</th>#}
-{#                            <th>Процент выполнения</th>#}
-{#                            <th>Прогресс разработчика</th>#}
-{#                            <th>Дата начала</th>#}
-{#                            <th>Дедлайн</th>#}
-{#                            <th>Обратная связь</th>#}
-{#                            <th>Статус</th>#}
-{#                        </tr>#}
-{#                    </thead>#}
-{#                    <tbody></tbody>#}
-{#                </table>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#        <!-- Modal Container -->#}
-{#        <div id="modalContainer"></div>#}
-{#        #}
-{#    </section>#}
-{##}
-{#    <!-- Scripts -->#}
-{#    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>#}
-{#    <script src="{% static 'js/particles.min.js' %}"></script>#}
-{#    #}
-{#    <script>#}
-{#        // Modal Management#}
-{#        const createModal = (id) => {#}
-{#            return `#}
-{#                <div id="${id}" class="custom-modal">#}
-{#                    <div class="custom-modal-dialog">#}
-{#                        <div class="custom-modal-header">#}
-{#                            <h5 class="custom-modal-title"></h5>#}
-{#                            <button type="button" class="custom-modal-close" onclick="hideModal('${id}')">&times;</button>#}
-{#                        </div>#}
-{#                        <div class="custom-modal-body"></div>#}
-{#                        <div class="custom-modal-footer">#}
-{#                            <button type="button" class="btn btn-secondary" onclick="hideModal('${id}')">Закрыть</button>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            `;#}
-{#        };#}
-{##}
-{#        const showModal = (modalId, title, content) => {#}
-{#            const modal = document.getElementById(modalId);#}
-{#            if (!modal) return;#}
-{#            #}
-{#            modal.querySelector('.custom-modal-title').textContent = title;#}
-{#            modal.querySelector('.custom-modal-body').textContent = content;#}
-{#            modal.style.display = 'block';#}
-{#            document.body.classList.add('modal-open');#}
-{#            modal.classList.add('show');#}
-{##}
-{#            // Close on outside click#}
-{#            modal.onclick = (event) => {#}
-{#                if (event.target === modal) {#}
-{#                    hideModal(modalId);#}
-{#                }#}
-{#            };#}
-{#        };#}
-{##}
-{#        const hideModal = (modalId) => {#}
-{#            const modal = document.getElementById(modalId);#}
-{#            if (!modal) return;#}
-{#            #}
-{#            modal.classList.remove('show');#}
-{#            setTimeout(() => {#}
-{#                modal.style.display = 'none';#}
-{#                document.body.classList.remove('modal-open');#}
-{#            }, 300);#}
-{#        };#}
-{##}
-{#        // Initialize page#}
-{#        document.addEventListener("DOMContentLoaded", function () {#}
-{#            // Parse tasks data#}
-{#            const tasks = JSON.parse('{{ tasks|escapejs }}');#}
-{#            console.log('Tasks loaded:', tasks);#}
-{##}
-{#            // Create modals#}
-{#            const modalContainer = document.getElementById('modalContainer');#}
-{#            tasks.forEach((_, index) => {#}
-{#                modalContainer.innerHTML += createModal(`descriptionModal${index + 1}`);#}
-{#                modalContainer.innerHTML += createModal(`feedbackModal${index + 1}`);#}
-{#            });#}
-{##}
-{#            // Handle keyboard events#}
-{#            document.addEventListener('keydown', (event) => {#}
-{#                if (event.key === 'Enter' || event.key === 'Escape') {#}
-{#                    const openModal = document.querySelector('.custom-modal[style*="display: block"]');#}
-{#                    if (openModal) {#}
-{#                        hideModal(openModal.id);#}
-{#                    }#}
-{#                }#}
-{#            });#}
-{##}
-{#            // Populate table#}
-{#            const tbody = document.querySelector("tbody");#}
-{#            tbody.innerHTML = '';#}
-{##}
-{#            tasks.forEach((task, index) => {#}
-{#                // Calculate progress path#}
-{#                const startDate = new Date(task.start_date);#}
-{#                const deadline = new Date(task.deadline);#}
-{#                const currentDate = new Date();#}
-{#                const totalDuration = deadline - startDate;#}
-{#                const elapsedTime = currentDate - startDate;#}
-{#                #}
-{#                let path = 0;#}
-{#                if (totalDuration <= 0) {#}
-{#                    path = 100;#}
-{#                } else {#}
-{#                    path = Math.min((elapsedTime / totalDuration) * 100, 100);#}
-{#                }#}
-{##}
-{#                // Determine status#}
-{#                let statusBadge;#}
-{#                if (task.progress >= path) {#}
-{#                    statusBadge = `<span class="badge bg-primary">Перевыполнено на ${(task.progress - path).toFixed(2)}%</span>`;#}
-{#                } else if (task.progress >= path - 5) {#}
-{#                    statusBadge = `<span class="badge bg-warning">Отставание 5%</span>`;#}
-{#                } else if (task.progress >= path - 10) {#}
-{#                    statusBadge = `<span class="badge bg-danger">Отставание 10%</span>`;#}
-{#                } else {#}
-{#                    statusBadge = `<span class="badge bg-success">По плану</span>`;#}
-{#                }#}
-{##}
-{#                // Create row#}
-{#                const row = document.createElement("tr");#}
-{#                row.innerHTML = `#}
-{#                    <td>${index + 1}</td>#}
-{#                    <td class="taskTitle">${task.title}</td>#}
-{#                    <td>#}
-{#                        <button class="btn btn-sm btn-info" onclick="showModal('descriptionModal${index + 1}', 'Описание задачи: ${task.title}', '${(task.description || 'Описание отсутствует').replace(/'/g, "&#39;")}')">#}
-{#                            Описание#}
-{#                        </button>#}
-{#                    </td>#}
-{#                    <td>${task.task_percentage}%</td>#}
-{#                    <td class="taskProgress">${task.progress}%</td>#}
-{#                    <td>${task.start_date || '-'}</td>#}
-{#                    <td>${task.deadline || '-'}</td>#}
-{#                    <td>#}
-{#                        <button class="btn btn-sm btn-outline-info" onclick="showModal('feedbackModal${index + 1}', 'Отзыв для задачи: ${task.title}', '${(task.feedback || 'Отзыв отсутствует').replace(/'/g, "&#39;")}')">#}
-{#                            FeedBack#}
-{#                        </button>#}
-{#                    </td>#}
-{#                    <td>${statusBadge}</td>#}
-{#                `;#}
-{#                tbody.appendChild(row);#}
-{#            });#}
-{#        });#}
-{##}
-{#        // Initialize particles#}
-{#        particlesJS.load('particles-js', "{% static 'assets/particles.json' %}", function() {#}
-{#            console.log('Particles.js loaded');#}
-{#        });#}
-{#    </script>#}
-{##}
-{#    <!-- Additional Scripts -->#}
-{#    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>#}
-{#    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>#}
-{#    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>#}
-{#    <script src="{% static 'js/chart.js' %}"></script>#}
-{#    <script src="{% static 'js/app.js' %}"></script>#}
-{#    <script src="{% static 'js/script.js' %}"></script>#}
-{#</body>#}
-{#</html>#}
-{#        #}
-{##}
 {#{% load static %}#}
 {#<!DOCTYPE html>#}
 {#<html lang="ru">#}
@@ -1000,6 +410,7 @@
 {#            color: var(--dark);#}
 {#            margin-top: 6px;#}
 {#        }#}
+{#        #}
 {#        /* Sheet Table Styles - Fixed Cell Sizes */#}
 {#        .sheet-container {#}
 {#            overflow-x: auto;#}
@@ -1221,11 +632,11 @@
 {#                </div>#}
 {#                <div class="view-tabs">#}
 {#                    <button class="view-tab active" id="list-view-btn">#}
-{#                        <i class="fas fa-list-ul"></i> Простые задачи#}
+{#                        <i class="fas fa-list-ul"></i> Дополнительные задачи#}
 {#                    </button>#}
 {#                    {% if show_follow_tasks %}#}
 {#                    <button class="view-tab" id="sheet-view-btn">#}
-{#                        <i class="fas fa-table"></i> Повторяющиеся задачи#}
+{#                        <i class="fas fa-table"></i> Задачи дорожной карты#}
 {#                    </button>#}
 {#                    {% endif %}#}
 {#                </div>#}
@@ -1244,7 +655,7 @@
 {#                        <i class="fas fa-dollar-sign"></i>#}
 {#                    </div>#}
 {#                    <div class="kpi-value">${{ job.over_all_income|floatformat:0 }}</div>#}
-{#                    <div class="kpi-label">Общий бюджет</div>#}
+{#                    <div class="kpi-label">Текущий платеж</div>#}
 {#                </div>#}
 {#                #}
 {#                <!-- Progress Card -->#}
@@ -1352,158 +763,134 @@
 {#            <div class="summary-title ps-3 pt-2">#}
 {#                <i class="fas fa-calendar-alt"></i> График повторяющихся задач#}
 {#            </div>#}
-{#            <div class="table-responsive">#}
-{#                <table class="sheet-table">#}
-{#                    <thead>#}
-{#                        <tr>#}
-{#                            <th>Задача</th>#}
-{#                            {% for month in all_months %}#}
-{#                            <th>{{ month }}</th>#}
-{#                            {% endfor %}#}
-{#                        </tr>#}
-{#                    </thead>#}
-{#                    <tbody>#}
-{#                        {% for row in task_matrix %}#}
-{#                        <tr>#}
-{#                            <td>{{ row.base_name }}</td>#}
-{#                            {% for cell in row.cells %}#}
+{#            <table class="sheet-table">#}
+{#                <thead>#}
+{#                <tr>#}
+{#                    <th>Задача</th>#}
+{#                    {% for month in all_months %}#}
+{#                        <th>{{ month }}</th>#}
+{#                    {% endfor %}#}
+{#                </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for row in task_matrix %}#}
+{#                    <tr>#}
+{#                        <td>{{ row.base_name }}</td>#}
+{#                        {% for cell in row.cells %}#}
 {#                            <td>#}
 {#                                {% if not cell.empty %}#}
-{#                                {% with progress=cell.tasks.0.progress %}#}
-{#                                {% with current_month=current_date|date:"F Y" month_index=forloop.counter0 %}#}
-{#                                <div class="task-cell #}
-{#                                    {% if progress == 100 %}cell-completed#}
-{#                                    {% else %}#}
-{#                                        {% with month_str=all_months|first %}#}
-{#                                            {% if month_index < month_str|length %}#}
-{#                                                {% if forloop.counter0 < forloop.parentloop.counter0 %}cell-past-month#}
-{#                                                {% elif all_months|length > forloop.counter0 %}#}
-{#                                                    {% if all_months|slice:":1:"|first == current_month %}cell-current-month#}
-{#                                                    {% else %}cell-future-month#}
-{#                                                    {% endif %}#}
-{#                                                {% endif %}#}
-{#                                            {% endif %}#}
-{#                                        {% endwith %}#}
-{#                                    {% endif %}" #}
-{#                                    onclick="toggleTaskPopup('popup-{{ row.base_name|slugify }}-{{ forloop.counter }}')">#}
-{#                                    #}
-{#                                    {% if cell.tasks|length == 1 %}#}
-{#                                    <div class="cell-progress #}
-{#                                        {% if progress == 100 %}progress-completed#}
-{#                                        {% else %}#}
-{#                                            {% if forloop.counter0 < forloop.parentloop.counter0 %}progress-past-month#}
-{#                                            {% elif cell.tasks.0.deadline|date:"F Y" == current_month %}progress-current-month#}
-{#                                            {% else %}progress-future-month#}
-{#                                            {% endif %}#}
+{#                                    <div class="task-cell #}
+{#                                    {% if cell.month_type == 'completed' %}cell-completed#}
+{#                                    {% elif cell.month_type == 'current' %}cell-current-month#}
+{#                                    {% elif cell.month_type == 'past' %}cell-past-month#}
+{#                                    {% else %}cell-future-month#}
+{#                                    {% endif %}"#}
+{#                                         onclick="toggleTaskPopup('popup-{{ row.base_name|slugify }}-{{ forloop.counter }}')">#}
+{##}
+{#                                        {% if cell.tasks|length == 1 %}#}
+{#                                            <div class="cell-progress #}
+{#                                        {% if cell.month_type == 'completed' %}progress-completed#}
+{#                                        {% elif cell.month_type == 'current' %}progress-current-month#}
+{#                                        {% elif cell.month_type == 'past' %}progress-past-month#}
+{#                                        {% else %}progress-future-month#}
 {#                                        {% endif %}">#}
-{#                                        {{ progress }}%#}
-{#                                    </div>#}
-{#                                    {% else %}#}
-{#                                    <span class="task-count #}
-{#                                        {% if progress == 100 %}count-completed#}
+{#                                                {{ cell.tasks.0.progress }}%#}
+{#                                            </div>#}
 {#                                        {% else %}#}
-{#                                            {% if forloop.counter0 < forloop.parentloop.counter0 %}count-past-month#}
-{#                                            {% elif cell.tasks.0.deadline|date:"F Y" == current_month %}count-current-month#}
-{#                                            {% else %}count-future-month#}
-{#                                            {% endif %}#}
+{#                                            <span class="task-count #}
+{#                                        {% if cell.month_type == 'completed' %}count-completed#}
+{#                                        {% elif cell.month_type == 'current' %}count-current-month#}
+{#                                        {% elif cell.month_type == 'past' %}count-past-month#}
+{#                                        {% else %}count-future-month#}
 {#                                        {% endif %}">#}
 {#                                        {{ cell.tasks|length }}#}
 {#                                    </span>#}
-{#                                    {% endif %}#}
-{#                                    #}
-{#                                    <!-- Task Popup -->#}
-{#                                    <div id="popup-{{ row.base_name|slugify }}-{{ forloop.counter }}" class="task-popup">#}
-{#                                        {% if cell.tasks|length == 1 %}#}
-{#                                        <!-- Single task popup -->#}
-{#                                        <div class="popup-header">#}
-{#                                            <div class="popup-title">{{ cell.tasks.0.title }}</div>#}
-{#                                            <div class="popup-progress #}
-{#                                                {% if progress == 100 %}progress-completed#}
-{#                                                {% else %}#}
-{#                                                    {% if forloop.counter0 < forloop.parentloop.counter0 %}progress-past-month#}
-{#                                                    {% elif cell.tasks.0.deadline|date:"F Y" == current_month %}progress-current-month#}
-{#                                                    {% else %}progress-future-month#}
-{#                                                    {% endif %}#}
-{#                                                {% endif %}">#}
-{#                                                {{ progress }}%#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        #}
-{#                                        <div class="popup-item">#}
-{#                                            <div class="popup-label">Срок сдачи</div>#}
-{#                                            <div class="popup-value">{{ cell.tasks.0.deadline|date:"d.m.Y" }}</div>#}
-{#                                        </div>#}
-{#                                        #}
-{#                                        <div class="popup-item">#}
-{#                                            <div class="popup-label">Бюджет</div>#}
-{#                                            <div class="popup-value">${{ cell.tasks.0.money_for_task|floatformat:2 }}</div>#}
-{#                                        </div>#}
-{#                                        #}
-{#                                        <div class="popup-item">#}
-{#                                            <div class="popup-label">Часы</div>#}
-{#                                            <div class="popup-value">{{ cell.tasks.0.hours }} часов</div>#}
-{#                                        </div>#}
-{#                                        #}
-{#                                        <div class="popup-item">#}
-{#                                            <div class="popup-label">Исполнитель</div>#}
-{#                                            <div class="popup-value">#}
-{#                                                {% for user in cell.tasks.0.assigned_users.all %}#}
-{#                                                {{ user.email }}{% if not forloop.last %}, {% endif %}#}
-{#                                                {% empty %}#}
-{#                                                <span class="text-muted">Не назначен</span>#}
-{#                                                {% endfor %}#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        {% else %}#}
-{#                                        <!-- Multiple tasks popup -->#}
-{#                                        <div class="popup-header">#}
-{#                                            <div class="popup-title">{{ cell.tasks|length }} задач</div>#}
-{#                                        </div>#}
-{#                                        #}
-{#                                        <div class="multi-tasks">#}
-{#                                            {% for task in cell.tasks %}#}
-{#                                            <div class="multi-task-item">#}
-{#                                                <div class="popup-item">#}
-{#                                                    <div class="popup-label">Задача</div>#}
-{#                                                    <div class="popup-value">{{ task.title }}</div>#}
-{#                                                </div>#}
-{#                                                #}
-{#                                                <div class="d-flex justify-content-between align-items-center">#}
-{#                                                    <div class="popup-label">Прогресс</div>#}
+{#                                        {% endif %}#}
+{##}
+{#                                        <!-- Task Popup -->#}
+{#                                        <div id="popup-{{ row.base_name|slugify }}-{{ forloop.counter }}" class="task-popup">#}
+{#                                            {% if cell.tasks|length == 1 %}#}
+{#                                                <!-- Single task popup -->#}
+{#                                                <div class="popup-header">#}
+{#                                                    <div class="popup-title">{{ cell.tasks.0.title }}</div>#}
 {#                                                    <div class="popup-progress #}
-{#                                                       {% if task.progress == 100 %}progress-completed#}
-{#                                                        {% else %}#}
-{#                                                            {% if forloop.parentloop.parentloop.counter0 < forloop.parentloop.parentloop.parentloop.counter0 %}progress-past-month#}
-{#                                                            {% elif task.deadline|date:"F Y" == current_month %}progress-current-month#}
-{#                                                            {% else %}progress-future-month#}
-{#                                                            {% endif %}#}
-{#                                                        {% endif %}">#}
-{#                                                        {{ task.progress }}%#}
+{#                                                {% if cell.month_type == 'completed' %}progress-completed#}
+{#                                                {% elif cell.month_type == 'current' %}progress-current-month#}
+{#                                                {% elif cell.month_type == 'past' %}progress-past-month#}
+{#                                                {% else %}progress-future-month#}
+{#                                                {% endif %}">#}
+{#                                                        {{ cell.tasks.0.progress }}%#}
 {#                                                    </div>#}
 {#                                                </div>#}
-{#                                                #}
+{##}
 {#                                                <div class="popup-item">#}
 {#                                                    <div class="popup-label">Срок сдачи</div>#}
-{#                                                    <div class="popup-value">{{ task.deadline|date:"d.m.Y" }}</div>#}
+{#                                                    <div class="popup-value">{{ cell.tasks.0.deadline|date:"d.m.Y" }}</div>#}
 {#                                                </div>#}
-{#                                                #}
+{##}
 {#                                                <div class="popup-item">#}
 {#                                                    <div class="popup-label">Бюджет</div>#}
-{#                                                    <div class="popup-value">${{ task.money_for_task|floatformat:2 }}</div>#}
+{#                                                    <div class="popup-value">${{ cell.tasks.0.money_for_task|floatformat:2 }}</div>#}
 {#                                                </div>#}
-{#                                                #}
+{##}
 {#                                                <div class="popup-item">#}
 {#                                                    <div class="popup-label">Часы</div>#}
-{#                                                    <div class="popup-value">{{ task.hours }} часов</div>#}
+{#                                                    <div class="popup-value">{{ cell.tasks.0.hours }} часов</div>#}
 {#                                                </div>#}
-{#                                            </div>#}
-{#                                            {% endfor %}#}
-{#                                        </div>#}
-{#                                        {% endif %}#}
+{##}
+{#                                                <div class="popup-item">#}
+{#                                                    <div class="popup-label">Исполнитель</div>#}
+{#                                                    <div class="popup-value">#}
+{#                                                        {% for user in cell.tasks.0.assigned_users.all %}#}
+{#                                                            {{ user.email }}{% if not forloop.last %}, {% endif %}#}
+{#                                                        {% empty %}#}
+{#                                                            <span class="text-muted">Не назначен</span>#}
+{#                                                        {% endfor %}#}
+{#                                                    </div>#}
+{#                                                </div>#}
+{#                                            {% else %}#}
+{#                                                <!-- Multiple tasks popup -->#}
+{#                                                <div class="popup-header">#}
+{#                                                    <div class="popup-title">{{ cell.tasks|length }} задач</div>#}
+{#                                                </div>#}
+{##}
+{#                                                <div class="multi-tasks">#}
+{#                                                    {% for task in cell.tasks %}#}
+{#                                                        <div class="multi-task-item">#}
+{#                                                            <div class="popup-item">#}
+{#                                                                <div class="popup-label">Задача</div>#}
+{#                                                                <div class="popup-value">{{ task.title }}</div>#}
+{#                                                            </div>#}
+{##}
+{#                                                            <div class="d-flex justify-content-between align-items-center">#}
+{#                                                                <div class="popup-label">Прогресс</div>#}
+{#                                                                <div class="popup-progress #}
+{#                                                        {% if cell.month_type == 'completed' %}progress-completed#}
+{#                                                        {% elif cell.month_type == 'current' %}progress-current-month#}
+{#                                                        {% elif cell.month_type == 'past' %}progress-past-month#}
+{#                                                        {% else %}progress-future-month#}
+{#                                                        {% endif %}">#}
+{#                                                                    {{ task.progress }}%#}
+{#                                                                </div>#}
+{#                                                            </div>#}
+{##}
+{#                                                            <div class="popup-value">{{ task.deadline|date:"d.m.Y" }}</div>#}
+{#                                                        </div>#}
+{##}
+{#                                                        <div class="popup-item">#}
+{#                                                            <div class="popup-label">Бюджет</div>#}
+{#                                                            <div class="popup-value">${{ task.money_for_task|floatformat:2 }}</div>#}
+{#                                                        </div>#}
+{##}
+{#                                                        <div class="popup-item">#}
+{#                                                            <div class="popup-label">Часы</div>#}
+{#                                                            <div class="popup-value">{{ task.hours }} часов</div>#}
+{#                                                        </div>#}
+{#                                                        </div>#}
+{#                                                    {% endfor %}#}
+{#                                                </div>#}
+{#                                            {% endif %}#}
 {#                                    </div>#}
-{#                                </div>#}
-{#                                {% endwith %}#}
-{#                                {% endwith %}#}
 {#                                {% else %}#}
 {#                                <div class="task-no-data">—</div>#}
 {#                                {% endif %}#}
@@ -1680,11 +1067,6 @@
 
 
 
-
-
-
-
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
@@ -1746,6 +1128,47 @@
             font-size: 15px;
             color: var(--gray);
             margin-bottom: 0;
+        }
+        
+        /* Tab Buttons - Moved to bottom */
+        .tabs-container {
+            margin-bottom: 20px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 10px;
+        }
+        
+        .view-tabs {
+            display: flex;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            width: fit-content;
+        }
+        
+        .view-tab {
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            position: relative;
+        }
+        
+        .view-tab.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        
+        .view-tab:hover:not(.active) {
+            background-color: #f8fafc;
+        }
+        
+        .view-tab i {
+            margin-right: 6px;
         }
         
         .project-summary {
@@ -1973,41 +1396,6 @@
             padding: 3px 8px;
             font-weight: 600;
             font-size: 13px;
-        }
-        
-        /* Task Visualization Tabs */
-        .view-tabs {
-            display: flex;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-            width: fit-content;
-        }
-        
-        .view-tab {
-            padding: 12px 22px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--gray);
-            cursor: pointer;
-            background: transparent;
-            border: none;
-            position: relative;
-        }
-        
-        .view-tab.active {
-            color: var(--primary);
-            background-color: var(--primary-light);
-        }
-        
-        .view-tab:hover:not(.active) {
-            background-color: #f8fafc;
-        }
-        
-        .view-tab i {
-            margin-right: 6px;
         }
         
         /* Task Tables */
@@ -2317,16 +1705,6 @@
                     <h1>Добро пожаловать, Клиент</h1>
                     <p>Текущий статус вашего проекта: <strong>{{ job.title }}</strong></p>
                 </div>
-                <div class="view-tabs">
-                    <button class="view-tab active" id="list-view-btn">
-                        <i class="fas fa-list-ul"></i> Дополнительные задачи
-                    </button>
-                    {% if show_follow_tasks %}
-                    <button class="view-tab" id="sheet-view-btn">
-                        <i class="fas fa-table"></i> Задачи дорожной карты
-                    </button>
-                    {% endif %}
-                </div>
             </div>
         </div>
         
@@ -2362,6 +1740,9 @@
                     <div class="kpi-value">{{ job.get_completed_tasks_count }}</div>
                     <div class="kpi-label">Завершено задач</div>
                 </div>
+            
+            
+
                 
                 <!-- Time Remaining Card - Updated -->
                 <div class="kpi-card">
@@ -2420,6 +1801,20 @@
                         {% endif %}
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Moved: Tabs container to appear here before the task views -->
+        <div class="tabs-container">
+            <div class="view-tabs">
+                <button class="view-tab active" id="list-view-btn">
+                    <i class="fas fa-list-ul"></i> Дополнительные задачи
+                </button>
+                {% if show_follow_tasks %}
+                <button class="view-tab" id="sheet-view-btn">
+                    <i class="fas fa-table"></i> Задачи дорожной карты
+                </button>
+                {% endif %}
             </div>
         </div>
         
@@ -2573,10 +1968,10 @@
                                                             <div class="popup-label">Часы</div>
                                                             <div class="popup-value">{{ task.hours }} часов</div>
                                                         </div>
-                                                        </div>
                                                     {% endfor %}
                                                 </div>
                                             {% endif %}
+                                        </div>
                                     </div>
                                 {% else %}
                                 <div class="task-no-data">—</div>
@@ -2749,3 +2144,4 @@
     </script>
 </body>
 </html>
+

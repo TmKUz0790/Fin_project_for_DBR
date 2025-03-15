@@ -1,5 +1,5 @@
 
-from datetime import timezone, datetime
+from datetime import timezone, datetime, date
 from django.db.models import F, Sum, Q
 from django.utils.timezone import now
 from django.core.paginator import Paginator
@@ -17,12 +17,12 @@ from django.urls import reverse
 import json
 
 from . import models
-from .models import Job, Task, DeductionLog, calculate_income_balance
+
 from .forms import JobForm, TaskFormSet, ClientLoginForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .models import Job
+from .models import Job, calculate_income_balance
 from .forms import TaskFormSet
 from django.core.paginator import Paginator
 from django.shortcuts import render
@@ -823,23 +823,145 @@ from django.db.models import Count
 from django.db.models import Sum
 from django.utils.timezone import now
 
+#
+# from django.utils.timezone import now
+#
+# @login_required
+# def admin_dashboard(request):
+#     if request.user.email != 'Admin@dbr.org':
+#         # Return a 403 Forbidden response if the user is not authorized
+#         return HttpResponseForbidden("You are not authorized to access this page.")
+#     jobs = Job.objects.all()
+#     total_jobs = jobs.count()
+#     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
+#     total_remaining_income = calculate_income_balance()["income_balance"]
+#
+#     # Overdue task count
+#     overdue_task_count = Task.objects.filter(
+#         progress__lt=100,
+#         deadline__lt=now().date()
+#     ).count()
+#
+#     # Calculate monthly income (jobs created this month)
+#     current_month = now().month
+#     current_year = now().year
+#     monthly_income = Job.objects.filter(
+#         created_at__year=current_year,
+#         created_at__month=current_month
+#     ).aggregate(monthly_total=Sum('over_all_income'))['monthly_total'] or 0
+#
+#     developers = User.objects.prefetch_related('developer_tasks')
+#     developer_data = []
+#     for developer in developers:
+#         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
+#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
+#         task_info = []
+#
+#         for task in assigned_tasks:
+#             days_until_deadline = (task.deadline - now().date()).days if task.deadline else None
+#             if task.progress == 100:
+#                 task_color = 'done'
+#                 status_counter['done'] += 1
+#             else:
+#                 if days_until_deadline is not None:
+#                     if days_until_deadline > 10:
+#                         task_color = 'task_green'
+#                         status_counter['task_green'] += 1
+#                     elif 5 < days_until_deadline <= 10:
+#                         task_color = 'task_yellow'
+#                         status_counter['task_yellow'] += 1
+#                     elif 0 <= days_until_deadline <= 5:
+#                         task_color = 'task_red'
+#                         status_counter['task_red'] += 1
+#                     else:
+#                         task_color = 'overdue'
+#                         status_counter['overdue'] += 1
+#                 else:
+#                     task_color = None
+#
+#             task_info.append({
+#                 'task': task,
+#                 'days_until_deadline': days_until_deadline,
+#                 'color': task_color
+#             })
+#
+#         task_paginator = Paginator(task_info, 5)
+#         page_number = request.GET.get(f'page_{developer.id}', 1)
+#         page_obj = task_paginator.get_page(page_number)
+#
+#         balance = assigned_tasks.filter(paid=True).aggregate(
+#             total_balance=Sum('money_for_task')
+#         )['total_balance'] or 0
+#
+#         developer_data.append({
+#             'developer': developer,
+#             'tasks': page_obj,
+#             'balance': balance,
+#             'status_counts': status_counter,
+#         })
+#
+#     developers_paginator = Paginator(developer_data, 10)
+#     developers_page_number = request.GET.get('developer_page', 1)
+#     developers_page_obj = developers_paginator.get_page(developers_page_number)
+#
+#     unassigned_tasks = Task.objects.filter(assigned_users=None)
+#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
+#
+#     context = {
+#         'total_jobs': total_jobs,
+#         'total_income': total_income,
+#         'in_time_processes_money': total_remaining_income,
+#         'overdue_task_count': overdue_task_count,
+#         'monthly_income': monthly_income,
+#         'developer_data': developers_page_obj,
+#         'unassigned_tasks': unassigned_tasks,
+#         'all_deduction_logs': all_deduction_logs,
+#     }
+#     return render(request, 'admin_dashboard.html', context)
 
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import Sum, Count, Q, F, Min, Max
 from django.utils.timezone import now
+from collections import Counter
+from datetime import timedelta
+
+from .models import Job, Task, DeductionLog, calculate_income_balance
+
 
 @login_required
 def admin_dashboard(request):
+    # Permission check
     if request.user.email != 'Admin@dbr.org':
-        # Return a 403 Forbidden response if the user is not authorized
         return HttpResponseForbidden("You are not authorized to access this page.")
+
+    today = now().date()
+
+    # Basic job & task stats
     jobs = Job.objects.all()
     total_jobs = jobs.count()
+
+    # Task counts by type
+    simple_tasks_count = Task.objects.filter(
+        task_type='SIMPLE',
+        progress__lt=100  # less than 100% complete
+    ).count()
+
+    monthly_tasks = Task.objects.filter(
+        task_type='MONTHLY',
+        progress__lt=100
+    ).count()
+
+    # Financial data
     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
-    total_remaining_income = calculate_income_balance()["income_balance"]
+    in_time_processes_money = calculate_income_balance()["income_balance"]
 
     # Overdue task count
     overdue_task_count = Task.objects.filter(
         progress__lt=100,
-        deadline__lt=now().date()
+        deadline__lt=today
     ).count()
 
     # Calculate monthly income (jobs created this month)
@@ -850,15 +972,18 @@ def admin_dashboard(request):
         created_at__month=current_month
     ).aggregate(monthly_total=Sum('over_all_income'))['monthly_total'] or 0
 
+    # Get developer data with task status
     developers = User.objects.prefetch_related('developer_tasks')
     developer_data = []
+
     for developer in developers:
         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
         task_info = []
 
         for task in assigned_tasks:
-            days_until_deadline = (task.deadline - now().date()).days if task.deadline else None
+            days_until_deadline = (task.deadline - today).days if task.deadline else None
+
             if task.progress == 100:
                 task_color = 'done'
                 status_counter['done'] += 1
@@ -885,10 +1010,13 @@ def admin_dashboard(request):
                 'color': task_color
             })
 
+        # Get 5 most recent tasks for the detail view
+        from django.core.paginator import Paginator
         task_paginator = Paginator(task_info, 5)
         page_number = request.GET.get(f'page_{developer.id}', 1)
         page_obj = task_paginator.get_page(page_number)
 
+        # Calculate balance
         balance = assigned_tasks.filter(paid=True).aggregate(
             total_balance=Sum('money_for_task')
         )['total_balance'] or 0
@@ -900,24 +1028,167 @@ def admin_dashboard(request):
             'status_counts': status_counter,
         })
 
-    developers_paginator = Paginator(developer_data, 10)
-    developers_page_number = request.GET.get('developer_page', 1)
-    developers_page_obj = developers_paginator.get_page(developers_page_number)
+    # Limit developer data for dashboard display
+    developer_data = developer_data[:4]  # Show only 4 developers on dashboard
 
-    unassigned_tasks = Task.objects.filter(assigned_users=None)
-    all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
+    # Get recent jobs (5 most recent)
+    recent_jobs = Job.objects.order_by('-created_at')[:5]
+
+    # Add job.get_overall_progress and get_overdue_tasks_count methods to the Job model
+    for job in recent_jobs:
+        if not hasattr(job, 'get_overall_progress'):
+            job.get_overall_progress = lambda: Task.objects.filter(job=job).aggregate(
+                avg_progress=Sum(F('progress') * F('task_percentage')) / 100
+            )['avg_progress'] or 0
+
+        if not hasattr(job, 'get_overdue_tasks_count'):
+            job.get_overdue_tasks_count = Task.objects.filter(
+                job=job,
+                progress__lt=100,
+                deadline__lt=today
+            ).count()
+
+        if not hasattr(job, 'get_latest_deadline'):
+            job.get_latest_deadline = Task.objects.filter(job=job).aggregate(
+                latest=Max('deadline')
+            )['latest']
+
+    # Get upcoming deadlines (10 tasks with closest deadlines that aren't overdue)
+    upcoming_tasks = Task.objects.filter(
+        progress__lt=100,  # Not completed
+        deadline__gte=today  # Not overdue
+    ).order_by('deadline')[:8]
+
+    # Add days_until_deadline property to tasks
+    for task in upcoming_tasks:
+        task.days_until_deadline = (task.deadline - today).days if task.deadline else None
+
+    # Overall completion rate for all active projects
+    total_progress = Task.objects.aggregate(
+        weighted_progress=Sum(F('progress') * F('task_percentage')) / 100
+    )['weighted_progress'] or 0
+    overall_completion_rate = int(total_progress)
 
     context = {
         'total_jobs': total_jobs,
         'total_income': total_income,
-        'in_time_processes_money': total_remaining_income,
+        'in_time_processes_money': in_time_processes_money,
         'overdue_task_count': overdue_task_count,
         'monthly_income': monthly_income,
-        'developer_data': developers_page_obj,
-        'unassigned_tasks': unassigned_tasks,
-        'all_deduction_logs': all_deduction_logs,
+        'developer_data': developer_data,
+        'simple_tasks_count': simple_tasks_count,
+        'monthly_tasks': monthly_tasks,
+        'recent_jobs': recent_jobs,
+        'upcoming_tasks': upcoming_tasks,
+        'overall_completion_rate': overall_completion_rate,
     }
+
     return render(request, 'admin_dashboard.html', context)
+
+#
+#
+# @login_required
+# def admin_dashboard(request):
+#     if request.user.email != 'Admin@dbr.org':
+#         # Return a 403 Forbidden response if the user is not authorized
+#         return HttpResponseForbidden("You are not authorized to access this page.")
+#     jobs = Job.objects.all()
+#     total_jobs = jobs.count()
+#     simple_incomplete_tasks = Task.objects.filter(
+#         task_type='SIMPLE',
+#         progress__lt=100  # less than 100
+#     ).count()
+#     monthly_tasks = Task.objects.filter(
+#         task_type='MONTHLY',
+#         progress__lt=100
+#     ).count()
+#     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
+#     total_remaining_income = calculate_income_balance()["income_balance"]
+#
+#     # Overdue task count
+#     overdue_task_count = Task.objects.filter(
+#         progress__lt=100,
+#         deadline__lt=now().date()
+#     ).count()
+#
+#     # Calculate monthly income (jobs created this month)
+#     current_month = now().month
+#     current_year = now().year
+#     monthly_income = Job.objects.filter(
+#         created_at__year=current_year,
+#         created_at__month=current_month
+#     ).aggregate(monthly_total=Sum('over_all_income'))['monthly_total'] or 0
+#
+#     developers = User.objects.prefetch_related('developer_tasks')
+#     developer_data = []
+#     for developer in developers:
+#         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
+#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
+#         task_info = []
+#
+#         for task in assigned_tasks:
+#             days_until_deadline = (task.deadline - now().date()).days if task.deadline else None
+#             if task.progress == 100:
+#                 task_color = 'done'
+#                 status_counter['done'] += 1
+#             else:
+#                 if days_until_deadline is not None:
+#                     if days_until_deadline > 10:
+#                         task_color = 'task_green'
+#                         status_counter['task_green'] += 1
+#                     elif 5 < days_until_deadline <= 10:
+#                         task_color = 'task_yellow'
+#                         status_counter['task_yellow'] += 1
+#                     elif 0 <= days_until_deadline <= 5:
+#                         task_color = 'task_red'
+#                         status_counter['task_red'] += 1
+#                     else:
+#                         task_color = 'overdue'
+#                         status_counter['overdue'] += 1
+#                 else:
+#                     task_color = None
+#
+#             task_info.append({
+#                 'task': task,
+#                 'days_until_deadline': days_until_deadline,
+#                 'color': task_color
+#             })
+#
+#         task_paginator = Paginator(task_info, 5)
+#         page_number = request.GET.get(f'page_{developer.id}', 1)
+#         page_obj = task_paginator.get_page(page_number)
+#
+#         balance = assigned_tasks.filter(paid=True).aggregate(
+#             total_balance=Sum('money_for_task')
+#         )['total_balance'] or 0
+#
+#         developer_data.append({
+#             'developer': developer,
+#             'tasks': page_obj,
+#             'balance': balance,
+#             'status_counts': status_counter,
+#         })
+#
+#     developers_paginator = Paginator(developer_data, 10)
+#     developers_page_number = request.GET.get('developer_page', 1)
+#     developers_page_obj = developers_paginator.get_page(developers_page_number)
+#
+#     unassigned_tasks = Task.objects.filter(assigned_users=None)
+#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
+#
+#     context = {
+#         'total_jobs': total_jobs,
+#         'total_income': total_income,
+#         'in_time_processes_money': total_remaining_income,
+#         'overdue_task_count': overdue_task_count,
+#         'monthly_income': monthly_income,
+#         'developer_data': developers_page_obj,
+#         'unassigned_tasks': unassigned_tasks,
+#         'all_deduction_logs': all_deduction_logs,
+#         'simple_tasks_count': simple_incomplete_tasks,
+#         'monthly_tasks': monthly_tasks,
+#     }
+#     return render(request, 'admin_dashboard.html', context)
 
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
@@ -2085,3 +2356,41 @@ def edit_task(request, task_id):
         'task': task,
         'job': job,
     })
+
+
+
+@login_required
+def job_statistics(request):
+    # Get all jobs with their task statistics
+    jobs_stats = []
+
+    for job in Job.objects.all():
+        # Get all tasks for this job
+        tasks = job.tasks.all()
+
+        # Count different types of tasks
+        monthly_tasks = tasks.filter(task_type='MONTHLY').count()
+        simple_tasks = tasks.filter(task_type='SIMPLE').count()
+        overdue_tasks = tasks.filter(
+            Q(deadline__lt=date.today()) &
+            Q(progress__lt=100)
+        ).count()
+
+        # Calculate total tasks
+        total_tasks = tasks.count()
+
+        # Add to stats list
+        jobs_stats.append({
+            'job': job,
+            'total_tasks': total_tasks,
+            'monthly_tasks': monthly_tasks,
+            'simple_tasks': simple_tasks,
+            'overdue_tasks': overdue_tasks,
+            'overall_progress': job.get_overall_progress()
+        })
+
+    context = {
+        'jobs_stats': jobs_stats
+    }
+
+    return render(request, 'job_statistics.html', context)
