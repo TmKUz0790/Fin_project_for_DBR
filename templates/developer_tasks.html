@@ -1,3 +1,4 @@
+{##}
 {#<!DOCTYPE html>#}
 {#<html lang="en">#}
 {#<head>#}
@@ -76,6 +77,31 @@
 {#                        <i class="fas fa-cog text-3xl"></i>#}
 {#                    </a>#}
 {#                </div>#}
+{#                #}
+{#                #}
+{#                <!-- Добавьте этот код внутри task-card div, сразу после div с прогрессом -->#}
+{##}
+{#{% if task.progress == 100 %}#}
+{#    <div class="mt-3 flex justify-between text-accent-text/70">#}
+{#        <span>Статус подтверждения:</span>#}
+{#        {% if task.confirmed %}#}
+{#            <span class="text-neon-green flex items-center">#}
+{#                <i class="fas fa-check-circle mr-2"></i> Подтверждено#}
+{#            </span>#}
+{#        {% else %}#}
+{#            <span class="text-luxe-gold flex items-center">#}
+{#                <i class="fas fa-clock mr-2"></i> Ожидает подтверждения#}
+{#            </span>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#    #}
+{#    {% if task.confirmed %}#}
+{#        <div class="mt-1 flex justify-between text-accent-text/60 text-sm">#}
+{#            <span>Подтверждено:</span>#}
+{#            <span>{{ task.confirmed_by.username }} ({{ task.confirmation_date|date:"d.m.Y" }})</span>#}
+{#        </div>#}
+{#    {% endif %}#}
+{#{% endif %}#}
 {#            </div>#}
 {#        </header>#}
 {##}
@@ -323,76 +349,73 @@
 {#                    }#}
 {#                }#}
 {#            });#}
-{#            document.addEventListener('DOMContentLoaded', function() {#}
-{#    // Existing Performance Chart code...#}
-{##}
-{#    // Earnings Chart#}
-{#        const earningsCtx = document.getElementById('earningsChart').getContext('2d');#}
-{#        new Chart(earningsCtx, {#}
-{#         type: 'bar',#}
-{#         data: {#}
-{#            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],#}
-{#            datasets: [#}
-{#                {#}
-{#                    label: 'Earned',#}
-{#                    data: tasks.map(task => task.paid ? task.money_for_task : 0),#}
-{#                    backgroundColor: '#22D3EE',  // neon-green#}
-{#                    borderRadius: 8,#}
-{#                },#}
-{#                {#}
-{#                    label: 'Pending',#}
-{#                    data: tasks.map(task => !task.paid ? task.money_for_task : 0),#}
-{#                    backgroundColor: '#F59E0B',  // luxe-gold#}
-{#                    borderRadius: 8,#}
-{#                }#}
-{#            ]#}
-{#         },#}
-{#         options: {#}
-{#            responsive: true,#}
-{#            plugins: {#}
-{#                legend: {#}
-{#                    display: true,#}
-{#                    position: 'top',#}
-{#                    labels: {#}
-{#                        color: '#F8FAFC',#}
-{#                        font: {#}
-{#                            family: 'Space Grotesk'#}
-{#                        }#}
-{#                    }#}
-{#                },#}
-{#                tooltip: {#}
-{#                    callbacks: {#}
-{#                        label: function(context) {#}
-{#                            return `${context.dataset.label}: $${context.raw}`;#}
-{#                        }#}
-{#                    }#}
-{#                }#}
-{#            },#}
-{#            scales: {#}
-{#                y: {#}
-{#                    beginAtZero: true,#}
-{#                    grid: {#}
-{#                        color: 'rgba(248, 250, 252, 0.1)'#}
+{#            #}
+{#            // Earnings Chart#}
+{#            const earningsCtx = document.getElementById('earningsChart').getContext('2d');#}
+{#            new Chart(earningsCtx, {#}
+{#             type: 'bar',#}
+{#             data: {#}
+{#                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],#}
+{#                datasets: [#}
+{#                    {#}
+{#                        label: 'Earned',#}
+{#                        data: [1200, 1500, 1800, 1300, 1650, 1900],#}
+{#                        backgroundColor: '#22D3EE',  // neon-green#}
+{#                        borderRadius: 8,#}
 {#                    },#}
-{#                    ticks: {#}
-{#                        color: '#F8FAFC',#}
-{#                        callback: function(value) {#}
-{#                            return '$' + value;#}
+{#                    {#}
+{#                        label: 'Pending',#}
+{#                        data: [800, 600, 400, 700, 500, 300],#}
+{#                        backgroundColor: '#F59E0B',  // luxe-gold#}
+{#                        borderRadius: 8,#}
+{#                    }#}
+{#                ]#}
+{#             },#}
+{#             options: {#}
+{#                responsive: true,#}
+{#                plugins: {#}
+{#                    legend: {#}
+{#                        display: true,#}
+{#                        position: 'top',#}
+{#                        labels: {#}
+{#                            color: '#F8FAFC',#}
+{#                            font: {#}
+{#                                family: 'Space Grotesk'#}
+{#                            }#}
+{#                        }#}
+{#                    },#}
+{#                    tooltip: {#}
+{#                        callbacks: {#}
+{#                            label: function(context) {#}
+{#                                return `${context.dataset.label}: $${context.raw}`;#}
+{#                            }#}
 {#                        }#}
 {#                    }#}
 {#                },#}
-{#                x: {#}
-{#                    grid: {#}
-{#                        color: 'rgba(248, 250, 252, 0.1)'#}
+{#                scales: {#}
+{#                    y: {#}
+{#                        beginAtZero: true,#}
+{#                        grid: {#}
+{#                            color: 'rgba(248, 250, 252, 0.1)'#}
+{#                        },#}
+{#                        ticks: {#}
+{#                            color: '#F8FAFC',#}
+{#                            callback: function(value) {#}
+{#                                return '$' + value;#}
+{#                            }#}
+{#                        }#}
 {#                    },#}
-{#                    ticks: {#}
-{#                        color: '#F8FAFC'#}
+{#                    x: {#}
+{#                        grid: {#}
+{#                            color: 'rgba(248, 250, 252, 0.1)'#}
+{#                        },#}
+{#                        ticks: {#}
+{#                            color: '#F8FAFC'#}
+{#                        }#}
 {#                    }#}
 {#                }#}
 {#            }#}
-{#        }#}
-{#    });#}
-{#});#}
+{#        });#}
 {##}
 {#            // Range input live update#}
 {#            const rangeInputs = document.querySelectorAll('.progress-range');#}
@@ -456,7 +479,7 @@
 {#            });#}
 {#        }#}
 {##}
-{#        // Countdown Update#}
+{#        // Countdown Update - UPDATED to show actual deadline date#}
 {#        function updateCountdowns() {#}
 {#            const countdownElements = document.querySelectorAll('.countdown');#}
 {#            countdownElements.forEach(countdownElement => {#}
@@ -465,20 +488,24 @@
 {#                const timeDiff = deadlineDate - today;#}
 {#                const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));#}
 {##}
+{#                // Format the date to display#}
+{#                const options = { year: 'numeric', month: 'short', day: 'numeric' };#}
+{#                const formattedDate = deadlineDate.toLocaleDateString('en-US', options);#}
+{##}
 {#                // Remove existing classes#}
 {#                countdownElement.classList.remove('text-neon-green', 'text-luxe-gold', 'text-royal-purple', 'text-accent-text/50');#}
 {##}
+{#                // Display the actual deadline date instead of days left#}
+{#                countdownElement.textContent = `Due: ${formattedDate}`;#}
+{#                #}
+{#                // Still use color coding based on urgency#}
 {#                if (daysLeft > 10) {#}
-{#                    countdownElement.textContent = `${daysLeft} days left`;#}
 {#                    countdownElement.classList.add('text-neon-green');#}
 {#                } else if (daysLeft > 5) {#}
-{#                    countdownElement.textContent = `${daysLeft} days left`;#}
 {#                    countdownElement.classList.add('text-luxe-gold');#}
 {#                } else if (daysLeft > 0) {#}
-{#                    countdownElement.textContent = `${daysLeft} days left`;#}
 {#                    countdownElement.classList.add('text-royal-purple');#}
 {#                } else {#}
-{#                    countdownElement.textContent = "Deadline passed";#}
 {#                    countdownElement.classList.add('text-accent-text/50');#}
 {#                }#}
 {#            });#}
@@ -535,6 +562,7 @@
 {#    </script>#}
 {#</body>#}
 {#</html>#}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -631,49 +659,114 @@
                     </div>
                 </div>
 
+                <!-- Task Statistics -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="glass-morphism rounded-2xl p-4">
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-electric-blue mb-2">{{ task_stats.total_tasks }}</div>
+                            <div class="text-accent-text/70">Всего задач</div>
+                        </div>
+                    </div>
+                    <div class="glass-morphism rounded-2xl p-4">
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-neon-green mb-2">{{ task_stats.completed_tasks }}</div>
+                            <div class="text-accent-text/70">Завершенные</div>
+                        </div>
+                    </div>
+                    <div class="glass-morphism rounded-2xl p-4">
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-luxe-gold mb-2">{{ task_stats.pending_confirmation }}</div>
+                            <div class="text-accent-text/70">Ожидают подтверждения</div>
+                        </div>
+                    </div>
+                    <div class="glass-morphism rounded-2xl p-4">
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-royal-purple mb-2">{{ task_stats.confirmed_tasks }}</div>
+                            <div class="text-accent-text/70">Подтверждено</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Task List -->
                 <div id="task-list" class="space-y-6">
                     {% for task in tasks %}
                     <div class="task-card glass-morphism rounded-2xl p-6 flex items-center justify-between" data-progress="{{ task.progress }}">
                         <div class="flex-grow mr-6">
                             <div class="mb-2">
-        <span class="text-luxe-gold text-sm">{{ task.job.title }}</span>
-    </div>
+                                <span class="text-luxe-gold text-sm">{{ task.job.title }}</span>
+                            </div>
                             <h3 class="text-2xl font-semibold text-electric-blue mb-4">{{ task.title }}</h3>
                             <div class="w-full bg-deep-navy rounded-full h-3 overflow-hidden mb-3">
                                 <div class="progress-bar h-3 rounded-full" style="width: {{ task.progress }}%"></div>
                             </div>
                             <div class="flex justify-between text-accent-text/70">
-                                <span>Project Details</span>
-                                <span>{{ task.progress }}% Complete</span>
+                                <span>Детали проекта</span>
+                                <span>{{ task.progress }}% Выполнено</span>
                             </div>
+                            
+                            <!-- Task Confirmation Status -->
+                            {% if task.progress == 100 %}
+                            <div class="mt-3 border-t border-electric-blue/20 pt-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-accent-text/70">Статус проверки:</span>
+                                    {% if task.confirmed %}
+                                        <div class="flex items-center bg-neon-green/20 text-neon-green px-3 py-1 rounded-full">
+                                            <i class="fas fa-check-circle mr-2"></i> Подтверждено
+                                        </div>
+                                    {% else %}
+                                        <div class="flex items-center bg-luxe-gold/20 text-luxe-gold px-3 py-1 rounded-full">
+                                            <i class="fas fa-hourglass-half mr-2"></i> Ожидает подтверждения
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if task.confirmed %}
+                                <div class="mt-2 text-sm grid grid-cols-2 gap-2">
+                                    <div>
+                                        <span class="text-accent-text/50">Подтверждено:</span>
+                                        <span class="text-accent-text ml-2">{{ task.confirmed_by.username }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-accent-text/50">Дата:</span>
+                                        <span class="text-accent-text ml-2">{{ task.confirmation_date|date:"d.m.Y" }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="flex items-center space-x-6">
                             <div class="text-center">
                                 <span class="countdown block text-xl mb-2" data-deadline="{{ task.deadline }}"></span>
                                 <span class="text-sm {% if task.paid %}text-neon-green{% else %}text-luxe-gold{% endif %}">
-                                    {{ task.paid|yesno:"Paid,Pending" }}
+                                    {{ task.paid|yesno:"Оплачено,Ожидает оплаты" }}
                                 </span>
                             </div>
                             <div class="flex flex-col space-y-2">
+                                {% if task.progress < 100 %}
                                 <button 
                                     onclick="showUpdateProgressForm('{{ task.id }}')" 
                                     class="px-3 py-1 bg-electric-blue text-deep-navy rounded-md hover:opacity-90 transition-colors flex items-center justify-center"
                                 >
-                                    <i class="fas fa-chart-line mr-2"></i>Прогресс обновления
+                                    <i class="fas fa-chart-line mr-2"></i>Обновить прогресс
                                 </button>
+                                {% endif %}
                                 <button 
                                     onclick="showFeedbackForm('{{ task.id }}')" 
                                     class="px-3 py-1 bg-neon-green text-deep-navy rounded-md hover:opacity-90 transition-colors flex items-center justify-center"
                                 >
                                     <i class="fas fa-comment-dots mr-2"></i>Оставить отзыв
                                 </button>
+                                
+                                
+                                
+                               
                             </div>
                         </div>
                     </div>
                     {% empty %}
                     <div class="glass-morphism rounded-2xl p-8 text-center">
-                        <p class="text-accent-text/50 text-2xl">No tasks available</p>
+                        <p class="text-accent-text/50 text-2xl">Задачи не найдены</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -685,7 +778,7 @@
                             {% if tasks.has_previous %}
                             <li>
                                 <a href="?page={{ tasks.previous_page_number }}" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors">
-                                    Previous
+                                    Назад
                                 </a>
                             </li>
                             {% endif %}
@@ -699,7 +792,7 @@
                             {% if tasks.has_next %}
                             <li>
                                 <a href="?page={{ tasks.next_page_number }}" class="px-4 py-2 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors">
-                                    Next
+                                    Вперед
                                 </a>
                             </li>
                             {% endif %}
@@ -722,83 +815,93 @@
                    <canvas id="earningsChart" width="400" height="300"></canvas>
                  </div>
 
-                <!-- Quick Actions -->
-{#                <div class="glass-morphism rounded-2xl p-6">#}
-{#                    <h3 class="text-2xl font-semibold text-electric-blue mb-6">Quick Actions</h3>#}
-{#                    <div class="space-y-4">#}
-{#                        <button class="w-full px-6 py-3 bg-neon-green text-deep-navy rounded-full hover:opacity-90 transition-opacity">#}
-{#                            <i class="fas fa-plus mr-3"></i>Create New Project#}
-{#                        </button>#}
-{#                        <button class="w-full px-6 py-3 bg-royal-purple text-accent-text rounded-full hover:opacity-90 transition-opacity">#}
-{#                            <i class="fas fa-upload mr-3"></i>Upload Project Files#}
-{#                        </button>#}
-{#                    </div>#}
-{#                </div>#}
+                <!-- Task Status Summary -->
+                <div class="glass-morphism rounded-2xl p-6">
+                    <h3 class="text-2xl font-semibold text-electric-blue mb-6">Статус задач</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-accent-text">Требуют подтверждения</span>
+                            <span class="px-3 py-1 bg-luxe-gold/20 text-luxe-gold rounded-full">{{ task_stats.pending_confirmation }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-accent-text">Подтверждено</span>
+                            <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full">{{ task_stats.confirmed_tasks }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-accent-text">В процессе</span>
+                            <span class="px-3 py-1 bg-electric-blue/20 text-electric-blue rounded-full">{{ task_stats.in_progress_tasks }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-accent-text">Просрочено</span>
+                            <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full">{{ task_stats.overdue_tasks }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Progress Update Modal -->
-{% for task in tasks %}
-<div id="update-progress-form-{{ task.id }}" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center" onclick="event.target === this && hideUpdateProgressForm('{{ task.id }}')">
-    <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4" onclick="event.stopPropagation()">
-        <h3 class="text-3xl font-semibold text-electric-blue mb-6">Update Progress: {{ task.title }}</h3>
-        
-        <form method="POST" action="{% url 'update_progress' %}" class="progress-update-form">
-            {% csrf_token %}
-            <div class="mb-6">
-                <label for="progress_{{ task.id }}" class="block text-accent-text/70 mb-3">Процент прогресса:</label>
-                <input 
-                    type="range" 
-                    id="progress_{{ task.id }}" 
-                    name="progress" 
-                    min="0" 
-                    max="100" 
-                    value="{{ task.progress }}" 
-                    class="w-full h-3 bg-deep-navy rounded-full appearance-none cursor-pointer progress-range"
-                >
-                <div class="flex justify-between text-accent-text/70 mt-4">
-                    <span>0%</span>
-                    <span id="progressValue_{{ task.id }}" class="text-electric-blue font-bold">{{ task.progress }}%</span>
-                    <span>100%</span>
+    {% for task in tasks %}
+    <div id="update-progress-form-{{ task.id }}" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center" onclick="event.target === this && hideUpdateProgressForm('{{ task.id }}')">
+        <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4" onclick="event.stopPropagation()">
+            <h3 class="text-3xl font-semibold text-electric-blue mb-6">Обновить прогресс: {{ task.title }}</h3>
+            
+            <form method="POST" action="{% url 'update_progress' %}" class="progress-update-form">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <label for="progress_{{ task.id }}" class="block text-accent-text/70 mb-3">Процент прогресса:</label>
+                    <input 
+                        type="range" 
+                        id="progress_{{ task.id }}" 
+                        name="progress" 
+                        min="0" 
+                        max="100" 
+                        value="{{ task.progress }}" 
+                        class="w-full h-3 bg-deep-navy rounded-full appearance-none cursor-pointer progress-range"
+                    >
+                    <div class="flex justify-between text-accent-text/70 mt-4">
+                        <span>0%</span>
+                        <span id="progressValue_{{ task.id }}" class="text-electric-blue font-bold">{{ task.progress }}%</span>
+                        <span>100%</span>
+                    </div>
                 </div>
-            </div>
-            <input type="hidden" name="task_id" value="{{ task.id }}">
-            <div class="flex justify-end space-x-4">
-                <button 
-                    type="button" 
-                    onclick="hideUpdateProgressForm('{{ task.id }}')" 
-                    class="px-6 py-3 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors"
-                >
-                    Cancel
-                </button>
-                <button 
-                    type="submit" 
-                    class="px-6 py-3 bg-electric-blue text-deep-navy rounded-full hover:opacity-90 transition-colors submit-progress"
-                >
-                    Прогресс обновления
-                </button>
-            </div>
-        </form>
+                <input type="hidden" name="task_id" value="{{ task.id }}">
+                <div class="flex justify-end space-x-4">
+                    <button 
+                        type="button" 
+                        onclick="hideUpdateProgressForm('{{ task.id }}')" 
+                        class="px-6 py-3 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors"
+                    >
+                        Отмена
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="px-6 py-3 bg-electric-blue text-deep-navy rounded-full hover:opacity-90 transition-colors submit-progress"
+                    >
+                        Обновить прогресс
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-{% endfor %}
+    {% endfor %}
 
     <!-- Feedback Modals -->
     {% for task in tasks %}
     <div id="feedback-form-{{ task.id }}" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center" onclick="event.target === this && hideFeedbackForm('{{ task.id }}')">
-        <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4">
-            <h3 class="text-3xl font-semibold text-electric-blue mb-6">Feedback для: {{ task.title }}</h3>
+        <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4" onclick="event.stopPropagation()">
+            <h3 class="text-3xl font-semibold text-electric-blue mb-6">Оставить отзыв для: {{ task.title }}</h3>
             <form method="post" action="{% url 'update_feedback' %}">
                 {% csrf_token %}
                 <div class="mb-6">
-                    <label for="feedback_{{ task.id }}" class="block text-accent-text/70 mb-3">Твой Feedback:</label>
+                    <label for="feedback_{{ task.id }}" class="block text-accent-text/70 mb-3">Ваш отзыв:</label>
                     <textarea 
                         id="feedback_{{ task.id }}" 
                         name="feedback" 
                         rows="5" 
                         class="w-full bg-deep-navy text-accent-text rounded-2xl p-4 border border-electric-blue/30 focus:ring-2 focus:ring-electric-blue"
-                        placeholder="Write your detailed feedback here..."
+                        placeholder="Напишите подробный отзыв здесь..."
                     >{{ task.feedback }}</textarea>
                 </div>
                 <input type="hidden" name="task_id" value="{{ task.id }}">
@@ -808,13 +911,13 @@
                         onclick="hideFeedbackForm('{{ task.id }}')" 
                         class="px-6 py-3 bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue transition-colors"
                     >
-                        Cancel
+                        Отмена
                     </button>
                     <button 
                         type="submit" 
                         class="px-6 py-3 bg-electric-blue text-deep-navy rounded-full hover:opacity-90 transition-colors"
                     >
-                        Submit Feedback
+                        Отправить отзыв
                     </button>
                 </div>
             </form>
@@ -829,9 +932,9 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
                     datasets: [{
-                        label: 'Project Completion',
+                        label: 'Выполнение проекта',
                         data: [65, 59, 80, 81, 56, 55],
                         borderColor: '#38BDF8',
                         backgroundColor: 'rgba(56, 189, 248, 0.2)',
@@ -866,16 +969,16 @@
             new Chart(earningsCtx, {
              type: 'bar',
              data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
                 datasets: [
                     {
-                        label: 'Earned',
+                        label: 'Получено',
                         data: [1200, 1500, 1800, 1300, 1650, 1900],
                         backgroundColor: '#22D3EE',  // neon-green
                         borderRadius: 8,
                     },
                     {
-                        label: 'Pending',
+                        label: 'Ожидает',
                         data: [800, 600, 400, 700, 500, 300],
                         backgroundColor: '#F59E0B',  // luxe-gold
                         borderRadius: 8,
@@ -948,7 +1051,7 @@
                     // Basic client-side validation
                     if (progressValue < 0 || progressValue > 100) {
                         e.preventDefault();
-                        alert('Progress must be between 0 and 100%.');
+                        alert('Прогресс должен быть между 0 и 100%.');
                         progressInput.focus();
                     }
                 });
@@ -965,7 +1068,7 @@
                     // Basic client-side validation
                     if (feedbackTextarea.value.trim() === '') {
                         e.preventDefault();
-                        alert('Please provide feedback before submitting.');
+                        alert('Пожалуйста, введите отзыв перед отправкой.');
                         feedbackTextarea.focus();
                     }
                 });
@@ -1001,13 +1104,13 @@
 
                 // Format the date to display
                 const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                const formattedDate = deadlineDate.toLocaleDateString('en-US', options);
+                const formattedDate = deadlineDate.toLocaleDateString('ru-RU', options);
 
                 // Remove existing classes
                 countdownElement.classList.remove('text-neon-green', 'text-luxe-gold', 'text-royal-purple', 'text-accent-text/50');
 
                 // Display the actual deadline date instead of days left
-                countdownElement.textContent = `Due: ${formattedDate}`;
+                countdownElement.textContent = `Срок: ${formattedDate}`;
                 
                 // Still use color coding based on urgency
                 if (daysLeft > 10) {

@@ -205,173 +205,6 @@ def get_tasks_data(job):
         for task in job.tasks.all()
     ]
 
-# def client_progress(request):
-#     job_id = request.session.get('client_job_id')
-#     if not job_id:
-#         return redirect('client_login')
-#
-#     job = get_object_or_404(Job, id=job_id)
-#     tasks_data = get_tasks_data(job)
-#
-#     context = {
-#         'job': job,
-#         'tasks': mark_safe(json.dumps(tasks_data))
-#     }
-#     return render(request, 'client_progress.html', context)
-
-
-# def client_progress(request):
-#     job_id = request.session.get('client_job_id')
-#     if not job_id:
-#         return redirect('client_login')
-#
-#     job = get_object_or_404(Job, id=job_id)
-#     tasks_data = get_tasks_data(job)
-#
-#     # Add sheet view data similar to job_details view
-#     # Retrieve PATPIS (follow) tasks
-#     follow_tasks = Task.objects.filter(job=job, task_type='PATPIS').select_related()
-#
-#     # Initialize variables for sheet view
-#     all_months = []
-#     task_groups = {}
-#     task_matrix = []
-#     show_follow_tasks = follow_tasks.exists()
-#
-#     # Process follow tasks for sheet view (same logic as in job_details)
-#     if show_follow_tasks:
-#         import re
-#         from datetime import datetime, timedelta
-#
-#         # Find earliest and latest deadlines
-#         from django.db.models import Min, Max
-#         follow_task_stats = follow_tasks.aggregate(
-#             earliest_deadline=Min('deadline'),
-#             latest_follow_deadline=Max('deadline')
-#         )
-#
-#         earliest_deadline = follow_task_stats['earliest_deadline']
-#         latest_follow_deadline = follow_task_stats['latest_follow_deadline']
-#
-#         if earliest_deadline and latest_follow_deadline:
-#             # Ensure we have at least 12 months from earliest date
-#             min_end_date = earliest_deadline + timedelta(days=365)
-#             if latest_follow_deadline < min_end_date:
-#                 latest_follow_deadline = min_end_date
-#
-#             # Generate all months between earliest and latest deadline
-#             current_date = earliest_deadline.replace(day=1)
-#             while current_date <= latest_follow_deadline:
-#                 month_str = current_date.strftime("%B %Y")
-#                 all_months.append(month_str)
-#                 # Move to next month
-#                 if current_date.month == 12:
-#                     current_date = current_date.replace(year=current_date.year + 1, month=1)
-#                 else:
-#                     current_date = current_date.replace(month=current_date.month + 1)
-#
-#         # Compile regex once outside the loop
-#         pattern = re.compile(r'(.*) \((.*)\)')
-#
-#         # Extract all months and base names from tasks
-#         for task in follow_tasks:
-#             match = pattern.match(task.title)
-#             if match:
-#                 base_name = match.group(1)
-#                 month = match.group(2)
-#
-#                 # If month isn't in our all_months list, add it
-#                 if month not in all_months:
-#                     all_months.append(month)
-#
-#                 # Initialize the task group if it doesn't exist
-#                 if base_name not in task_groups:
-#                     task_groups[base_name] = {}
-#
-#                 # For each base_name+month combination, store related tasks
-#                 if month not in task_groups[base_name]:
-#                     task_groups[base_name][month] = []
-#
-#                 # Add this task to the list for this month
-#                 task_groups[base_name][month].append(task)
-#
-#         # Cache for parsed dates to avoid repeated parsing
-#         month_cache = {}
-#
-#         # Sort months chronologically
-#         def month_sort_key(month_str):
-#             if month_str in month_cache:
-#                 return month_cache[month_str]
-#
-#             try:
-#                 date_obj = datetime.strptime(month_str, "%B %Y")
-#                 month_cache[month_str] = date_obj
-#                 return date_obj
-#             except ValueError:
-#                 try:
-#                     date_obj = datetime.strptime(month_str, "%B")
-#                     date_obj = date_obj.replace(year=datetime.now().year)
-#                     month_cache[month_str] = date_obj
-#                     return date_obj
-#                 except ValueError:
-#                     month_cache[month_str] = datetime.now()
-#                     return datetime.now()
-#
-#         all_months.sort(key=month_sort_key)
-#
-#         # Build the matrix
-#         for base_name in sorted(task_groups.keys()):
-#             row = {
-#                 'base_name': base_name,
-#                 'cells': []
-#             }
-#
-#             # Find when this task type first appears
-#             first_task_month = None
-#             for month in all_months:
-#                 if month in task_groups[base_name]:
-#                     first_task_month = month
-#                     break
-#
-#             first_month_found = False
-#
-#             for month in all_months:
-#                 # If we haven't found the first month for this task yet, and this isn't it,
-#                 # add empty cell to create gap
-#                 if not first_month_found and month != first_task_month:
-#                     row['cells'].append({
-#                         'tasks': [],
-#                         'empty': True
-#                     })
-#                 # Once we find the first month or have already found it, process normally
-#                 elif month in task_groups[base_name] or first_month_found:
-#                     first_month_found = True
-#                     if month in task_groups[base_name]:
-#                         row['cells'].append({
-#                             'tasks': task_groups[base_name][month],
-#                             'empty': False
-#                         })
-#                     else:
-#                         row['cells'].append({
-#                             'tasks': [],
-#                             'empty': True
-#                         })
-#
-#             task_matrix.append(row)
-#
-#     context = {
-#         'job': job,
-#         'tasks': mark_safe(json.dumps(tasks_data)),
-#         # Add sheet view data to context
-#         'show_follow_tasks': show_follow_tasks,
-#         'all_months': all_months,
-#         'task_matrix': task_matrix,
-#     }
-#
-#     return render(request, 'client_progress.html', context)
-
-from django.db.models import Max
-
 
 
 from django import template
@@ -390,6 +223,9 @@ def client_progress(request):
     job_id = request.session.get('client_job_id')
     if not job_id:
         return redirect('client_login')
+
+    admin_confirmed_tasks = Task.objects.filter(job=job, confirmed=True, client_confirmed=False).count()
+    client_confirmed_tasks = Task.objects.filter(job=job, client_confirmed=True).count()
 
     job = get_object_or_404(Job, id=job_id)
 
@@ -596,6 +432,8 @@ def client_progress(request):
         'latest_deadline': latest_deadline,
         'formatted_latest_deadline': formatted_latest_deadline,
         'current_date': current_date,
+        'admin_confirmed_tasks': admin_confirmed_tasks,
+        'client_confirmed_tasks': client_confirmed_tasks,
         'show_follow_tasks': show_follow_tasks,
         'all_months': all_months,
         'task_matrix': task_matrix,
@@ -807,119 +645,6 @@ def payment_history(request):
 
 
 
-from collections import Counter
-from django.core.paginator import Paginator
-from django.shortcuts import render
-from django.utils import timezone
-from .models import User, Task, DeductionLog
-
-
-
-
-
-from django.db.models import Count
-
-
-from django.db.models import Sum
-from django.utils.timezone import now
-
-#
-# from django.utils.timezone import now
-#
-# @login_required
-# def admin_dashboard(request):
-#     if request.user.email != 'Admin@dbr.org':
-#         # Return a 403 Forbidden response if the user is not authorized
-#         return HttpResponseForbidden("You are not authorized to access this page.")
-#     jobs = Job.objects.all()
-#     total_jobs = jobs.count()
-#     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
-#     total_remaining_income = calculate_income_balance()["income_balance"]
-#
-#     # Overdue task count
-#     overdue_task_count = Task.objects.filter(
-#         progress__lt=100,
-#         deadline__lt=now().date()
-#     ).count()
-#
-#     # Calculate monthly income (jobs created this month)
-#     current_month = now().month
-#     current_year = now().year
-#     monthly_income = Job.objects.filter(
-#         created_at__year=current_year,
-#         created_at__month=current_month
-#     ).aggregate(monthly_total=Sum('over_all_income'))['monthly_total'] or 0
-#
-#     developers = User.objects.prefetch_related('developer_tasks')
-#     developer_data = []
-#     for developer in developers:
-#         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
-#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
-#         task_info = []
-#
-#         for task in assigned_tasks:
-#             days_until_deadline = (task.deadline - now().date()).days if task.deadline else None
-#             if task.progress == 100:
-#                 task_color = 'done'
-#                 status_counter['done'] += 1
-#             else:
-#                 if days_until_deadline is not None:
-#                     if days_until_deadline > 10:
-#                         task_color = 'task_green'
-#                         status_counter['task_green'] += 1
-#                     elif 5 < days_until_deadline <= 10:
-#                         task_color = 'task_yellow'
-#                         status_counter['task_yellow'] += 1
-#                     elif 0 <= days_until_deadline <= 5:
-#                         task_color = 'task_red'
-#                         status_counter['task_red'] += 1
-#                     else:
-#                         task_color = 'overdue'
-#                         status_counter['overdue'] += 1
-#                 else:
-#                     task_color = None
-#
-#             task_info.append({
-#                 'task': task,
-#                 'days_until_deadline': days_until_deadline,
-#                 'color': task_color
-#             })
-#
-#         task_paginator = Paginator(task_info, 5)
-#         page_number = request.GET.get(f'page_{developer.id}', 1)
-#         page_obj = task_paginator.get_page(page_number)
-#
-#         balance = assigned_tasks.filter(paid=True).aggregate(
-#             total_balance=Sum('money_for_task')
-#         )['total_balance'] or 0
-#
-#         developer_data.append({
-#             'developer': developer,
-#             'tasks': page_obj,
-#             'balance': balance,
-#             'status_counts': status_counter,
-#         })
-#
-#     developers_paginator = Paginator(developer_data, 10)
-#     developers_page_number = request.GET.get('developer_page', 1)
-#     developers_page_obj = developers_paginator.get_page(developers_page_number)
-#
-#     unassigned_tasks = Task.objects.filter(assigned_users=None)
-#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
-#
-#     context = {
-#         'total_jobs': total_jobs,
-#         'total_income': total_income,
-#         'in_time_processes_money': total_remaining_income,
-#         'overdue_task_count': overdue_task_count,
-#         'monthly_income': monthly_income,
-#         'developer_data': developers_page_obj,
-#         'unassigned_tasks': unassigned_tasks,
-#         'all_deduction_logs': all_deduction_logs,
-#     }
-#     return render(request, 'admin_dashboard.html', context)
-
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -1085,119 +810,7 @@ def admin_dashboard(request):
 
     return render(request, 'admin_dashboard.html', context)
 
-#
-#
-# @login_required
-# def admin_dashboard(request):
-#     if request.user.email != 'Admin@dbr.org':
-#         # Return a 403 Forbidden response if the user is not authorized
-#         return HttpResponseForbidden("You are not authorized to access this page.")
-#     jobs = Job.objects.all()
-#     total_jobs = jobs.count()
-#     simple_incomplete_tasks = Task.objects.filter(
-#         task_type='SIMPLE',
-#         progress__lt=100  # less than 100
-#     ).count()
-#     monthly_tasks = Task.objects.filter(
-#         task_type='MONTHLY',
-#         progress__lt=100
-#     ).count()
-#     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
-#     total_remaining_income = calculate_income_balance()["income_balance"]
-#
-#     # Overdue task count
-#     overdue_task_count = Task.objects.filter(
-#         progress__lt=100,
-#         deadline__lt=now().date()
-#     ).count()
-#
-#     # Calculate monthly income (jobs created this month)
-#     current_month = now().month
-#     current_year = now().year
-#     monthly_income = Job.objects.filter(
-#         created_at__year=current_year,
-#         created_at__month=current_month
-#     ).aggregate(monthly_total=Sum('over_all_income'))['monthly_total'] or 0
-#
-#     developers = User.objects.prefetch_related('developer_tasks')
-#     developer_data = []
-#     for developer in developers:
-#         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
-#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
-#         task_info = []
-#
-#         for task in assigned_tasks:
-#             days_until_deadline = (task.deadline - now().date()).days if task.deadline else None
-#             if task.progress == 100:
-#                 task_color = 'done'
-#                 status_counter['done'] += 1
-#             else:
-#                 if days_until_deadline is not None:
-#                     if days_until_deadline > 10:
-#                         task_color = 'task_green'
-#                         status_counter['task_green'] += 1
-#                     elif 5 < days_until_deadline <= 10:
-#                         task_color = 'task_yellow'
-#                         status_counter['task_yellow'] += 1
-#                     elif 0 <= days_until_deadline <= 5:
-#                         task_color = 'task_red'
-#                         status_counter['task_red'] += 1
-#                     else:
-#                         task_color = 'overdue'
-#                         status_counter['overdue'] += 1
-#                 else:
-#                     task_color = None
-#
-#             task_info.append({
-#                 'task': task,
-#                 'days_until_deadline': days_until_deadline,
-#                 'color': task_color
-#             })
-#
-#         task_paginator = Paginator(task_info, 5)
-#         page_number = request.GET.get(f'page_{developer.id}', 1)
-#         page_obj = task_paginator.get_page(page_number)
-#
-#         balance = assigned_tasks.filter(paid=True).aggregate(
-#             total_balance=Sum('money_for_task')
-#         )['total_balance'] or 0
-#
-#         developer_data.append({
-#             'developer': developer,
-#             'tasks': page_obj,
-#             'balance': balance,
-#             'status_counts': status_counter,
-#         })
-#
-#     developers_paginator = Paginator(developer_data, 10)
-#     developers_page_number = request.GET.get('developer_page', 1)
-#     developers_page_obj = developers_paginator.get_page(developers_page_number)
-#
-#     unassigned_tasks = Task.objects.filter(assigned_users=None)
-#     all_deduction_logs = DeductionLog.objects.select_related('developer', 'deducted_by').all()
-#
-#     context = {
-#         'total_jobs': total_jobs,
-#         'total_income': total_income,
-#         'in_time_processes_money': total_remaining_income,
-#         'overdue_task_count': overdue_task_count,
-#         'monthly_income': monthly_income,
-#         'developer_data': developers_page_obj,
-#         'unassigned_tasks': unassigned_tasks,
-#         'all_deduction_logs': all_deduction_logs,
-#         'simple_tasks_count': simple_incomplete_tasks,
-#         'monthly_tasks': monthly_tasks,
-#     }
-#     return render(request, 'admin_dashboard.html', context)
 
-from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404
-from .models import Job, Task
-from django.db.models import Max, Sum
-
-from django.core.paginator import Paginator
-from django.shortcuts import render, get_object_or_404
-from .models import Job, Task
 from django.db.models import Max, Sum
 
 
@@ -2394,3 +2007,557 @@ def job_statistics(request):
     }
 
     return render(request, 'job_statistics.html', context)
+
+
+# Add these imports at the top of views.py if not already imported
+from django.utils import timezone
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+
+#
+# @login_required
+# def confirm_completed_task(request, task_id):
+#     """
+#     View to allow admin to confirm a completed task.
+#     Only tasks with 100% progress can be confirmed.
+#     Only admin users can confirm tasks.
+#     """
+#     # Permission check - only admin can confirm tasks
+#     if request.user.email != 'Admin@dbr.org':
+#         return HttpResponseForbidden("You are not authorized to confirm tasks.")
+#
+#     # Get the task instance
+#     task = get_object_or_404(Task, id=task_id)
+#
+#     # Check if task is complete (progress = 100%)
+#     if task.progress < 100:
+#         messages.error(request, "Only completed tasks can be confirmed.")
+#         return redirect('job_details', job_id=task.job.id)
+#
+#     # Handle confirmation
+#     if request.method == 'POST':
+#         action = request.POST.get('action')
+#
+#         if action == 'confirm':
+#             # Confirm the task
+#             task.confirmed = True
+#             task.confirmation_date = timezone.now()
+#             task.confirmed_by = request.user
+#             task.save()
+#
+#             # Check if payment should be processed
+#             task.check_and_pay_developer()
+#
+#             messages.success(request, f"Task '{task.title}' has been confirmed.")
+#
+#         elif action == 'unconfirm':
+#             # Unconfirm the task if it's already confirmed
+#             if task.confirmed:
+#                 # If the task was already paid, we need to handle that
+#                 if task.paid:
+#                     task.paid = False
+#                     # You might want to add additional logic for reversing payments
+#
+#                 task.confirmed = False
+#                 task.confirmation_date = None
+#                 task.confirmed_by = None
+#                 task.save()
+#
+#                 messages.success(request, f"Task '{task.title}' confirmation has been revoked.")
+#             else:
+#                 messages.info(request, "This task was not previously confirmed.")
+#
+#     # Redirect back to job details page
+#     return redirect('job_details', job_id=task.job.id)
+#
+#
+# @login_required
+# def tasks_pending_confirmation(request):
+#     """
+#     View to display all tasks with 100% progress for admin confirmation.
+#     Handles both pending and already confirmed tasks.
+#     """
+#     # Permission check
+#     if request.user.email != 'Admin@dbr.org':
+#         return HttpResponseForbidden("You are not authorized to access this page.")
+#
+#     # Get filter parameter (pending or confirmed)
+#     filter_param = request.GET.get('filter', 'pending')
+#
+#     # Build query based on filter
+#     if filter_param == 'confirmed':
+#         # Get confirmed tasks
+#         tasks_query = Task.objects.filter(
+#             progress=100,
+#             confirmed=True
+#         ).select_related('job', 'confirmed_by').prefetch_related('assigned_users')
+#     else:
+#         # Get pending tasks (default)
+#         tasks_query = Task.objects.filter(
+#             progress=100,
+#             confirmed=False
+#         ).select_related('job').prefetch_related('assigned_users')
+#
+#     # Get counts for summary data
+#     pending_count = Task.objects.filter(progress=100, confirmed=False).count()
+#     confirmed_count = Task.objects.filter(progress=100, confirmed=True).count()
+#
+#     # Calculate total payment value
+#     from django.db.models import Sum
+#     payment_total = tasks_query.aggregate(Sum('money_for_task'))['money_for_task__sum'] or 0
+#
+#     # Get count of tasks by job for quick reference
+#     from django.db.models import Count
+#     job_task_counts = tasks_query.values('job__title').annotate(
+#         task_count=Count('id')
+#     ).order_by('-task_count')
+#
+#     # Set up pagination
+#     paginator = Paginator(tasks_query.order_by('-deadline', 'job__title'), 15)  # Show 15 tasks per page
+#     page_number = request.GET.get('page')
+#     page_tasks = paginator.get_page(page_number)
+#
+#     context = {
+#         'tasks': page_tasks,
+#         'filter': filter_param,
+#         'pending_count': pending_count,
+#         'confirmed_count': confirmed_count,
+#         'payment_total': payment_total,
+#         'job_task_counts': job_task_counts,
+#         'active_page': 'tasks_confirmation',
+#     }
+#
+#     return render(request, 'tasks_pending_confirmation.html', context)
+#
+#
+# @login_required
+# def bulk_confirm_tasks(request):
+#     """
+#     View to handle bulk confirmation of tasks
+#     """
+#     # Permission check
+#     if request.user.email != 'Admin@dbr.org':
+#         return HttpResponseForbidden("You are not authorized to perform this action.")
+#
+#     if request.method == 'POST':
+#         # Get task IDs from the form
+#         task_ids = request.POST.getlist('task_ids')
+#
+#         if not task_ids:
+#             messages.error(request, "No tasks were selected.")
+#             return redirect('tasks_pending_confirmation')
+#
+#         # Confirm all selected tasks
+#         confirm_count = 0
+#         for task_id in task_ids:
+#             try:
+#                 task = Task.objects.get(id=task_id, progress=100, confirmed=False)
+#                 task.confirmed = True
+#                 task.confirmation_date = timezone.now()
+#                 task.confirmed_by = request.user
+#                 task.save()
+#
+#                 # Check if payment should be processed
+#                 task.check_and_pay_developer()
+#
+#                 confirm_count += 1
+#             except Task.DoesNotExist:
+#                 # Skip tasks that don't exist or don't meet criteria
+#                 continue
+#
+#         messages.success(request, f"Successfully confirmed {confirm_count} tasks.")
+#
+#     return redirect('tasks_pending_confirmation')
+
+
+# Оптимизация представлений для подтверждения задач
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse, HttpResponseForbidden
+from django.contrib import messages
+from django.utils import timezone
+from django.db.models import Sum, Count, Q, F
+from django.core.paginator import Paginator
+from django.views.decorators.http import require_POST
+from django.db import transaction
+
+from .models import Task, Job, DeductionLog
+
+
+# Оптимизированное представление для подтверждения одной задачи
+@login_required
+@require_POST  # Ограничиваем только POST-запросами для безопасности
+def confirm_completed_task(request, task_id):
+    """
+    Оптимизированное представление для подтверждения выполненной задачи.
+    Используем транзакции и select_related для ускорения.
+    """
+    # Проверка прав доступа - только админ может подтверждать задачи
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("У вас нет прав для подтверждения задач.")
+
+    # Получаем задачу с предварительной загрузкой связанных данных
+    task = get_object_or_404(Task.objects.select_related('job'), id=task_id)
+
+    # Проверяем, завершена ли задача (прогресс = 100%)
+    if task.progress < 100:
+        messages.error(request, "Только выполненные задачи могут быть подтверждены.")
+        return redirect('job_details', job_id=task.job.id)
+
+    # Получаем действие из формы
+    action = request.POST.get('action')
+
+    # Используем транзакцию для атомарности операций
+    with transaction.atomic():
+        if action == 'confirm':
+            # Подтверждаем задачу
+            task.confirmed = True
+            task.confirmation_date = timezone.now()
+            task.confirmed_by = request.user
+            task.save(update_fields=['confirmed', 'confirmation_date', 'confirmed_by'])
+
+            # Проверяем, должна ли быть произведена оплата
+            task.check_and_pay_developer()
+
+            messages.success(request, f"Задача '{task.title}' подтверждена.")
+
+        elif action == 'unconfirm':
+            # Отмена подтверждения задачи
+            if task.confirmed:
+                # Если задача уже была оплачена, обрабатываем это
+                if task.paid:
+                    task.paid = False
+                    # Здесь можно добавить логику для отмены платежа
+
+                task.confirmed = False
+                task.confirmation_date = None
+                task.confirmed_by = None
+                task.save(update_fields=['confirmed', 'confirmation_date', 'confirmed_by', 'paid'])
+
+                messages.success(request, f"Подтверждение задачи '{task.title}' отменено.")
+            else:
+                messages.info(request, "Эта задача ранее не была подтверждена.")
+
+    # Проверяем, был ли запрос AJAX
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success', 'action': action})
+
+    # Перенаправляем обратно на страницу деталей проекта
+    return redirect('job_details', job_id=task.job.id)
+
+
+# Оптимизированное представление для страницы подтверждения задач
+@login_required
+def tasks_pending_confirmation(request):
+    """
+    Оптимизированное представление для отображения задач, требующих подтверждения.
+    Используем кэширование и оптимизированные запросы.
+    """
+    # Проверка прав доступа
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("У вас нет прав для доступа к этой странице.")
+
+    # Получаем фильтр (ожидающие или подтвержденные)
+    filter_param = request.GET.get('filter', 'pending')
+
+    # Оптимизированный запрос с select_related и prefetch_related
+    if filter_param == 'confirmed':
+        # Получаем подтвержденные задачи
+        tasks_query = Task.objects.filter(
+            progress=100,
+            confirmed=True
+        ).select_related('job', 'confirmed_by').prefetch_related('assigned_users')
+    else:
+        # Получаем ожидающие задачи (по умолчанию)
+        tasks_query = Task.objects.filter(
+            progress=100,
+            confirmed=False
+        ).select_related('job').prefetch_related('assigned_users')
+
+    # Оптимизация: выполняем агрегационные запросы за один раз
+    from django.db.models import Count, Sum
+
+    stats = Task.objects.filter(progress=100).aggregate(
+        pending_count=Count('id', filter=Q(confirmed=False)),
+        confirmed_count=Count('id', filter=Q(confirmed=True)),
+        payment_total=Sum('money_for_task', filter=Q(progress=100))
+    )
+
+    pending_count = stats['pending_count']
+    confirmed_count = stats['confirmed_count']
+    payment_total = stats['payment_total'] or 0
+
+    # Получаем аналитику по проектам с оптимизацией запроса
+    job_task_counts = (
+        Task.objects.filter(
+            progress=100
+        ).values('job__id', 'job__title')
+        .annotate(
+            task_count=Count('id', filter=Q(confirmed=False)),
+            confirmed_count=Count('id', filter=Q(confirmed=True)),
+            payment_total=Sum('money_for_task')
+        )
+        .order_by('-task_count')
+    )
+
+    # Оптимизация пагинации - ограничиваем количество запросов
+    paginator = Paginator(tasks_query.order_by('-deadline', 'job__title'), 15)
+    page_number = request.GET.get('page', 1)
+
+    # Устанавливаем orphans для предотвращения страниц с малым количеством элементов
+    paginator.orphans = 3
+
+    # Получаем только текущую страницу без лишних запросов
+    page_tasks = paginator.get_page(page_number)
+
+    context = {
+        'tasks': page_tasks,
+        'filter': filter_param,
+        'pending_count': pending_count,
+        'confirmed_count': confirmed_count,
+        'payment_total': payment_total,
+        'job_task_counts': job_task_counts,
+        'active_page': 'tasks_confirmation',
+    }
+
+    return render(request, 'tasks_pending_confirmation.html', context)
+
+
+# Оптимизированное представление для массового подтверждения задач
+@login_required
+@require_POST
+@transaction.atomic  # Оборачиваем всю функцию в транзакцию для атомарности
+def bulk_confirm_tasks(request):
+    """
+    Оптимизированное представление для массового подтверждения задач.
+    Используем транзакции и пакетное обновление.
+    """
+    # Проверка прав доступа
+    if request.user.email != 'Admin@dbr.org':
+        return HttpResponseForbidden("У вас нет прав для выполнения этого действия.")
+
+    # Получаем ID задач из формы
+    task_ids = request.POST.getlist('task_ids')
+
+    if not task_ids:
+        messages.error(request, "Не выбрано ни одной задачи.")
+        return redirect('tasks_pending_confirmation')
+
+    # Получаем текущее время для всех задач
+    now_time = timezone.now()
+
+    # Выбираем только задачи, которые соответствуют критериям
+    tasks_to_confirm = Task.objects.filter(
+        id__in=task_ids,
+        progress=100,
+        confirmed=False
+    )
+
+    confirm_count = tasks_to_confirm.count()
+
+    if confirm_count > 0:
+        # Массовое обновление всех задач за один запрос
+        tasks_to_confirm.update(
+            confirmed=True,
+            confirmation_date=now_time,
+            confirmed_by=request.user
+        )
+
+        # Получаем обновленные задачи и обрабатываем оплату
+        for task in tasks_to_confirm:
+            task.check_and_pay_developer()
+
+        messages.success(request, f"Успешно подтверждено {confirm_count} задач.")
+    else:
+        messages.warning(request, "Не найдено задач для подтверждения.")
+
+    # Проверяем, был ли запрос AJAX
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'status': 'success',
+            'count': confirm_count,
+            'redirect': request.META.get('HTTP_REFERER', '/tasks/pending-confirmation/')
+        })
+
+    return redirect('tasks_pending_confirmation')
+
+
+# Add to views.py
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse, HttpResponseForbidden
+from django.contrib import messages
+from django.utils import timezone
+from django.db.models import Count, Q, F
+from django.db import transaction
+
+
+@login_required
+def client_task_confirmation(request):
+    """
+    View for client to see tasks that need confirmation.
+    Only shows tasks that have been confirmed by admin already.
+    """
+    # Get the job_id from the session
+    job_id = request.session.get('client_job_id')
+    if not job_id:
+        return redirect('client_login')
+
+    # Get the job
+    job = get_object_or_404(Job, id=job_id)
+
+    # Filter parameter (pending or confirmed)
+    filter_param = request.GET.get('filter', 'pending')
+
+    if filter_param == 'confirmed':
+        # Get tasks confirmed by client
+        tasks = Task.objects.filter(
+            job=job,
+            confirmed=True,  # Admin confirmed
+            client_confirmed=True  # Client confirmed
+        ).order_by('-client_confirmation_date')
+    elif filter_param == 'all':
+        # Get all completed tasks
+        tasks = Task.objects.filter(
+            job=job,
+            progress=100
+        ).order_by('-deadline')
+    else:
+        # Get tasks pending client confirmation (default)
+        tasks = Task.objects.filter(
+            job=job,
+            confirmed=True,  # Admin confirmed
+            client_confirmed=False  # Not client confirmed yet
+        ).order_by('deadline')
+
+    # Count statistics
+    pending_count = Task.objects.filter(job=job, confirmed=True, client_confirmed=False).count()
+    confirmed_count = Task.objects.filter(job=job, client_confirmed=True).count()
+    completed_count = Task.objects.filter(job=job, progress=100).count()
+
+    # Paginate results
+    paginator = Paginator(tasks, 10)
+    page_number = request.GET.get('page', 1)
+    page_tasks = paginator.get_page(page_number)
+
+    context = {
+        'job': job,
+        'tasks': page_tasks,
+        'filter': filter_param,
+        'pending_count': pending_count,
+        'confirmed_count': confirmed_count,
+        'completed_count': completed_count
+    }
+
+    return render(request, 'client_task_confirmation.html', context)
+
+
+@login_required
+@require_POST
+def confirm_task_by_client(request, task_id):
+    """
+    Handle client confirmation for a specific task
+    """
+    # Get job_id from session to verify client access
+    job_id = request.session.get('client_job_id')
+    if not job_id:
+        return redirect('client_login')
+
+    # Get the task and verify it belongs to client's job
+    task = get_object_or_404(Task, id=task_id, job_id=job_id)
+
+    # Verify the task is ready for client confirmation
+    if not task.confirmed:
+        messages.error(request, "Эта задача еще не подтверждена администратором.")
+        return redirect('client_task_confirmation')
+
+    # Get client action and comment
+    action = request.POST.get('action')
+    comment = request.POST.get('comment', '')
+
+    # Use transaction for atomicity
+    with transaction.atomic():
+        if action == 'confirm':
+            # Client confirms the task
+            task.client_confirmed = True
+            task.client_confirmation_date = timezone.now()
+            task.client_comment = comment  # Store comment in English
+            task.status = 'client_confirmed'
+            task.save(update_fields=[
+                'client_confirmed', 'client_confirmation_date',
+                'client_comment', 'status'
+            ])
+
+            # Check if payment should be processed
+            task.check_and_pay_developer()
+
+            messages.success(request, "Задача успешно подтверждена.")
+
+        elif action == 'reject':
+            # Client rejects the task
+            task.client_confirmed = False
+            task.status = 'rejected'
+            task.client_comment = comment  # Store rejection reason in English
+            task.save(update_fields=['client_confirmed', 'status', 'client_comment'])
+
+            messages.info(request, "Задача отклонена и отправлена обратно на доработку.")
+
+    return redirect('client_task_confirmation')
+
+
+@login_required
+@require_POST
+def bulk_confirm_client_tasks(request):
+    """
+    Handle bulk confirmation by client
+    """
+    # Verify client access
+    job_id = request.session.get('client_job_id')
+    if not job_id:
+        return redirect('client_login')
+
+    # Get selected task IDs
+    task_ids = request.POST.getlist('task_ids')
+    comment = request.POST.get('bulk_comment', '')
+
+    if not task_ids:
+        messages.error(request, "Вы не выбрали задачи для подтверждения.")
+        return redirect('client_task_confirmation')
+
+    # Get tasks that belong to client's job and are ready for confirmation
+    tasks = Task.objects.filter(
+        id__in=task_ids,
+        job_id=job_id,
+        confirmed=True,
+        client_confirmed=False
+    )
+
+    # Confirm all selected tasks
+    confirm_count = 0
+    with transaction.atomic():
+        for task in tasks:
+            task.client_confirmed = True
+            task.client_confirmation_date = timezone.now()
+            task.client_comment = comment  # Same comment for all tasks
+            task.status = 'client_confirmed'
+            task.save(update_fields=[
+                'client_confirmed', 'client_confirmation_date',
+                'client_comment', 'status'
+            ])
+
+            # Check payment eligibility
+            task.check_and_pay_developer()
+
+            confirm_count += 1
+
+    if confirm_count > 0:
+        messages.success(request, f"Успешно подтверждено {confirm_count} задач.")
+    else:
+        messages.warning(request, "Не найдено задач для подтверждения.")
+
+    return redirect('client_task_confirmation')
+

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение задач | HR Finance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-navy': '#0F172A',
+                        'midnight-blue': '#1E293B',
+                        'electric-blue': '#38BDF8',
+                        'neon-green': '#22D3EE',
+                        'royal-purple': '#8B5CF6',
+                        'luxe-gold': '#F59E0B',
+                        'accent-text': '#F8FAFC',
+                        'danger-red': '#EF4444',
+                        'deep-red': '#B91C1C',
+                        'success-green': '#10B981'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'gradient': 'gradient 8s ease infinite',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': { 
+                                'background-position': '0% 50%' 
+                            },
+                            '50%': { 
+                                'background-position': '100% 50%' 
+                            },
+                        }
+                    },
+                    backgroundSize: {
+                        'size-200': '200% 200%',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: #F8FAFC;
+            min-height: 100vh;
+        }
+        
+        .glass-morphism {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+        
+        .premium-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+        
+        .premium-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-border {
+            position: relative;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #38BDF8, #22D3EE, #8B5CF6, #F59E0B);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 1.1rem;
+            animation: gradient 15s ease infinite;
+        }
+        
+        .animated-gradient {
+            background: linear-gradient(-45deg, #38BDF8, #22D3EE, #8B5CF6, #F59E0B);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .custom-checkbox {
+            appearance: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid rgba(56, 189, 248, 0.5);
+            background-color: rgba(15, 23, 42, 0.8);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .custom-checkbox:checked {
+            background-color: #38BDF8;
+            border-color: #38BDF8;
+            transform: scale(1.1);
+        }
+        
+        .custom-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: #0F172A;
+            font-weight: bold;
+            font-size: 1rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+        
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
+        }
+        
+        .button-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .button-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        }
+        
+        .table-row-animated tr {
+            transition: all 0.3s;
+        }
+        
+        .table-row-animated tr:hover {
+            transform: translateX(5px) scale(1.01);
+        }
+        
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            transform: rotate(30deg);
+            transition: transform 0.5s;
+        }
+        
+        .shine-effect:hover::after {
+            transform: rotate(30deg) translate(50%, 50%);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(15, 23, 42, 0.95);
+            color: #F8FAFC;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .progress-pulse {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body class="relative">
+    <!-- Background Particles -->
+    <div class="fixed inset-0 pointer-events-none opacity-20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <defs>
+                <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+                    <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                </pattern>
+                <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+                    <rect width="100" height="100" fill="url(#smallGrid)"/>
+                    <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-10 max-w-7xl relative z-10">
+        <!-- Header with animated gradient -->
+        <div class="gradient-border p-8 mb-10">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <h1 class="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-electric-blue via-neon-green to-royal-purple">
+                        Подтверждение задач
+                    </h1>
+                    <p class="text-accent-text/70 text-xl mt-3 max-w-2xl">
+                        Управление выполненными задачами и контроль качества работы
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="?filter=pending" class="button-3d px-6 py-4 rounded-xl {% if filter == 'pending' %}bg-gradient-to-r from-electric-blue to-neon-green text-deep-navy neon-glow{% else %}bg-midnight-blue/80 text-accent-text hover:bg-electric-blue/80 hover:text-deep-navy transition-colors hover:neon-glow{% endif %} shadow-lg flex items-center">
+                        <i class="fas fa-clock mr-3 text-lg"></i>
+                        <div>
+                            <span class="font-semibold">Ожидающие</span>
+                            <div class="text-xs opacity-80">{{ pending_count }} задач</div>
+                        </div>
+                    </a>
+                    <a href="?filter=confirmed" class="button-3d px-6 py-4 rounded-xl {% if filter == 'confirmed' %}bg-gradient-to-r from-neon-green to-success-green text-deep-navy neon-glow{% else %}bg-midnight-blue/80 text-accent-text hover:bg-neon-green/80 hover:text-deep-navy transition-colors hover:neon-glow{% endif %} shadow-lg flex items-center">
+                        <i class="fas fa-check-circle mr-3 text-lg"></i>
+                        <div>
+                            <span class="font-semibold">Подтвержденные</span>
+                            <div class="text-xs opacity-80">{{ confirmed_count }} задач</div>
+                        </div>
+                    </a>
+                    <a href="{% url 'admin_dashboard' %}" class="button-3d px-6 py-4 rounded-xl bg-deep-navy/80 text-accent-text hover:bg-royal-purple/80 transition-colors shadow-lg flex items-center">
+                        <i class="fas fa-arrow-left mr-3 text-lg"></i>
+                        <span class="font-semibold">К панели</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <!-- Awaiting Confirmation Card -->
+            <div class="premium-card rounded-2xl p-6 shine-effect">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-gradient-to-br from-luxe-gold/30 to-luxe-gold/5 p-5">
+                        <i class="fas fa-hourglass-half text-3xl text-luxe-gold"></i>
+                    </div>
+                    <div>
+                        <p class="text-accent-text/70 text-sm">Ожидают подтверждения</p>
+                        <h3 class="text-4xl font-bold text-luxe-gold mt-1">{{ pending_count }}</h3>
+                        <p class="text-luxe-gold/70 text-xs mt-2 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {% if pending_count > 0 %}
+                            Требуют внимания
+                            {% else %}
+                            Все задачи обработаны
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-luxe-gold/20">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-accent-text/50">Прогресс проверки</span>
+                        <span class="text-xs text-luxe-gold">
+                            {{ confirmed_count }}/{{ pending_count|add:confirmed_count }}
+                        </span>
+                    </div>
+                    <div class="mt-2 w-full h-2 bg-deep-navy rounded-full overflow-hidden">
+                        {% with total=pending_count|add:confirmed_count %}
+                        {% if total > 0 %}
+                        {% with percent=confirmed_count|floatformat:0 %}
+                        <div class="h-full rounded-full bg-gradient-to-r from-luxe-gold to-neon-green" 
+                             style="width: {% if total > 0 %}{{ percent }}{% else %}100{% endif %}%">
+                        </div>
+                        {% endwith %}
+                        {% else %}
+                        <div class="h-full rounded-full bg-gradient-to-r from-luxe-gold to-neon-green" 
+                             style="width: 100%">
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmed Tasks Card -->
+            <div class="premium-card rounded-2xl p-6 shine-effect">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-gradient-to-br from-neon-green/30 to-neon-green/5 p-5">
+                        <i class="fas fa-check-circle text-3xl text-neon-green"></i>
+                    </div>
+                    <div>
+                        <p class="text-accent-text/70 text-sm">Подтверждено задач</p>
+                        <h3 class="text-4xl font-bold text-neon-green mt-1">{{ confirmed_count }}</h3>
+                        <p class="text-neon-green/70 text-xs mt-2 flex items-center">
+                            <i class="fas fa-calendar-check mr-1"></i>
+                            За все время
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-neon-green/20">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-accent-text/50">Последнее подтверждение</span>
+                        <span class="bg-neon-green/20 text-neon-green text-xs px-2 py-1 rounded-full">
+                            {% now "d.m.Y" %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Card -->
+            <div class="premium-card rounded-2xl p-6 shine-effect">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-gradient-to-br from-electric-blue/30 to-electric-blue/5 p-5">
+                        <i class="fas fa-project-diagram text-3xl text-electric-blue"></i>
+                    </div>
+                    <div>
+                        <p class="text-accent-text/70 text-sm">Активных проектов</p>
+                        <h3 class="text-4xl font-bold text-electric-blue mt-1">{{ job_task_counts|length }}</h3>
+                        <p class="text-electric-blue/70 text-xs mt-2 flex items-center">
+                            <i class="fas fa-chart-line mr-1"></i>
+                            С текущими задачами
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-electric-blue/20">
+                    <div class="flex items-center space-x-2">
+                        {% for count in job_task_counts|slice:":5" %}
+                        <div class="h-8 w-1 rounded-full bg-electric-blue/30" 
+                             style="height: {{ count.task_count|floatformat:0 }}px; max-height: 64px">
+                        </div>
+                        {% empty %}
+                        <div class="h-8 w-1 rounded-full bg-electric-blue/30"></div>
+                        <div class="h-12 w-1 rounded-full bg-electric-blue/30"></div>
+                        <div class="h-16 w-1 rounded-full bg-electric-blue/30"></div>
+                        <div class="h-12 w-1 rounded-full bg-electric-blue/30"></div>
+                        <div class="h-8 w-1 rounded-full bg-electric-blue/30"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Value Card -->
+            <div class="premium-card rounded-2xl p-6 shine-effect">
+                <div class="flex items-center space-x-4">
+                    <div class="rounded-full bg-gradient-to-br from-royal-purple/30 to-royal-purple/5 p-5">
+                        <i class="fas fa-dollar-sign text-3xl text-royal-purple"></i>
+                    </div>
+                    <div>
+                        <p class="text-accent-text/70 text-sm">Общая стоимость</p>
+                        <h3 class="text-4xl font-bold text-royal-purple mt-1">${{ payment_total }}</h3>
+                        <p class="text-royal-purple/70 text-xs mt-2 flex items-center">
+                            <i class="fas fa-money-bill-wave mr-1"></i>
+                            Стоимость активных задач
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-royal-purple/20">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-accent-text/50">Статус оплаты</span>
+                        <span class="bg-royal-purple/20 text-royal-purple text-xs px-2 py-1 rounded-full">
+                            В обработке
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="glass-morphism rounded-2xl overflow-hidden mb-10">
+            <div class="p-6 border-b border-electric-blue/20 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-electric-blue flex items-center">
+                        {% if filter == 'confirmed' %}
+                        <i class="fas fa-check-circle mr-3 text-neon-green"></i>Подтвержденные задачи
+                        {% else %}
+                        <i class="fas fa-clock mr-3 text-luxe-gold"></i>Задачи, ожидающие подтверждения
+                        {% endif %}
+                    </h2>
+                    <p class="text-accent-text/50 text-sm mt-1">
+                        {% if filter == 'confirmed' %}
+                        Ранее проверенные и подтвержденные задачи
+                        {% else %}
+                        Выполненные задачи, требующие вашей проверки
+                        {% endif %}
+                    </p>
+                </div>
+                
+                {% if filter != 'confirmed' and tasks %}
+                <div class="flex items-center">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="select-all" class="sr-only peer">
+                        <div class="w-11 h-6 bg-deep-navy rounded-full peer-focus:outline-none peer peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-accent-text after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-electric-blue"></div>
+                        <span class="ms-3 text-sm font-medium text-accent-text">Выбрать все</span>
+                    </label>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if tasks %}
+                {% if filter != 'confirmed' %}
+                <form method="post" action="{% url 'bulk_confirm_tasks' %}" id="bulk-form">
+                    {% csrf_token %}
+                {% endif %}
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-row-animated">
+                            <thead class="bg-deep-navy text-accent-text/70">
+                                <tr>
+                                    {% if filter != 'confirmed' %}
+                                    <th class="px-6 py-5 text-left w-10"></th>
+                                    {% endif %}
+                                    <th class="px-6 py-5 text-left">Задача</th>
+                                    <th class="px-6 py-5 text-left">Проект</th>
+                                    <th class="px-6 py-5 text-left">Исполнители</th>
+                                    <th class="px-6 py-5 text-left">Срок</th>
+                                    <th class="px-6 py-5 text-left">Оплата</th>
+                                    {% if filter == 'confirmed' %}
+                                    <th class="px-6 py-5 text-left">Кто подтвердил</th>
+                                    <th class="px-6 py-5 text-left">Дата</th>
+                                    {% endif %}
+                                    <th class="px-6 py-5 text-left">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-electric-blue/10">
+                                {% for task in tasks %}
+                                <tr class="hover:bg-midnight-blue/80 transition-colors">
+                                    {% if filter != 'confirmed' %}
+                                    <td class="px-6 py-5">
+                                        <input type="checkbox" name="task_ids" value="{{ task.id }}" class="task-checkbox custom-checkbox">
+                                    </td>
+                                    {% endif %}
+                                    <td class="px-6 py-5">
+                                        <div class="font-semibold text-electric-blue text-lg">{{ task.title }}</div>
+                                        {% if task.feedback %}
+                                        <div class="mt-1 tooltip">
+                                            <span class="inline-flex items-center bg-royal-purple/20 text-royal-purple rounded-full px-2 py-1 text-xs">
+                                                <i class="fas fa-comment mr-1"></i>Есть отзыв
+                                            </span>
+                                            <span class="tooltiptext">{{ task.feedback }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <div class="text-accent-text">{{ task.job.title }}</div>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <div class="flex flex-wrap gap-1 max-w-xs">
+                                            {% for user in task.assigned_users.all %}
+                                            <div class="inline-flex items-center bg-deep-navy text-accent-text rounded-full px-3 py-1 text-xs">
+                                                <i class="fas fa-user mr-1"></i>{{ user.email|truncatechars:16 }}
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        {% if task.deadline %}
+                                        <div class="text-accent-text flex items-center">
+                                            <i class="fas fa-calendar-day mr-2 text-electric-blue"></i>
+                                            {{ task.deadline|date:"d.m.Y" }}
+                                        </div>
+                                        {% else %}
+                                        <span class="text-accent-text/50">Нет срока</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        <div class="text-accent-text font-semibold text-lg">${{ task.money_for_task }}</div>
+                                        {% if task.paid %}
+                                        <div class="mt-1">
+                                            <span class="inline-flex items-center bg-neon-green/20 text-neon-green rounded-full px-2 py-1 text-xs">
+                                                <i class="fas fa-check mr-1"></i>Оплачено
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    {% if filter == 'confirmed' %}
+                                    <td class="px-6 py-5">
+                                        {% if task.confirmed_by %}
+                                        <div class="text-accent-text flex items-center">
+                                            <i class="fas fa-user-check mr-2 text-neon-green"></i>
+                                            {{ task.confirmed_by.username }}
+                                        </div>
+                                        {% else %}
+                                        <span class="text-accent-text/50">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        {% if task.confirmation_date %}
+                                        <div class="text-accent-text flex items-center">
+                                            <i class="fas fa-calendar-check mr-2 text-neon-green"></i>
+                                            {{ task.confirmation_date|date:"d.m.Y H:i" }}
+                                        </div>
+                                        {% else %}
+                                        <span class="text-accent-text/50">—</span>
+                                        {% endif %}
+                                    </td>
+                                    {% endif %}
+                                    <td class="px-6 py-5">
+                                        <div class="flex flex-wrap gap-2">
+                                            {% if filter != 'confirmed' %}
+                                            <form method="post" action="{% url 'confirm_completed_task' task.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="confirm">
+                                                <button type="submit" class="button-3d bg-gradient-to-r from-neon-green to-success-green text-deep-navy rounded-xl px-4 py-2 text-sm hover:opacity-90 shadow-lg flex items-center neon-glow">
+                                                    <i class="fas fa-check mr-2"></i>Подтвердить
+                                                </button>
+                                            </form>
+                                            {% else %}
+                                            <form method="post" action="{% url 'confirm_completed_task' task.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="unconfirm">
+                                                <button type="submit" class="button-3d bg-gradient-to-r from-luxe-gold to-deep-red text-deep-navy rounded-xl px-4 py-2 text-sm hover:opacity-90 shadow-lg flex items-center neon-glow">
+                                                    <i class="fas fa-undo mr-2"></i>Отменить
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                            <a href="{% url 'job_details' task.job.id %}" class="button-3d bg-gradient-to-r from-electric-blue to-royal-purple text-deep-navy rounded-xl px-4 py-2 text-sm hover:opacity-90 shadow-lg flex items-center glow-effect"><i class="fas fa-eye mr-2"></i>Просмотр
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination and Bulk Action Button -->
+                    <div class="p-6 border-t border-electric-blue/20 flex flex-wrap justify-between items-center gap-4">
+                        <!-- Pagination -->
+                        {% if tasks.paginator.num_pages > 1 %}
+                        <div class="flex justify-center">
+                            <nav class="flex items-center space-x-3">
+                                {% if tasks.has_previous %}
+                                <a href="?page=1{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-all button-3d shadow-lg">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                                <a href="?page={{ tasks.previous_page_number }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-all button-3d shadow-lg">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                                {% else %}
+                                <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </span>
+                                <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                    <i class="fas fa-angle-left"></i>
+                                </span>
+                                {% endif %}
+                                
+                                <div class="flex items-center space-x-2">
+                                    {% for i in tasks.paginator.page_range %}
+                                        {% if tasks.number == i %}
+                                        <span class="w-10 h-10 flex items-center justify-center bg-gradient-to-r from-electric-blue to-neon-green text-deep-navy rounded-xl shadow-lg glow-effect font-bold">
+                                            {{ i }}
+                                        </span>
+                                        {% elif i > tasks.number|add:'-3' and i < tasks.number|add:'3' %}
+                                        <a href="?page={{ i }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-all button-3d shadow-lg">
+                                            {{ i }}
+                                        </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+
+                                {% if tasks.has_next %}
+                                <a href="?page={{ tasks.next_page_number }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-all button-3d shadow-lg">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                                <a href="?page={{ tasks.paginator.num_pages }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-all button-3d shadow-lg">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                                {% else %}
+                                <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                    <i class="fas fa-angle-right"></i>
+                                </span>
+                                <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </span>
+                                {% endif %}
+                            </nav>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Bulk Confirmation Button -->
+                        {% if filter != 'confirmed' %}
+                        <button type="submit" id="confirm-selected" class="button-3d px-6 py-4 bg-gradient-to-r from-neon-green to-success-green text-deep-navy rounded-xl shadow-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center neon-glow" disabled>
+                            <i class="fas fa-check-circle mr-3"></i>
+                            <span class="font-semibold">Подтвердить выбранные</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                {% if filter != 'confirmed' %}
+                </form>
+                {% endif %}
+            {% else %}
+                <!-- Empty State with Animation -->
+                <div class="p-16 text-center flex flex-col items-center justify-center">
+                    <div class="relative w-40 h-40 mb-8">
+                        <div class="absolute inset-0 bg-gradient-to-r from-electric-blue/30 to-neon-green/30 rounded-full animate-pulse-slow"></div>
+                        <div class="absolute inset-4 bg-gradient-to-r from-electric-blue/20 to-neon-green/20 rounded-full animate-pulse-slow" style="animation-delay: 0.5s"></div>
+                        <div class="absolute inset-8 bg-gradient-to-r from-electric-blue/10 to-neon-green/10 rounded-full animate-pulse-slow" style="animation-delay: 1s"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas {% if filter == 'confirmed' %}fa-check-circle text-neon-green{% else %}fa-clipboard-check text-electric-blue{% endif %} text-7xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-semibold text-accent-text mb-4">
+                        {% if filter == 'confirmed' %}
+                            Нет подтвержденных задач
+                        {% else %}
+                            Все задачи подтверждены
+                        {% endif %}
+                    </h3>
+                    <p class="text-accent-text/60 max-w-md mx-auto text-lg">
+                        {% if filter == 'confirmed' %}
+                            На данный момент нет подтвержденных задач. Проверяйте задачи во вкладке "Ожидающие подтверждения".
+                        {% else %}
+                            Все выполненные задачи уже проверены и подтверждены. Отличная работа!
+                        {% endif %}
+                    </p>
+                    <div class="mt-8">
+                        <a href="{% if filter == 'confirmed' %}?filter=pending{% else %}?filter=confirmed{% endif %}" class="button-3d px-6 py-4 bg-gradient-to-r from-electric-blue to-royal-purple text-deep-navy rounded-xl shadow-lg hover:opacity-90 transition-opacity flex items-center glow-effect">
+                            <i class="fas {% if filter == 'confirmed' %}fa-clock{% else %}fa-check-circle{% endif %} mr-3"></i>
+                            <span class="font-semibold">
+                                {% if filter == 'confirmed' %}Перейти к ожидающим задачам{% else %}Просмотреть подтвержденные{% endif %}
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Extra Features Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <!-- Quick Summary -->
+            <div class="premium-card rounded-2xl p-6 lg:col-span-2">
+                <h3 class="text-2xl font-bold text-electric-blue mb-6 flex items-center">
+                    <i class="fas fa-chart-pie mr-3"></i>Сводка по проектам
+                </h3>
+                
+                <div class="overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-deep-navy text-accent-text/70 text-sm">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Проект</th>
+                                <th class="px-4 py-3 text-center">Ожидают</th>
+                                <th class="px-4 py-3 text-center">Подтверждено</th>
+                                <th class="px-4 py-3 text-right">Общая стоимость</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-electric-blue/10">
+                            {% for item in job_task_counts|slice:":5" %}
+                            <tr class="hover:bg-midnight-blue/50 transition-colors">
+                                <td class="px-4 py-3 text-accent-text">{{ item.job__title|truncatechars:30 }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="inline-flex items-center justify-center bg-luxe-gold/20 text-luxe-gold rounded-full px-2 py-1 text-xs">
+                                        {{ item.task_count }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="inline-flex items-center justify-center bg-neon-green/20 text-neon-green rounded-full px-2 py-1 text-xs">
+                                        {{ item.confirmed_count|default:"0" }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right font-semibold text-accent-text">${{ item.payment_total|default:"0" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-4 py-6 text-center text-accent-text/50">Нет данных по проектам</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if job_task_counts|length > 5 %}
+                <div class="mt-4 text-center">
+                    <button class="px-4 py-2 text-sm bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                        Показать больше проектов ({{ job_task_counts|length|add:"-5" }})
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Recent Activities -->
+            <div class="premium-card rounded-2xl p-6">
+                <h3 class="text-2xl font-bold text-electric-blue mb-6 flex items-center">
+                    <i class="fas fa-history mr-3"></i>Недавние действия
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="relative pl-6 pb-4 border-l-2 border-neon-green/50">
+                        <div class="absolute top-0 left-0 -translate-x-1/2 w-4 h-4 rounded-full bg-neon-green"></div>
+                        <div class="text-accent-text">Задача <span class="text-neon-green">«Разработка API»</span> подтверждена</div>
+                        <div class="text-accent-text/50 text-sm">Сегодня, 10:45</div>
+                    </div>
+                    
+                    <div class="relative pl-6 pb-4 border-l-2 border-luxe-gold/50">
+                        <div class="absolute top-0 left-0 -translate-x-1/2 w-4 h-4 rounded-full bg-luxe-gold"></div>
+                        <div class="text-accent-text">Новая задача <span class="text-luxe-gold">«Создание дашборда»</span> ожидает подтверждения</div>
+                        <div class="text-accent-text/50 text-sm">Сегодня, 09:30</div>
+                    </div>
+                    
+                    <div class="relative pl-6 pb-4 border-l-2 border-royal-purple/50">
+                        <div class="absolute top-0 left-0 -translate-x-1/2 w-4 h-4 rounded-full bg-royal-purple"></div>
+                        <div class="text-accent-text">Проведена оплата по задаче <span class="text-royal-purple">«Верстка шаблонов»</span></div>
+                        <div class="text-accent-text/50 text-sm">Вчера, 16:22</div>
+                    </div>
+                    
+                    <div class="relative pl-6 border-l-2 border-electric-blue/50">
+                        <div class="absolute top-0 left-0 -translate-x-1/2 w-4 h-4 rounded-full bg-electric-blue"></div>
+                        <div class="text-accent-text">Задача <span class="text-electric-blue">«Тестирование модулей»</span> подтверждена</div>
+                        <div class="text-accent-text/50 text-sm">Вчера, 14:05</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button class="px-4 py-2 text-sm bg-midnight-blue text-accent-text rounded-full hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                        Просмотреть все действия
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fixed bottom-8 right-8 z-20">
+        <button id="scroll-top" class="w-14 h-14 rounded-full bg-gradient-to-r from-electric-blue to-royal-purple text-deep-navy flex items-center justify-center shadow-lg hover:scale-110 transition-transform button-3d">
+            <i class="fas fa-arrow-up text-xl"></i>
+        </button>
+    </div>
+
+    <script>
+        // Scroll to top functionality
+        const scrollTopBtn = document.getElementById('scroll-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+                scrollTopBtn.classList.add('opacity-100');
+            } else {
+                scrollTopBtn.classList.add('opacity-0', 'pointer-events-none');
+                scrollTopBtn.classList.remove('opacity-100');
+            }
+        });
+        
+        scrollTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    
+        // Select All Functionality
+        const selectAllCheckbox = document.getElementById('select-all');
+        const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+        const confirmSelectedBtn = document.getElementById('confirm-selected');
+        
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                taskCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    // Add animation effect when checking boxes
+                    if (this.checked) {
+                        checkbox.parentElement.classList.add('scale-105', 'transition-transform');
+                        setTimeout(() => {
+                            checkbox.parentElement.classList.remove('scale-105', 'transition-transform');
+                        }, 300);
+                    }
+                });
+                updateConfirmButton();
+            });
+        }
+        
+        if (taskCheckboxes.length) {
+            taskCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateConfirmButton();
+                    
+                    // Add animation effect
+                    if (this.checked) {
+                        this.parentElement.classList.add('scale-105', 'transition-transform');
+                        setTimeout(() => {
+                            this.parentElement.classList.remove('scale-105', 'transition-transform');
+                        }, 300);
+                    }
+                });
+            });
+        }
+        
+        // Update confirmation button state
+        function updateConfirmButton() {
+            if (!confirmSelectedBtn) return;
+            
+            const selectedCount = document.querySelectorAll('.task-checkbox:checked').length;
+            confirmSelectedBtn.disabled = selectedCount === 0;
+            
+            if (selectedCount > 0) {
+                confirmSelectedBtn.innerHTML = `
+                    <i class="fas fa-check-circle mr-3"></i>
+                    <span class="font-semibold">Подтвердить выбранные (${selectedCount})</span>
+                `;
+                confirmSelectedBtn.classList.add('neon-glow');
+            } else {
+                confirmSelectedBtn.innerHTML = `
+                    <i class="fas fa-check-circle mr-3"></i>
+                    <span class="font-semibold">Подтвердить выбранные</span>
+                `;
+                confirmSelectedBtn.classList.remove('neon-glow');
+            }
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup tooltips
+            const tooltipElements = document.querySelectorAll('.tooltip');
+            
+            tooltipElements.forEach(element => {
+                const tooltipText = element.querySelector('.tooltiptext');
+                
+                // Add small animation when showing tooltips
+                if (tooltipText) {
+                    element.addEventListener('mouseenter', () => {
+                        tooltipText.style.transform = 'scale(1)';
+                        tooltipText.style.transition = 'opacity 0.3s, transform 0.2s';
+                    });
+                    
+                    element.addEventListener('mouseleave', () => {
+                        tooltipText.style.transform = 'scale(0.95)';
+                    });
+                }
+            });
+            
+            // Initialize button state
+            updateConfirmButton();
+            
+            // Initialize scroll top button
+            scrollTopBtn.classList.add('opacity-0', 'pointer-events-none', 'transition-opacity', 'duration-300');
+        });
+    </script>
+</body>
+</html>

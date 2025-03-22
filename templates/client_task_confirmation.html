@@ -1,0 +1,640 @@
+{% extends 'base.html' %}
+{% block title %}Подтверждение задач проекта{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-10 max-w-7xl">
+    <!-- Header with gradient -->
+    <div class="glass-morphism rounded-2xl p-8 mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0 text-center md:text-left">
+                <h1 class="text-5xl font-bold text-electric-blue mb-2">{{ job.title }}</h1>
+                <p class="text-accent-text/70 text-xl max-w-2xl">
+                    Подтверждение выполненных задач вашего проекта
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="?filter=pending" class="px-6 py-4 rounded-xl {% if filter == 'pending' %}bg-electric-blue text-deep-navy{% else %}bg-midnight-blue text-accent-text{% endif %} hover:bg-electric-blue hover:text-deep-navy transition-colors shadow-lg flex items-center">
+                    <i class="fas fa-clock mr-3"></i>
+                    <div>
+                        <span class="font-semibold">Ожидают подтверждения</span>
+                        <div class="text-xs">{{ pending_count }} задач</div>
+                    </div>
+                </a>
+                <a href="?filter=confirmed" class="px-6 py-4 rounded-xl {% if filter == 'confirmed' %}bg-neon-green text-deep-navy{% else %}bg-midnight-blue text-accent-text{% endif %} hover:bg-neon-green hover:text-deep-navy transition-colors shadow-lg flex items-center">
+                    <i class="fas fa-check-circle mr-3"></i>
+                    <div>
+                        <span class="font-semibold">Подтвержденные</span>
+                        <div class="text-xs">{{ confirmed_count }} задач</div>
+                    </div>
+                </a>
+                <a href="?filter=all" class="px-6 py-4 rounded-xl {% if filter == 'all' %}bg-royal-purple text-accent-text{% else %}bg-midnight-blue text-accent-text{% endif %} hover:bg-royal-purple hover:text-accent-text transition-colors shadow-lg flex items-center">
+                    <i class="fas fa-list-alt mr-3"></i>
+                    <div>
+                        <span class="font-semibold">Все задачи</span>
+                        <div class="text-xs">{{ completed_count }} задач</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="premium-card rounded-2xl p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-gradient-to-br from-luxe-gold/30 to-luxe-gold/5 p-5 mr-4">
+                    <i class="fas fa-hourglass-half text-3xl text-luxe-gold"></i>
+                </div>
+                <div>
+                    <p class="text-accent-text/70">Ожидают подтверждения</p>
+                    <h3 class="text-4xl font-bold text-luxe-gold mt-1">{{ pending_count }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="premium-card rounded-2xl p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-gradient-to-br from-neon-green/30 to-neon-green/5 p-5 mr-4">
+                    <i class="fas fa-check-circle text-3xl text-neon-green"></i>
+                </div>
+                <div>
+                    <p class="text-accent-text/70">Подтверждено вами</p>
+                    <h3 class="text-4xl font-bold text-neon-green mt-1">{{ confirmed_count }}</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="premium-card rounded-2xl p-6">
+            <div class="flex items-center">
+                <div class="rounded-full bg-gradient-to-br from-electric-blue/30 to-electric-blue/5 p-5 mr-4">
+                    <i class="fas fa-tasks text-3xl text-electric-blue"></i>
+                </div>
+                <div>
+                    <p class="text-accent-text/70">Всего выполнено</p>
+                    <h3 class="text-4xl font-bold text-electric-blue mt-1">{{ completed_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="glass-morphism rounded-2xl overflow-hidden mb-8">
+        <div class="p-6 border-b border-electric-blue/20 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-electric-blue flex items-center">
+                    {% if filter == 'confirmed' %}
+                    <i class="fas fa-check-circle mr-3 text-neon-green"></i>Подтвержденные задачи
+                    {% elif filter == 'all' %}
+                    <i class="fas fa-list-alt mr-3 text-royal-purple"></i>Все выполненные задачи
+                    {% else %}
+                    <i class="fas fa-clock mr-3 text-luxe-gold"></i>Задачи для подтверждения
+                    {% endif %}
+                </h2>
+                <p class="text-accent-text/50 text-sm mt-1">
+                    {% if filter == 'confirmed' %}
+                    Задачи, которые вы уже подтвердили
+                    {% elif filter == 'all' %}
+                    Полный список выполненных задач по проекту
+                    {% else %}
+                    Задачи, требующие вашего подтверждения
+                    {% endif %}
+                </p>
+            </div>
+            
+            {% if filter == 'pending' and tasks %}
+            <div class="flex items-center">
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="select-all" class="sr-only peer">
+                    <div class="w-11 h-6 bg-deep-navy rounded-full peer-focus:outline-none peer peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-accent-text after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-electric-blue"></div>
+                    <span class="ms-3 text-sm font-medium text-accent-text">Выбрать все</span>
+                </label>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if tasks %}
+            {% if filter == 'pending' %}
+            <form method="post" action="{% url 'bulk_confirm_client_tasks' %}" id="bulk-form">
+                {% csrf_token %}
+            {% endif %}
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-deep-navy text-accent-text/70">
+                            <tr>
+                                {% if filter == 'pending' %}
+                                <th class="px-6 py-4 text-left w-10"></th>
+                                {% endif %}
+                                <th class="px-6 py-4 text-left">Задача</th>
+                                <th class="px-6 py-4 text-left">Срок</th>
+                                <th class="px-6 py-4 text-left">Статус</th>
+                                <th class="px-6 py-4 text-left">Исполнители</th>
+                                {% if filter != 'pending' %}
+                                <th class="px-6 py-4 text-left">Комментарий</th>
+                                {% endif %}
+                                <th class="px-6 py-4 text-left">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-electric-blue/10">
+                            {% for task in tasks %}
+                            <tr class="hover:bg-midnight-blue/50 transition-colors">
+                                {% if filter == 'pending' %}
+                                <td class="px-6 py-4">
+                                    <input type="checkbox" name="task_ids" value="{{ task.id }}" class="task-checkbox w-5 h-5 rounded bg-deep-navy border-electric-blue/30 appearance-none checked:bg-electric-blue cursor-pointer">
+                                </td>
+                                {% endif %}
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-electric-blue">{{ task.title }}</div>
+                                    <div class="text-accent-text/50 text-sm mt-1">{{ task.description|truncatechars:100 }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if task.deadline %}
+                                    <div class="text-accent-text flex items-center">
+                                        <i class="fas fa-calendar-day mr-2 text-electric-blue"></i>
+                                        {{ task.deadline|date:"d.m.Y" }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-accent-text/50">Нет срока</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if task.client_confirmed %}
+                                    <span class="inline-flex items-center bg-neon-green/20 text-neon-green rounded-full px-3 py-1 text-sm">
+                                        <i class="fas fa-check-circle mr-2"></i>Подтверждено
+                                    </span>
+                                    <div class="text-accent-text/50 text-xs mt-1">
+                                        {{ task.client_confirmation_date|date:"d.m.Y H:i" }}
+                                    </div>
+                                    {% elif task.confirmed %}
+                                    <span class="inline-flex items-center bg-luxe-gold/20 text-luxe-gold rounded-full px-3 py-1 text-sm">
+                                        <i class="fas fa-clock mr-2"></i>Ожидает вашего подтверждения
+                                    </span>
+                                    {% elif task.status == 'rejected' %}
+                                    <span class="inline-flex items-center bg-deep-red/20 text-deep-red rounded-full px-3 py-1 text-sm">
+                                        <i class="fas fa-times-circle mr-2"></i>Отклонено
+                                    </span>
+                                    {% elif task.progress == 100 %}
+                                    <span class="inline-flex items-center bg-electric-blue/20 text-electric-blue rounded-full px-3 py-1 text-sm">
+                                        <i class="fas fa-check mr-2"></i>Выполнено
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center bg-midnight-blue/80 text-accent-text rounded-full px-3 py-1 text-sm">
+                                        <i class="fas fa-spinner mr-2"></i>{{ task.progress }}% Выполнено
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-1 max-w-xs">
+                                        {% for user in task.assigned_users.all %}
+                                        <div class="inline-flex items-center bg-deep-navy text-accent-text rounded-full px-3 py-1 text-xs">
+                                            <i class="fas fa-user mr-1"></i>{{ user.email|truncatechars:16 }}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                {% if filter != 'pending' %}
+                                <td class="px-6 py-4">
+                                    {% if task.client_comment %}
+                                    <div class="text-accent-text">
+                                        {{ task.client_comment|truncatechars:100 }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-accent-text/50">Нет комментария</span>
+                                    {% endif %}
+                                </td>
+                                {% endif %}
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-2">
+                                        {% if task.confirmed and not task.client_confirmed and filter == 'pending' %}
+                                        <button type="button" onclick="showConfirmModal('{{ task.id }}', '{{ task.title|escapejs }}')" class="bg-neon-green text-deep-navy rounded-xl px-4 py-2 text-sm hover:opacity-90 shadow-lg flex items-center">
+                                            <i class="fas fa-check mr-2"></i>Подтвердить
+                                        </button>
+                                        <button type="button" onclick="showRejectModal('{{ task.id }}', '{{ task.title|escapejs }}')" class="bg-deep-red text-accent-text rounded-xl px-4 py-2 text-sm hover:opacity-90 shadow-lg flex items-center">
+                                            <i class="fas fa-times mr-2"></i>Отклонить
+                                        </button>
+                                        {% else %}
+                                        <a href="#" onclick="showTaskDetails('{{ task.id }}')" class="bg-electric-blue text-deep-navy rounded-xl px-4 py-2 text-sm hover:opacity-90 shadow-lg flex items-center">
+                                            <i class="fas fa-eye mr-2"></i>Детали
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination and bulk action -->
+                <div class="p-6 border-t border-electric-blue/20 flex flex-wrap justify-between items-center gap-4">
+                    <!-- Pagination -->
+                    {% if tasks.paginator.num_pages > 1 %}
+                    <div class="flex justify-center">
+                        <nav class="flex items-center space-x-2">
+                            {% if tasks.has_previous %}
+                            <a href="?page=1{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ tasks.previous_page_number }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                            {% else %}
+                            <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                <i class="fas fa-angle-double-left"></i>
+                            </span>
+                            <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                <i class="fas fa-angle-left"></i>
+                            </span>
+                            {% endif %}
+                            
+                            {% for i in tasks.paginator.page_range %}
+                                {% if tasks.number == i %}
+                                <span class="w-10 h-10 flex items-center justify-center bg-electric-blue text-deep-navy rounded-xl shadow-lg">
+                                    {{ i }}
+                                </span>
+                                {% elif i > tasks.number|add:'-3' and i < tasks.number|add:'3' %}
+                                <a href="?page={{ i }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                                    {{ i }}
+                                </a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if tasks.has_next %}
+                            <a href="?page={{ tasks.next_page_number }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="?page={{ tasks.paginator.num_pages }}{% if filter %}&filter={{ filter }}{% endif %}" class="w-10 h-10 flex items-center justify-center bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                            {% else %}
+                            <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                            <span class="w-10 h-10 flex items-center justify-center bg-deep-navy text-accent-text/30 rounded-xl cursor-not-allowed">
+                                <i class="fas fa-angle-double-right"></i>
+                            </span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Bulk action button -->
+                    {% if filter == 'pending' %}
+                    <div>
+                        <button type="button" id="confirm-selected" class="px-6 py-4 bg-neon-green text-deep-navy rounded-xl shadow-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center" disabled onclick="showBulkConfirmModal()">
+                            <i class="fas fa-check-circle mr-3"></i>
+                            <span class="font-semibold">Подтвердить выбранные</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                
+            {% if filter == 'pending' %}
+            </form>
+            {% endif %}
+        {% else %}
+            <!-- Empty state -->
+            <div class="p-16 text-center">
+                <div class="w-24 h-24 rounded-full bg-electric-blue/20 flex items-center justify-center mx-auto mb-6">
+                    <i class="fas {% if filter == 'confirmed' %}fa-check-circle text-neon-green{% elif filter == 'all' %}fa-list-alt text-royal-purple{% else %}fa-clock text-luxe-gold{% endif %} text-5xl"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-accent-text mb-4">
+                    {% if filter == 'confirmed' %}
+                        Нет подтвержденных задач
+                    {% elif filter == 'all' %}
+                        Нет выполненных задач
+                    {% else %}
+                        Нет задач для подтверждения
+                    {% endif %}
+                </h3><p class="text-accent-text/60 max-w-md mx-auto">
+                    {% if filter == 'confirmed' %}
+                        У вас пока нет подтвержденных задач. Перейдите во вкладку "Ожидают подтверждения", чтобы увидеть задачи, готовые к проверке.
+                    {% elif filter == 'all' %}
+                        В проекте еще нет выполненных задач. Как только разработчики начнут выполнять задачи, вы увидите их здесь.
+                    {% else %}
+                        Нет задач, ожидающих вашего подтверждения. Как только администратор проверит выполненные задачи, они появятся здесь.
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4">
+        <h3 class="text-3xl font-semibold text-electric-blue mb-6">Подтверждение задачи</h3>
+        <p class="text-accent-text mb-4">Вы собираетесь подтвердить задачу: <strong id="confirmTaskTitle"></strong></p>
+        
+        <form method="post" action="" id="confirmForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="confirm">
+            
+            <div class="mb-6">
+                <label class="block text-accent-text/70 mb-3">Комментарий (на английском):</label>
+                <textarea 
+                    name="comment" 
+                    rows="4" 
+                    class="w-full bg-deep-navy text-accent-text rounded-2xl p-4 border border-electric-blue/30 focus:ring-2 focus:ring-electric-blue"
+                    placeholder="Provide your feedback in English..."
+                ></textarea>
+                <p class="text-accent-text/50 text-sm mt-2">Пожалуйста, оставьте комментарий на английском языке</p>
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <button 
+                    type="button" 
+                    onclick="hideConfirmModal()" 
+                    class="px-6 py-3 bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors"
+                >
+                    Отмена
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-6 py-3 bg-neon-green text-deep-navy rounded-xl hover:opacity-90 transition-opacity"
+                >
+                    Подтвердить задачу
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4">
+        <h3 class="text-3xl font-semibold text-electric-blue mb-6">Отклонение задачи</h3>
+        <p class="text-accent-text mb-4">Вы собираетесь отклонить задачу: <strong id="rejectTaskTitle"></strong></p>
+        
+        <form method="post" action="" id="rejectForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="reject">
+            
+            <div class="mb-6">
+                <label class="block text-accent-text/70 mb-3">Причина отклонения (на английском):</label>
+                <textarea 
+                    name="comment" 
+                    rows="4" 
+                    class="w-full bg-deep-navy text-accent-text rounded-2xl p-4 border border-deep-red/30 focus:ring-2 focus:ring-deep-red"
+                    placeholder="Explain why you're rejecting this task in English..."
+                    required
+                ></textarea>
+                <p class="text-accent-text/50 text-sm mt-2">Пожалуйста, укажите причину отклонения на английском языке</p>
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <button 
+                    type="button" 
+                    onclick="hideRejectModal()" 
+                    class="px-6 py-3 bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors"
+                >
+                    Отмена
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-6 py-3 bg-deep-red text-accent-text rounded-xl hover:opacity-90 transition-opacity"
+                >
+                    Отклонить задачу
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bulk Confirmation Modal -->
+<div id="bulkConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="glass-morphism rounded-2xl p-8 w-full max-w-2xl mx-4">
+        <h3 class="text-3xl font-semibold text-electric-blue mb-6">Массовое подтверждение задач</h3>
+        <p class="text-accent-text mb-4">Вы собираетесь подтвердить <span id="bulkConfirmCount">0</span> задач</p>
+        
+        <div class="mb-6">
+            <label class="block text-accent-text/70 mb-3">Общий комментарий (на английском):</label>
+            <textarea 
+                name="bulk_comment" 
+                form="bulk-form"
+                rows="4" 
+                class="w-full bg-deep-navy text-accent-text rounded-2xl p-4 border border-electric-blue/30 focus:ring-2 focus:ring-electric-blue"
+                placeholder="Provide general feedback for all selected tasks in English..."
+            ></textarea>
+            <p class="text-accent-text/50 text-sm mt-2">Пожалуйста, оставьте комментарий на английском языке</p>
+        </div>
+        
+        <div class="flex justify-end space-x-4">
+            <button 
+                type="button" 
+                onclick="hideBulkConfirmModal()" 
+                class="px-6 py-3 bg-midnight-blue text-accent-text rounded-xl hover:bg-electric-blue hover:text-deep-navy transition-colors"
+            >
+                Отмена
+            </button>
+            <button 
+                type="button"
+                onclick="submitBulkForm()"
+                class="px-6 py-3 bg-neon-green text-deep-navy rounded-xl hover:opacity-90 transition-opacity"
+            >
+                Подтвердить все задачи
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Task Details Modal -->
+<div id="taskDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+    <div class="glass-morphism rounded-2xl p-8 w-full max-w-4xl mx-4">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-3xl font-semibold text-electric-blue" id="detailsTaskTitle">Детали задачи</h3>
+            <button onclick="hideTaskDetails()" class="bg-deep-navy text-accent-text rounded-full w-10 h-10 flex items-center justify-center hover:bg-electric-blue hover:text-deep-navy transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="space-y-6" id="taskDetailsContent">
+            <div class="bg-midnight-blue/50 rounded-xl p-5">
+                <h4 class="text-xl font-semibold text-electric-blue mb-2">Описание</h4>
+                <p class="text-accent-text" id="detailsDescription"></p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-midnight-blue/50 rounded-xl p-5">
+                    <h4 class="text-xl font-semibold text-electric-blue mb-2">Статус</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-accent-text/70">Прогресс:</span>
+                            <span class="text-accent-text" id="detailsProgress"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-accent-text/70">Срок:</span>
+                            <span class="text-accent-text" id="detailsDeadline"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-accent-text/70">Статус подтверждения:</span>
+                            <span class="text-accent-text" id="detailsConfirmation"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-midnight-blue/50 rounded-xl p-5">
+                    <h4 class="text-xl font-semibold text-electric-blue mb-2">Исполнители</h4>
+                    <div id="detailsAssignees" class="flex flex-wrap gap-2">
+                        <!-- Assigned users will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-midnight-blue/50 rounded-xl p-5">
+                <h4 class="text-xl font-semibold text-electric-blue mb-2">Ваш комментарий</h4>
+                <p class="text-accent-text" id="detailsComment"></p>
+                <p class="text-accent-text/50 text-sm mt-2" id="detailsCommentDate"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modal functions
+    function showConfirmModal(taskId, taskTitle) {
+        document.getElementById('confirmTaskTitle').textContent = taskTitle;
+        document.getElementById('confirmForm').action = "{% url 'confirm_task_by_client' 0 %}".replace('0', taskId);
+        
+        const modal = document.getElementById('confirmModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    
+    function hideConfirmModal() {
+        const modal = document.getElementById('confirmModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+    
+    function showRejectModal(taskId, taskTitle) {
+        document.getElementById('rejectTaskTitle').textContent = taskTitle;
+        document.getElementById('rejectForm').action = "{% url 'confirm_task_by_client' 0 %}".replace('0', taskId);
+        
+        const modal = document.getElementById('rejectModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    
+    function hideRejectModal() {
+        const modal = document.getElementById('rejectModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+    
+    function showBulkConfirmModal() {
+        const selectedCount = document.querySelectorAll('.task-checkbox:checked').length;
+        document.getElementById('bulkConfirmCount').textContent = selectedCount;
+        
+        const modal = document.getElementById('bulkConfirmModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    
+    function hideBulkConfirmModal() {
+        const modal = document.getElementById('bulkConfirmModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+    
+    function submitBulkForm() {
+        document.getElementById('bulk-form').submit();
+    }
+    
+    function showTaskDetails(taskId) {
+        // This would be implemented with actual AJAX to get task details
+        // For now, we'll use a placeholder
+        document.getElementById('detailsTaskTitle').textContent = "Загрузка...";
+        
+        const modal = document.getElementById('taskDetailsModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // In a real implementation, you would fetch task details via AJAX
+        // and populate the modal with the returned data
+        fetch(`/task/${taskId}/details/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('detailsTaskTitle').textContent = data.title;
+                document.getElementById('detailsDescription').textContent = data.description;
+                document.getElementById('detailsProgress').textContent = `${data.progress}%`;
+                document.getElementById('detailsDeadline').textContent = data.deadline;
+                document.getElementById('detailsConfirmation').textContent = data.confirmation_status;
+                document.getElementById('detailsComment').textContent = data.client_comment || "Комментарий не оставлен";
+                document.getElementById('detailsCommentDate').textContent = data.client_confirmation_date || "";
+                
+                // Clear and populate assignees
+                const assigneesContainer = document.getElementById('detailsAssignees');
+                assigneesContainer.innerHTML = '';
+                data.assignees.forEach(assignee => {
+                    const span = document.createElement('span');
+                    span.className = "inline-flex items-center bg-deep-navy text-accent-text rounded-full px-3 py-1 text-sm";
+                    span.innerHTML = `<i class="fas fa-user mr-2"></i>${assignee}`;
+                    assigneesContainer.appendChild(span);
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching task details:", error);
+                document.getElementById('detailsTaskTitle').textContent = "Ошибка загрузки";
+            });
+    }
+    
+    function hideTaskDetails() {
+        const modal = document.getElementById('taskDetailsModal');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+    
+    // Select All Functionality
+    const selectAllCheckbox = document.getElementById('select-all');
+    const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+    const confirmSelectedBtn = document.getElementById('confirm-selected');
+    
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            taskCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateConfirmButton();
+        });
+    }
+    
+    if (taskCheckboxes.length) {
+        taskCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateConfirmButton);
+        });
+    }
+    
+    // Update confirmation button state
+    function updateConfirmButton() {
+        if (!confirmSelectedBtn) return;
+        
+        const selectedCount = document.querySelectorAll('.task-checkbox:checked').length;
+        confirmSelectedBtn.disabled = selectedCount === 0;
+        
+        if (selectedCount > 0) {
+            confirmSelectedBtn.textContent = `Подтвердить выбранные (${selectedCount})`;
+        } else {
+            confirmSelectedBtn.innerHTML = `
+                <i class="fas fa-check-circle mr-3"></i>
+                <span class="font-semibold">Подтвердить выбранные</span>
+            `;
+        }
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        updateConfirmButton();
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.fixed.inset-0').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('flex');
+                    this.classList.add('hidden');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

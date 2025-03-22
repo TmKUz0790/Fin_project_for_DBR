@@ -95,4 +95,19 @@ urlpatterns = [
 
 
     path('dev_history/', views.developer_payment_sheet, name='dev_history'),
+
+
+# Add these to your urls.py file
+
+# Task confirmation URLs
+path('tasks/pending-confirmation/', views.tasks_pending_confirmation, name='tasks_pending_confirmation'),
+path('tasks/bulk-confirm/', views.bulk_confirm_tasks, name='bulk_confirm_tasks'),
+path('tasks/<int:task_id>/confirm/', views.confirm_completed_task, name='confirm_completed_task'),
+
+    path('client/tasks/confirmation/', views.client_task_confirmation, name='client_task_confirmation'),
+    path('client/tasks/<int:task_id>/confirm/', views.confirm_task_by_client, name='confirm_task_by_client'),
+    path('client/tasks/bulk-confirm/', views.bulk_confirm_client_tasks, name='bulk_confirm_client_tasks'),
+
+    # AJAX URL для получения деталей задачи (для модального окна)
+
 ]
