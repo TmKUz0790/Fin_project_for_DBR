@@ -1,211 +1,664 @@
-{% extends 'base.html' %}
-{% block title %}All Developer Tasks{% endblock %}
+{#<!DOCTYPE html>#}
+{#<html lang="ru">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Панель задач разработчиков</title>#}
+{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">#}
+{#    <style>#}
+{#        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');#}
+{##}
+{#        :root {#}
+{#            --primary-color: #007bff;#}
+{#            --secondary-color: #6c757d;#}
+{#            --success-color: #28a745;#}
+{#            --warning-color: #ffc107;#}
+{#            --danger-color: #dc3545;#}
+{#        }#}
+{##}
+{#        body {#}
+{#            background-color: #f0f4f8;#}
+{#            font-family: 'Roboto', sans-serif;#}
+{#            line-height: 1.6;#}
+{#            color: #333;#}
+{#        }#}
+{##}
+{#        .dashboard-container {#}
+{#            max-width: 1300px;#}
+{#            margin: 0 auto;#}
+{#            padding: 2rem;#}
+{#        }#}
+{##}
+{#        .task-summary-cards {#}
+{#            display: grid;#}
+{#            grid-template-columns: repeat(4, 1fr);#}
+{#            gap: 1rem;#}
+{#            margin-bottom: 2rem;#}
+{#        }#}
+{##}
+{#        .task-summary-card {#}
+{#            background-color: white;#}
+{#            border-radius: 12px;#}
+{#            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);#}
+{#            padding: 1.5rem;#}
+{#            display: flex;#}
+{#            justify-content: space-between;#}
+{#            align-items: center;#}
+{#            transition: all 0.3s ease;#}
+{#        }#}
+{##}
+{#        .task-summary-card:hover {#}
+{#            transform: translateY(-8px);#}
+{#            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);#}
+{#        }#}
+{##}
+{#        .task-summary-card .card-icon {#}
+{#            font-size: 2.5rem;#}
+{#            opacity: 0.7;#}
+{#        }#}
+{##}
+{#        .developer-section {#}
+{#            background-color: white;#}
+{#            border-radius: 12px;#}
+{#            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);#}
+{#            padding: 1.5rem;#}
+{#            margin-bottom: 1.5rem;#}
+{#        }#}
+{##}
+{#        .developer-header {#}
+{#            display: flex;#}
+{#            justify-content: space-between;#}
+{#            align-items: center;#}
+{#            margin-bottom: 1.5rem;#}
+{#            border-bottom: 1px solid #eee;#}
+{#            padding-bottom: 1rem;#}
+{#        }#}
+{##}
+{#        .task-table {#}
+{#            width: 100%;#}
+{#        }#}
+{##}
+{#        .task-table th {#}
+{#            background-color: #f8f9fa;#}
+{#            color: #6c757d;#}
+{#            text-transform: uppercase;#}
+{#            font-size: 0.8rem;#}
+{#            font-weight: 600;#}
+{#            border-bottom: 2px solid #e9ecef;#}
+{#        }#}
+{##}
+{#        .task-table tr:hover {#}
+{#            background-color: #f1f3f5;#}
+{#        }#}
+{##}
+{#        .task-status-badge {#}
+{#            padding: 0.25rem 0.5rem;#}
+{#            border-radius: 4px;#}
+{#            font-size: 0.75rem;#}
+{#            font-weight: 600;#}
+{#        }#}
+{##}
+{#        .progress-container {#}
+{#            display: flex;#}
+{#            align-items: center;#}
+{#            gap: 0.5rem;#}
+{#        }#}
+{##}
+{#        .filter-section {#}
+{#            display: flex;#}
+{#            gap: 1rem;#}
+{#            margin-bottom: 1.5rem;#}
+{#        }#}
+{##}
+{#        @media (max-width: 1024px) {#}
+{#            .task-summary-cards {#}
+{#                grid-template-columns: repeat(2, 1fr);#}
+{#            }#}
+{#        }#}
+{##}
+{#        @media (max-width: 640px) {#}
+{#            .task-summary-cards {#}
+{#                grid-template-columns: 1fr;#}
+{#            }#}
+{##}
+{#            .developer-header {#}
+{#                flex-direction: column;#}
+{#                align-items: flex-start;#}
+{#                gap: 1rem;#}
+{#            }#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+{#    <div class="dashboard-container">#}
+{#        <div class="page-header mb-4">#}
+{#            <h2 class="mb-2">Панель задач разработчиков</h2>#}
+{#            <p class="text-muted">{{ today|date:"d F Y" }}</p>#}
+{#        </div>#}
+{##}
+{#        <div class="filter-section">#}
+{#            <form method="GET" class="d-flex align-items-center">#}
+{#                <select name="category" class="form-select form-select-sm me-2" style="max-width: 250px;" onchange="this.form.submit()">#}
+{#                    <option value="overdue" {% if selected_category == 'overdue' %}selected{% endif %}>Просроченные задачи</option>#}
+{#                    <option value="today" {% if selected_category == 'today' %}selected{% endif %}>Задачи на сегодня</option>#}
+{#                    <option value="tomorrow" {% if selected_category == 'tomorrow' %}selected{% endif %}>Задачи на завтра</option>#}
+{#                    <option value="week" {% if selected_category == 'week' %}selected{% endif %}>Задачи на этой неделе</option>#}
+{#                </select>#}
+{##}
+{#                <select name="developer" class="form-select form-select-sm" style="max-width: 250px;" onchange="this.form.submit()">#}
+{#                    <option value="">Все разработчики</option>#}
+{#                    {% for dev in all_developers %}#}
+{#                        <option value="{{ dev.id }}" {% if selected_developer_id == dev.id|stringformat:"i" %}selected{% endif %}>#}
+{#                            {{ dev.username }} ({{ dev.task_count }})#}
+{#                        </option>#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{#            </form>#}
+{#        </div>#}
+{##}
+{#        <div class="task-summary-cards">#}
+{#            <div class="task-summary-card">#}
+{#                <div>#}
+{#                    <h6 class="text-muted mb-2">Просрочено</h6>#}
+{#                    <h4>{{ all_developers.aggregate.overdue_count|default:"0" }}</h4>#}
+{#                </div>#}
+{#                <div class="card-icon text-danger">⏰</div>#}
+{#            </div>#}
+{#            <div class="task-summary-card">#}
+{#                <div>#}
+{#                    <h6 class="text-muted mb-2">Сегодня</h6>#}
+{#                    <h4>{{ all_developers.aggregate.today_count|default:"0" }}</h4>#}
+{#                </div>#}
+{#                <div class="card-icon text-warning">📅</div>#}
+{#            </div>#}
+{#            <div class="task-summary-card">#}
+{#                <div>#}
+{#                    <h6 class="text-muted mb-2">Завтра</h6>#}
+{#                    <h4>{{ all_developers.aggregate.tomorrow_count|default:"0" }}</h4>#}
+{#                </div>#}
+{#                <div class="card-icon text-info">🔜</div>#}
+{#            </div>#}
+{#            <div class="task-summary-card">#}
+{#                <div>#}
+{#                    <h6 class="text-muted mb-2">Эта неделя</h6>#}
+{#                    <h4>{{ all_developers.aggregate.week_count|default:"0" }}</h4>#}
+{#                </div>#}
+{#                <div class="card-icon text-primary">📊</div>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#        {% for developer, tasks in developer_tasks.items %}#}
+{#        <div class="developer-section">#}
+{#            <div class="developer-header">#}
+{#                <div>#}
+{#                    <h5 class="mb-1">{{ developer.username }}</h5>#}
+{#                    <p class="text-muted small mb-0">{{ developer.email }}</p>#}
+{#                </div>#}
+{#                <div>#}
+{#                    <span class="task-status-badge badge bg-danger me-1">Просрочено: {{ developer.overdue_count }}</span>#}
+{#                    <span class="task-status-badge badge bg-warning text-dark me-1">Сегодня: {{ developer.today_count }}</span>#}
+{#                    <span class="task-status-badge badge bg-info me-1">Завтра: {{ developer.tomorrow_count }}</span>#}
+{#                    <span class="task-status-badge badge bg-primary">Неделя: {{ developer.week_count }}</span>#}
+{#                </div>#}
+{#            </div>#}
+{#            #}
+{#            {% if tasks %}#}
+{#            <div class="table-responsive">#}
+{#                <table class="table task-table">#}
+{#                    <thead>#}
+{#                        <tr>#}
+{#                            <th>Задача</th>#}
+{#                            <th>Проект</th>#}
+{#                            <th>Статус</th>#}
+{#                            <th>Дедлайн</th>#}
+{#                            <th>Прогресс</th>#}
+{#                            <th>Оплата</th>#}
+{#                        </tr>#}
+{#                    </thead>#}
+{#                    <tbody>#}
+{#                        {% for task in tasks %}#}
+{#                        <tr class="{% if task.status == 'overdue' %}table-danger{% elif task.status == 'due_today' %}table-warning{% endif %}">#}
+{#                            <td>{{ task.title }}</td>#}
+{#                            <td>{{ task.job.title }}</td>#}
+{#                            <td>{{ task.status_display }}</td>#}
+{#                            <td>{{ task.deadline|date:"d M Y" }}</td>#}
+{#                            <td>#}
+{#                                <div class="progress-container">#}
+{#                                    <div class="progress flex-grow-1" style="height: 10px;">#}
+{#                                        <div class="progress-bar bg-{% if task.progress == 100 %}success{% elif task.status == 'overdue' %}danger{% elif task.status == 'due_today' %}warning{% else %}primary{% endif %}" #}
+{#                                             style="width: {{ task.progress }}%;">#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <span class="small text-muted">{{ task.progress }}%</span>#}
+{#                                </div>#}
+{#                            </td>#}
+{#                            <td>${{ task.money_for_task }}</td>#}
+{#                        </tr>#}
+{#                        {% endfor %}#}
+{#                    </tbody>#}
+{#                </table>#}
+{#            </div>#}
+{#            {% else %}#}
+{#            <p class="text-muted text-center">Нет задач {{ selected_category }} для этого разработчика.</p>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#        {% empty %}#}
+{#        <div class="alert alert-info text-center">#}
+{#            Не найдено разработчиков по выбранным критериям.#}
+{#        </div>#}
+{#        {% endfor %}#}
+{#        #}
+{#        {% if developers.has_other_pages %}#}
+{#        <nav aria-label="Навигация по страницам" class="d-flex justify-content-center">#}
+{#            <ul class="pagination pagination-sm">#}
+{#                {% if developers.has_previous %}#}
+{#                    <li class="page-item">#}
+{#                        <a class="page-link" href="?page=1{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Первая</a>#}
+{#                    </li>#}
+{#                    <li class="page-item">#}
+{#                        <a class="page-link" href="?page={{ developers.previous_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Предыдущая</a>#}
+{#                    </li>#}
+{#                {% else %}#}
+{#                    <li class="page-item disabled">#}
+{#                        <span class="page-link">Первая</span>#}
+{#                    </li>#}
+{#                    <li class="page-item disabled">#}
+{#                        <span class="page-link">Предыдущая</span>#}
+{#                    </li>#}
+{#                {% endif %}#}
+{#                #}
+{#                {% for i in developers.paginator.page_range %}#}
+{#                    {% if developers.number == i %}#}
+{#                        <li class="page-item active">#}
+{#                            <span class="page-link">{{ i }}</span>#}
+{#                        </li>#}
+{#                    {% elif i > developers.number|add:'-3' and i < developers.number|add:'3' %}#}
+{#                        <li class="page-item">#}
+{#                            <a class="page-link" href="?page={{ i }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>#}
+{#                        </li>#}
+{#                    {% endif %}#}
+{#                {% endfor %}#}
+{#                #}
+{#                {% if developers.has_next %}#}
+{#                    <li class="page-item">#}
+{#                        <a class="page-link" href="?page={{ developers.next_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Следующая</a>#}
+{#                    </li>#}
+{#                    <li class="page-item">#}
+{#                        <a class="page-link" href="?page={{ developers.paginator.num_pages }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Последняя</a>#}
+{#                    </li>#}
+{#                {% else %}#}
+{#                    <li class="page-item disabled">#}
+{#                        <span class="page-link">Следующая</span>#}
+{#                    </li>#}
+{#                    <li class="page-item disabled">#}
+{#                        <span class="page-link">Последняя</span>#}
+{#                    </li>#}
+{#                {% endif %}#}
+{#            </ul>#}
+{#        </nav>#}
+{#        {% endif %}#}
+{#    </div>#}
+{##}
+{#    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>#}
+{#</body>#}
+{#</html>#}
 
-{% block content %}
-<div class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">All Developer Tasks</h1>
-        
-        <!-- Filters -->
-        <div class="d-flex">
-            <form method="GET" class="form-inline mr-2">
-                <!-- Preserve other parameters when changing category -->
-                {% if selected_developer_id %}
-                <input type="hidden" name="developer" value="{{ selected_developer_id }}">
-                {% endif %}
-                
-                <select name="category" class="form-control" onchange="this.form.submit()">
-                    <option value="overdue" {% if selected_category == 'overdue' %}selected{% endif %}>Overdue Tasks</option>
-                    <option value="today" {% if selected_category == 'today' %}selected{% endif %}>Today's Tasks</option>
-                    <option value="tomorrow" {% if selected_category == 'tomorrow' %}selected{% endif %}>Tomorrow's Tasks</option>
-                    <option value="week" {% if selected_category == 'week' %}selected{% endif %}>This Week's Tasks</option>
-                </select>
-            </form>
-            
-            <form method="GET" class="form-inline">
-                <!-- Preserve other parameters when changing developer -->
-                {% if selected_category %}
-                <input type="hidden" name="category" value="{{ selected_category }}">
-                {% endif %}
-                
-                <select name="developer" class="form-control" onchange="this.form.submit()">
-                    <option value="">All Developers</option>
-                    {% for dev in all_developers %}
-                        <option value="{{ dev.id }}" {% if selected_developer_id == dev.id|stringformat:"i" %}selected{% endif %}>
-                            {{ dev.username }} ({{ dev.task_count }} tasks)
-                        </option>
-                    {% endfor %}
-                </select>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Date Information -->
-    <div class="alert alert-info mb-4">
-        <p class="mb-0">
-            Viewing <strong>{{ selected_category }}</strong> tasks for <strong>{% if selected_developer_id %}selected developer{% else %}all developers{% endif %}</strong> | 
-            Today's Date: {{ today|date:"l, F d, Y" }}
-        </p>
-    </div>
-    
-    <!-- Task Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-danger text-white mb-3">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title mb-0">Overdue Tasks</h5>
-                            <p class="card-text">Needs immediate attention</p>
-                        </div>
-                        <div class="h1 mb-0">
-                            {{ all_developers.aggregate.overdue_count|default:"0" }}
-                        </div>
-                    </div>
-                    <a href="?category=overdue{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-white stretched-link">View all</a>
-                </div>
+
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления проектами</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6366f1;
+            --background-color: #f4f7fe;
+            --card-bg: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .dashboard-header__title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header__date {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-section .form-select {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card__icon {
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+
+        .developer-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .developer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .developer-header__info h5 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .developer-header__info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .task-table {
+            width: 100%;
+        }
+
+        .task-table thead th {
+            background-color: #f9fafb;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .task-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .task-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .task-status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e5e7eb;
+        }
+
+        .progress-bar {
+            border-radius: 4px;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .pagination .page-link {
+            color: var(--text-secondary);
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .developer-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .developer-header__badges {
+                margin-top: 1rem;
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-header">
+            <div class="dashboard-header__title">
+                <h1>Панель управления проектами</h1>
+                <p class="dashboard-header__date">{{ today|date:"d F Y" }}</p>
+            </div>
+            <div class="filter-section">
+                <form method="GET" class="d-flex align-items-center">
+                    <select name="category" class="form-select form-select-sm me-2" style="min-width: 250px;" onchange="this.form.submit()">
+                        <option value="overdue" {% if selected_category == 'overdue' %}selected{% endif %}>Просроченные задачи</option>
+                        <option value="today" {% if selected_category == 'today' %}selected{% endif %}>Задачи на сегодня</option>
+                        <option value="tomorrow" {% if selected_category == 'tomorrow' %}selected{% endif %}>Задачи на завтра</option>
+                        <option value="week" {% if selected_category == 'week' %}selected{% endif %}>Задачи на этой неделе</option>
+                    </select>
+
+                    <select name="developer" class="form-select form-select-sm" style="min-width: 250px;" onchange="this.form.submit()">
+                        <option value="">Все разработчики</option>
+                        {% for dev in all_developers %}
+                            <option value="{{ dev.id }}" {% if selected_developer_id == dev.id|stringformat:"i" %}selected{% endif %}>
+                                {{ dev.username }} ({{ dev.task_count }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
             </div>
         </div>
-        
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark mb-3">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title mb-0">Today's Tasks</h5>
-                            <p class="card-text">Due on {{ today|date:"M d" }}</p>
-                        </div>
-                        <div class="h1 mb-0">
-                            {{ all_developers.aggregate.today_count|default:"0" }}
-                        </div>
-                    </div>
-                    <a href="?category=today{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-dark stretched-link">View all</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="card bg-info text-white mb-3">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title mb-0">Tomorrow's Tasks</h5>
-                            <p class="card-text">Due tomorrow</p>
-                        </div>
-                        <div class="h1 mb-0">
-                            {{ all_developers.aggregate.tomorrow_count|default:"0" }}
-                        </div>
-                    </div>
-                    <a href="?category=tomorrow{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-white stretched-link">View all</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="card bg-primary text-white mb-3">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h5 class="card-title mb-0">This Week's Tasks</h5>
-                            <p class="card-text">Due in the next 7 days</p>
-                        </div>
-                        <div class="h1 mb-0">
-                            {{ all_developers.aggregate.week_count|default:"0" }}
-                        </div>
-                    </div>
-                    <a href="?category=week{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}" class="text-white stretched-link">View all</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Developer Task Tables -->
-    {% for developer, tasks in developer_tasks.items %}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">{{ developer.username }} ({{ developer.email }})</h5>
-                
-                <!-- Task counts badge group -->
+
+        <div class="stats-grid">
+            <div class="stat-card">
                 <div>
-                    <span class="badge badge-danger mr-1" title="Overdue tasks">{{ developer.overdue_count }}</span>
-                    <span class="badge badge-warning mr-1" title="Today's tasks">{{ developer.today_count }}</span>
-                    <span class="badge badge-info mr-1" title="Tomorrow's tasks">{{ developer.tomorrow_count }}</span>
-                    <span class="badge badge-primary" title="This week's tasks">{{ developer.week_count }}</span>
+                    <h6 class="text-secondary mb-2">Просрочено</h6>
+                    <h4>{{ all_developers.aggregate.overdue_count|default:"0" }}</h4>
+                </div>
+                <div class="stat-card__icon text-danger">
+                    <i class="ri-time-line"></i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <h6 class="text-secondary mb-2">Сегодня</h6>
+                    <h4>{{ all_developers.aggregate.today_count|default:"0" }}</h4>
+                </div>
+                <div class="stat-card__icon text-warning">
+                    <i class="ri-calendar-2-line"></i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <h6 class="text-secondary mb-2">Завтра</h6>
+                    <h4>{{ all_developers.aggregate.tomorrow_count|default:"0" }}</h4>
+                </div>
+                <div class="stat-card__icon text-info">
+                    <i class="ri-calendar-todo-line"></i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <h6 class="text-secondary mb-2">Эта неделя</h6>
+                    <h4>{{ all_developers.aggregate.week_count|default:"0" }}</h4>
+                </div>
+                <div class="stat-card__icon text-primary">
+                    <i class="ri-bar-chart-grouped-line"></i>
+                </div>
+            </div>
+        </div>
+
+        {% for developer, tasks in developer_tasks.items %}
+        <div class="developer-section">
+            <div class="developer-header">
+                <div class="developer-header__info">
+                    <h5>{{ developer.username }}</h5>
+                    <p>{{ developer.email }}</p>
+                </div>
+                <div class="developer-header__badges">
+                    <span class="task-status-badge badge bg-danger me-1">Просрочено: {{ developer.overdue_count }}</span>
+                    <span class="task-status-badge badge bg-warning text-dark me-1">Сегодня: {{ developer.today_count }}</span>
+                    <span class="task-status-badge badge bg-info me-1">Завтра: {{ developer.tomorrow_count }}</span>
+                    <span class="task-status-badge badge bg-primary">Неделя: {{ developer.week_count }}</span>
                 </div>
             </div>
             
-            <div class="card-body p-0">
-                <!-- Task Table -->
-                {% if tasks %}
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Task</th>
-                                    <th>Project</th>
-                                    <th>Status</th>
-                                    <th>Deadline</th>
-                                    <th>Progress</th>
-                                    <th>Payment</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for task in tasks %}
-                                    <tr class="{% if task.status == 'overdue' %}table-danger{% elif task.status == 'due_today' %}table-warning{% endif %}">
-                                        <td>{{ task.title }}</td>
-                                        <td>{{ task.job.title }}</td>
-                                        <td>
-                                            <span class="badge badge-{{ task.status }}">{{ task.status_display }}</span>
-                                        </td>
-                                        <td>{{ task.deadline|date:"M d, Y" }}</td>
-                                        <td>
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar bg-{% if task.progress == 100 %}success{% elif task.status == 'overdue' %}danger{% elif task.status == 'due_today' %}warning{% else %}primary{% endif %}" 
-                                                     role="progressbar" 
-                                                     style="width: {{ task.progress }}%;" 
-                                                     aria-valuenow="{{ task.progress }}" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100">
-                                                    {{ task.progress }}%
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>${{ task.money_for_task }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="alert alert-info m-3">
-                        No {{ selected_category }} tasks for this developer.
-                    </div>
-                {% endif %}
+            {% if tasks %}
+            <div class="table-responsive">
+                <table class="table task-table">
+                    <thead>
+                        <tr>
+                            <th>Задача</th>
+                            <th>Проект</th>
+                            <th>Статус</th>
+                            <th>Дедлайн</th>
+                            <th>Прогресс</th>
+                            <th>Оплата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr class="{% if task.status == 'overdue' %}table-danger{% elif task.status == 'due_today' %}table-warning{% endif %}">
+                            <td>{{ task.title }}</td>
+                            <td>{{ task.job.title }}</td>
+                            <td>{{ task.status_display }}</td>
+                            <td>{{ task.deadline|date:"d M Y" }}</td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-{% if task.progress == 100 %}success{% elif task.status == 'overdue' %}danger{% elif task.status == 'due_today' %}warning{% else %}primary{% endif %}" 
+                                             style="width: {{ task.progress }}%;">
+                                        </div>
+                                    </div>
+                                    <span class="small text-secondary">{{ task.progress }}%</span>
+                                </div>
+                            </td>
+                            <td>${{ task.money_for_task }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <p class="text-secondary text-center">Нет задач {{ selected_category }} для этого разработчика.</p>
+            {% endif %}
         </div>
-    {% empty %}
-        <div class="alert alert-info">
-            No developers found with the current filter criteria.
+        {% empty %}
+        <div class="alert alert-light text-center">
+            Не найдено разработчиков по выбранным критериям.
         </div>
-    {% endfor %}
-    
-    <!-- Pagination -->
-    {% if developers.has_other_pages %}
-        <nav aria-label="Developer pagination">
-            <ul class="pagination justify-content-center">
+        {% endfor %}
+        
+        {% if developers.has_other_pages %}
+        <nav aria-label="Навигация по страницам">
+            <ul class="pagination">
                 {% if developers.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">&laquo; First</a>
+                        <a class="page-link" href="?page=1{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Первая</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ developers.previous_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Previous</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo; First</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
+                        <a class="page-link" href="?page={{ developers.previous_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Предыдущая</a>
                     </li>
                 {% endif %}
                 
@@ -217,27 +670,150 @@
                     {% elif i > developers.number|add:'-3' and i < developers.number|add:'3' %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ i }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
-                        </li>
-                    {% endif %}
+                        </li>{% endif %}
                 {% endfor %}
                 
                 {% if developers.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ developers.next_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Next</a>
+                        <a class="page-link" href="?page={{ developers.next_page_number }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Следующая</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ developers.paginator.num_pages }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Last &raquo;</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">Next</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">Last &raquo;</span>
+                        <a class="page-link" href="?page={{ developers.paginator.num_pages }}{% if selected_developer_id %}&developer={{ selected_developer_id }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Последняя</a>
                     </li>
                 {% endif %}
             </ul>
         </nav>
-    {% endif %}
-</div>
-{% endblock %}
+        {% endif %}
+    </div>
+
+    <!-- Modal для детальной информации о задаче -->
+    <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskDetailModalLabel">Детали задачи</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body" id="taskDetailModalBody">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>Описание задачи</h6>
+                            <p id="taskDescription" class="text-muted"></p>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6>Проект</h6>
+                                    <p id="taskProject" class="fw-bold"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Приоритет</h6>
+                                    <span id="taskPriority" class="badge"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6>Начало</h6>
+                                    <p id="taskStartDate"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Дедлайн</h6>
+                                    <p id="taskDeadline" class="text-danger"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>Прогресс</h6>
+                                    <div class="progress mb-2" style="height: 20px;">
+                                        <div id="taskProgressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <p id="taskProgressText" class="text-center mb-0"></p>
+                                    
+                                    <hr>
+                                    
+                                    <h6>Оплата</h6>
+                                    <p id="taskPayment" class="fw-bold text-success"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Функция для открытия модального окна с деталями задачи
+            function openTaskDetailModal(taskData) {
+                const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+                
+                // Заполнение модального окна данными
+                document.getElementById('taskDetailModalLabel').textContent = taskData.title;
+                document.getElementById('taskDescription').textContent = taskData.description || 'Описание отсутствует';
+                document.getElementById('taskProject').textContent = taskData.project;
+                
+                // Установка приоритета
+                const priorityBadge = document.getElementById('taskPriority');
+                priorityBadge.textContent = taskData.priority;
+                priorityBadge.className = 'badge ' + getPriorityClass(taskData.priority);
+                
+                document.getElementById('taskStartDate').textContent = taskData.startDate || 'Не указано';
+                document.getElementById('taskDeadline').textContent = taskData.deadline;
+                
+                // Прогресс
+                const progressBar = document.getElementById('taskProgressBar');
+                progressBar.style.width = `${taskData.progress}%`;
+                progressBar.className = `progress-bar ${getProgressBarClass(taskData.progress)}`;
+                document.getElementById('taskProgressText').textContent = `${taskData.progress}%`;
+                
+                // Оплата
+                document.getElementById('taskPayment').textContent = `$${taskData.payment}`;
+                
+                modal.show();
+            }
+
+            // Вспомогательные функции для стилизации
+            function getPriorityClass(priority) {
+                switch(priority) {
+                    case 'Высокий': return 'bg-danger';
+                    case 'Средний': return 'bg-warning text-dark';
+                    case 'Низкий': return 'bg-info';
+                    default: return 'bg-secondary';
+                }
+            }
+
+            function getProgressBarClass(progress) {
+                if (progress === 100) return 'bg-success';
+                if (progress < 25) return 'bg-danger';
+                if (progress < 50) return 'bg-warning';
+                if (progress < 75) return 'bg-info';
+                return 'bg-primary';
+            }
+
+            // Пример привязки события (здесь вам нужно будет адаптировать под вашу конкретную реализацию)
+            document.querySelectorAll('.task-detail-trigger').forEach(element => {
+                element.addEventListener('click', function() {
+                    const taskData = {
+                        title: this.dataset.taskTitle,
+                        description: this.dataset.taskDescription,
+                        project: this.dataset.taskProject,
+                        priority: this.dataset.taskPriority,
+                        startDate: this.dataset.taskStartDate,
+                        deadline: this.dataset.taskDeadline,
+                        progress: parseInt(this.dataset.taskProgress),
+                        payment: this.dataset.taskPayment
+                    };
+                    openTaskDetailModal(taskData);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

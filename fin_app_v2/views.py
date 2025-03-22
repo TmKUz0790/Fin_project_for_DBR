@@ -663,10 +663,18 @@ def admin_dashboard(request):
         return HttpResponseForbidden("You are not authorized to access this page.")
 
     today = now().date()
+    current_month = today.month
+    current_year = today.year
 
     # Basic job & task stats
     jobs = Job.objects.all()
     total_jobs = jobs.count()
+
+    # Count this month's jobs
+    this_month_jobs = Job.objects.filter(
+        created_at__year=current_year,
+        created_at__month=current_month
+    ).count()
 
     # Task counts by type
     simple_tasks_count = Task.objects.filter(
@@ -674,9 +682,16 @@ def admin_dashboard(request):
         progress__lt=100  # less than 100% complete
     ).count()
 
+    # Get all monthly tasks
     monthly_tasks = Task.objects.filter(
-        task_type='MONTHLY',
-        progress__lt=100
+        task_type='MONTHLY'
+    ).count()
+
+    # Get this month's tasks (both simple and monthly)
+    this_month_tasks = Task.objects.filter(
+        deadline__year=current_year,
+        deadline__month=current_month,
+        task_type__in=['SIMPLE', 'MONTHLY']
     ).count()
 
     # Financial data
@@ -690,8 +705,6 @@ def admin_dashboard(request):
     ).count()
 
     # Calculate monthly income (jobs created this month)
-    current_month = now().month
-    current_year = now().year
     monthly_income = Job.objects.filter(
         created_at__year=current_year,
         created_at__month=current_month
@@ -796,6 +809,7 @@ def admin_dashboard(request):
 
     context = {
         'total_jobs': total_jobs,
+        'this_month_jobs': this_month_jobs,  # New context variable for this month's jobs
         'total_income': total_income,
         'in_time_processes_money': in_time_processes_money,
         'overdue_task_count': overdue_task_count,
@@ -803,12 +817,166 @@ def admin_dashboard(request):
         'developer_data': developer_data,
         'simple_tasks_count': simple_tasks_count,
         'monthly_tasks': monthly_tasks,
+        'this_month_tasks': this_month_tasks,  # All tasks for this month
         'recent_jobs': recent_jobs,
         'upcoming_tasks': upcoming_tasks,
         'overall_completion_rate': overall_completion_rate,
     }
 
     return render(request, 'admin_dashboard.html', context)
+# @login_required
+# def admin_dashboard(request):
+#     # Permission check
+#     if request.user.email != 'Admin@dbr.org':
+#         return HttpResponseForbidden("You are not authorized to access this page.")
+#
+#     today = now().date()
+#
+#     # Basic job & task stats
+#     jobs = Job.objects.all()
+#     total_jobs = jobs.count()
+#
+#     # Task counts by type
+#     simple_tasks_count = Task.objects.filter(
+#         task_type='SIMPLE',
+#         progress__lt=100  # less than 100% complete
+#     ).count()
+#
+#     monthly_tasks = Task.objects.filter(
+#         task_type='MONTHLY',
+#         progress__lt=100
+#     ).count()
+#
+#     # Financial data
+#     total_income = jobs.aggregate(total_income=Sum('over_all_income'))['total_income'] or 0
+#     in_time_processes_money = calculate_income_balance()["income_balance"]
+#
+#     # Overdue task count
+#     overdue_task_count = Task.objects.filter(
+#         progress__lt=100,
+#         deadline__lt=today
+#     ).count()
+#
+#     # Calculate monthly income (jobs created this month)
+#     current_month = now().month
+#     current_year = now().year
+#     monthly_income = Job.objects.filter(
+#         created_at__year=current_year,
+#         created_at__month=current_month
+#     ).aggregate(monthly_total=Sum('over_all_income'))['monthly_total'] or 0
+#
+#     # Get developer data with task status
+#     developers = User.objects.prefetch_related('developer_tasks')
+#     developer_data = []
+#
+#     for developer in developers:
+#         assigned_tasks = Task.objects.filter(assigned_users=developer).select_related('job')
+#         status_counter = Counter({'task_green': 0, 'task_yellow': 0, 'task_red': 0, 'overdue': 0, 'done': 0})
+#         task_info = []
+#
+#         for task in assigned_tasks:
+#             days_until_deadline = (task.deadline - today).days if task.deadline else None
+#
+#             if task.progress == 100:
+#                 task_color = 'done'
+#                 status_counter['done'] += 1
+#             else:
+#                 if days_until_deadline is not None:
+#                     if days_until_deadline > 10:
+#                         task_color = 'task_green'
+#                         status_counter['task_green'] += 1
+#                     elif 5 < days_until_deadline <= 10:
+#                         task_color = 'task_yellow'
+#                         status_counter['task_yellow'] += 1
+#                     elif 0 <= days_until_deadline <= 5:
+#                         task_color = 'task_red'
+#                         status_counter['task_red'] += 1
+#                     else:
+#                         task_color = 'overdue'
+#                         status_counter['overdue'] += 1
+#                 else:
+#                     task_color = None
+#
+#             task_info.append({
+#                 'task': task,
+#                 'days_until_deadline': days_until_deadline,
+#                 'color': task_color
+#             })
+#
+#         # Get 5 most recent tasks for the detail view
+#         from django.core.paginator import Paginator
+#         task_paginator = Paginator(task_info, 5)
+#         page_number = request.GET.get(f'page_{developer.id}', 1)
+#         page_obj = task_paginator.get_page(page_number)
+#
+#         # Calculate balance
+#         balance = assigned_tasks.filter(paid=True).aggregate(
+#             total_balance=Sum('money_for_task')
+#         )['total_balance'] or 0
+#
+#         developer_data.append({
+#             'developer': developer,
+#             'tasks': page_obj,
+#             'balance': balance,
+#             'status_counts': status_counter,
+#         })
+#
+#     # Limit developer data for dashboard display
+#     developer_data = developer_data[:4]  # Show only 4 developers on dashboard
+#
+#     # Get recent jobs (5 most recent)
+#     recent_jobs = Job.objects.order_by('-created_at')[:5]
+#
+#     # Add job.get_overall_progress and get_overdue_tasks_count methods to the Job model
+#     for job in recent_jobs:
+#         if not hasattr(job, 'get_overall_progress'):
+#             job.get_overall_progress = lambda: Task.objects.filter(job=job).aggregate(
+#                 avg_progress=Sum(F('progress') * F('task_percentage')) / 100
+#             )['avg_progress'] or 0
+#
+#         if not hasattr(job, 'get_overdue_tasks_count'):
+#             job.get_overdue_tasks_count = Task.objects.filter(
+#                 job=job,
+#                 progress__lt=100,
+#                 deadline__lt=today
+#             ).count()
+#
+#         if not hasattr(job, 'get_latest_deadline'):
+#             job.get_latest_deadline = Task.objects.filter(job=job).aggregate(
+#                 latest=Max('deadline')
+#             )['latest']
+#
+#     # Get upcoming deadlines (10 tasks with closest deadlines that aren't overdue)
+#     upcoming_tasks = Task.objects.filter(
+#         progress__lt=100,  # Not completed
+#         deadline__gte=today  # Not overdue
+#     ).order_by('deadline')[:8]
+#
+#     # Add days_until_deadline property to tasks
+#     for task in upcoming_tasks:
+#         task.days_until_deadline = (task.deadline - today).days if task.deadline else None
+#
+#     # Overall completion rate for all active projects
+#     total_progress = Task.objects.aggregate(
+#         weighted_progress=Sum(F('progress') * F('task_percentage')) / 100
+#     )['weighted_progress'] or 0
+#     overall_completion_rate = int(total_progress)
+#
+#     context = {
+#         'total_jobs': total_jobs,
+#         'total_income': total_income,
+#         'in_time_processes_money': in_time_processes_money,
+#         'overdue_task_count': overdue_task_count,
+#         'monthly_income': monthly_income,
+#         'developer_data': developer_data,
+#         'simple_tasks_count': simple_tasks_count,
+#         'monthly_tasks': monthly_tasks,
+#         'recent_jobs': recent_jobs,
+#         'upcoming_tasks': upcoming_tasks,
+#         'overall_completion_rate': overall_completion_rate,
+#     }
+#
+#     return render(request, 'admin_dashboard.html', context)
 
 
 from django.db.models import Max, Sum

@@ -336,33 +336,33 @@
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-card">
-                    <div class="d-flex align-items-center">
-                        <div class="stat-icon bg-success bg-opacity-10 text-success">
-                            <i class="bi bi-check2-circle"></i>
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-1">Простые задачи</h6>
-                            <h3 class="mb-0">{{ simple_tasks_count }}</h3>
-                        </div>
-                    </div>
+             <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-info bg-opacity-10 text-info">
+                    <i class="bi bi-calendar-month"></i>
+                </div>
+                <div class="ms-3">
+                    <h6 class="mb-1">Проекты за этот месяц</h6>
+                    <h3 class="mb-0">{{ this_month_jobs }}</h3>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-card">
-                    <div class="d-flex align-items-center">
-                        <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                            <i class="bi bi-calendar-check"></i>
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-1">Ежемесячные задачи</h6>
-                            <h3 class="mb-0">{{ monthly_tasks }}</h3>
-                        </div>
-                    </div>
+             <div class="col-md-3 col-sm-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center">
+                <div class="stat-icon bg-purple bg-opacity-10 text-purple" style="background-color: rgba(138, 43, 226, 0.1); color: #8a2be2;">
+                    <i class="bi bi-calendar-week"></i>
+                </div>
+                <div class="ms-3">
+                    <h6 class="mb-1">Задачи</h6>
+                    <h3 class="mb-0">{{ this_month_tasks }}</h3>
                 </div>
             </div>
+        </div>
+    </div>
 
             <div class="col-md-3 col-sm-6">
                 <div class="stat-card">
@@ -380,241 +380,266 @@
             </div>
         </div>
 
-        <!-- Financial Overview -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h5 class="mb-3">Финансовый обзор</h5>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="finance-item block-a">
-                    <img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/agree-.png" alt="agree-" />
-                    <h4>Всего клиентов</h4>
-                    <h2>{{ total_jobs }}</h2>
+   <!-- Financial Overview -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h5 class="mb-3">Финансовый обзор</h5>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="finance-item" style="background-color: #f8f9fa; border-radius: 10px; padding: 15px; text-align: center;">
+            <i class="bi bi-people" style="font-size: 48px; color: #0d6efd;"></i>
+            <h4>Всего клиентов</h4>
+            <h2>{{ total_jobs }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="finance-item" style="background-color: #f8f9fa; border-radius: 10px; padding: 15px; text-align: center;">
+            <i class="bi bi-credit-card" style="font-size: 48px; color: #0d6efd;"></i>
+            <h4>Общая задолженность</h4>
+            <h2>${{ total_income }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="finance-item" style="background-color: #f8f9fa; border-radius: 10px; padding: 15px; text-align: center;">
+            <i class="bi bi-hourglass-split" style="font-size: 48px; color: #0d6efd;"></i>
+            <h4>Текущий долг</h4>
+            <h2>${{ in_time_processes_money }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="finance-item" style="background-color: #f8f9fa; border-radius: 10px; padding: 15px; text-align: center;">
+            <i class="bi bi-calendar-week" style="font-size: 48px; color: #0d6efd;"></i>
+            <h4>Месячный доход</h4>
+            <h2>${{ monthly_income }}</h2>
+        </div>
+    </div>
+    <div class="col-md-8 col-sm-12">
+        <div class="chart-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Анализ доходов</h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-primary active">Ежемесячно</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary">Поквартально</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary">Ежегодно</button>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="finance-item block-b">
-                    <img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/financial-growth.png" alt="financial-growth" />
-                    <h4>Общий доход</h4>
-                    <h2>${{ total_income }}</h2>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="finance-item block-c">
-                    <img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/add-time.png" alt="add-time" />
-                    <h4>Чистая прибыль</h4>
-                    <h2>${{ in_time_processes_money }}</h2>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 mb-4">
-                <div class="finance-item block-d">
-                    <img width="48" height="48" src="https://img.icons8.com/pulsar-gradient/48/financial-growth.png" alt="financial-growth" />
-                    <h4>Месячный доход</h4>
-                    <h2>${{ monthly_income }}</h2>
-                </div>
-            </div>
-            <div class="col-md-8 col-sm-12">
-                <div class="chart-container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0">Анализ доходов</h5>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-outline-primary active">Ежемесячно</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">Поквартально</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">Ежегодно</button>
-                        </div>
-                    </div>
-                    <div id="chartdiv" style="height: 300px;">
-                        <!-- Chart will be rendered here by amCharts -->
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col-sm-12">
-                <div class="chart-container">
-                    <h5 class="mb-3">Разбивка расходов</h5>
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                        <span>Серверная инфраструктура</span>
-                        <span>$1,200</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                        <span>Программные лицензии</span>
-                        <span>$1,800</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                        <span>Офисные принадлежности</span>
-                        <span>$800</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                        <span>Маркетинг</span>
-                        <span>$1,200</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="fw-bold">Всего расходов</span>
-                        <span class="fw-bold">$5,000</span>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#editFeesModal">
-                        <i class="bi bi-pencil"></i> Редактировать расходы
-                    </button>
-                </div>
+            <div id="chartdiv" style="height: 300px;">
+                <!-- Chart will be rendered here by amCharts -->
             </div>
         </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+        <div class="chart-container">
+            <h5 class="mb-3">Разбивка расходов</h5>
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                <span>Серверная инфраструктура</span>
+                <span>$1,200</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                <span>Программные лицензии</span>
+                <span>$1,800</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                <span>Офисные принадлежности</span>
+                <span>$800</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                <span>Маркетинг</span>
+                <span>$1,200</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Всего расходов</span>
+                <span class="fw-bold">$5,000</span>
+            </div>
+            <button class="btn btn-sm btn-outline-primary mt-3 w-100" data-bs-toggle="modal" data-bs-target="#editFeesModal">
+                <i class="bi bi-pencil"></i> Редактировать расходы
+            </button>
+        </div>
+    </div>
+</div>
 
-        <!-- Team Performance -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h5 class="mb-3">Эффективность команды</h5>
-            </div>
-            
-            <!-- Developer Accordion for Mobile -->
-            <div class="col-12 d-block d-md-none">
-                <div class="accordion" id="developerAccordionMobile">
-                    {% for developer_info in developer_data %}
-                    <div class="accordion-item mb-3">
-                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar {% if developer_info.status_counts.overdue > 0 %}bg-danger{% elif developer_info.status_counts.task_red > 0 %}bg-warning{% else %}bg-success{% endif %} me-3">
-                                        {{ developer_info.developer.username|slice:":2"|upper }}
-                                    </div>
-                                    <span>{{ developer_info.developer.username }}</span>
-                                </div>
-                            </button>
-                        </h2>
-                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#developerAccordionMobile">
-                            <div class="accordion-body">
-                                <p><strong>Email:</strong> {{ developer_info.developer.email }}</p>
-                                <p><strong>Баланс:</strong> ${{ developer_info.balance }}</p>
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="task-green">Безопасно: {{ developer_info.status_counts.task_green }}</span>
-                                    <span class="task-yellow">Предупреждение: {{ developer_info.status_counts.task_yellow }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="task-red">Срочно: {{ developer_info.status_counts.task_red }}</span>
-                                    <span class="overdue">Просрочено: {{ developer_info.status_counts.overdue }}</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <a href="{% url 'deduct_balance' developer_info.developer.id %}" class="btn btn-sm btn-danger">Удержать баланс</a>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#statusModal-{{ forloop.counter }}">Статус задач</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <!-- Developer Cards for Desktop -->
+  <!-- Team Performance -->
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Эффективность команды</h5>
+        <a href="{% url 'all_developer_tasks' %}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-people-fill"></i> Просмотреть всех
+        </a>
+    </div>
+    
+    <!-- Developer Accordion for Mobile -->
+    <div class="col-12 d-block d-md-none">
+        <div class="accordion" id="developerAccordionMobile">
             {% for developer_info in developer_data %}
-            <div class="col-md-3 col-sm-6 d-none d-md-block">
-                <div class="developer-card">
-                    <div class="d-flex justify-content-between mb-3">
+            <div class="accordion-item mb-3">
+                <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
                         <div class="d-flex align-items-center">
                             <div class="avatar {% if developer_info.status_counts.overdue > 0 %}bg-danger{% elif developer_info.status_counts.task_red > 0 %}bg-warning{% else %}bg-success{% endif %} me-3">
                                 {{ developer_info.developer.username|slice:":2"|upper }}
                             </div>
-                            <div>
-                                <h6 class="mb-0">{{ developer_info.developer.username }}</h6>
-                                <small class="text-muted">{{ developer_info.developer.email }}</small>
-                            </div>
+                            <span>{{ developer_info.developer.username }}</span>
                         </div>
-                        <div class="text-end">
-                            <span class="badge {% if developer_info.status_counts.overdue > 0 %}bg-danger{% elif developer_info.status_counts.task_red > 0 %}bg-warning{% else %}bg-success{% endif %}">
-                                ${{ developer_info.balance }}
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="d-flex justify-content-between mb-1">
-                            <small>Статус задач</small>
-                        </div>
-                        <div class="d-flex justify-content-between text-muted mb-3">
+                    </button>
+                </h2>
+                <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#developerAccordionMobile">
+                    <div class="accordion-body">
+                        <p><strong>Email:</strong> {{ developer_info.developer.email }}</p>
+                        <p><strong>Баланс:</strong> ${{ developer_info.balance }}</p>
+                        <div class="d-flex justify-content-between mb-3">
                             <span class="task-green">Безопасно: {{ developer_info.status_counts.task_green }}</span>
-                            <span class="task-yellow">Внимание: {{ developer_info.status_counts.task_yellow }}</span>
+                            <span class="task-yellow">Предупреждение: {{ developer_info.status_counts.task_yellow }}</span>
                         </div>
-                        <div class="d-flex justify-content-between text-muted mb-3">
+                        <div class="d-flex justify-content-between mb-3">
                             <span class="task-red">Срочно: {{ developer_info.status_counts.task_red }}</span>
                             <span class="overdue">Просрочено: {{ developer_info.status_counts.overdue }}</span>
                         </div>
-                        <div class="d-flex justify-content-between gap-2">
-                            <a href="{% url 'deduct_balance' developer_info.developer.id %}" class="btn btn-sm btn-danger flex-grow-1">Удержать</a>
-                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#statusModal-{{ forloop.counter }}">Статус</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Status Modal for each developer -->
-            <div class="modal fade" id="statusModal-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Статус задач для {{ developer_info.developer.username }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="list-group">
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-circle-fill task-green me-2"></i> Безопасные задачи</span>
-                                    <span class="badge bg-success rounded-pill">{{ developer_info.status_counts.task_green }}</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-circle-fill task-yellow me-2"></i> Задачи с предупреждением</span>
-                                    <span class="badge bg-warning text-dark rounded-pill">{{ developer_info.status_counts.task_yellow }}</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-circle-fill task-red me-2"></i> Срочные задачи</span>
-                                    <span class="badge bg-danger rounded-pill">{{ developer_info.status_counts.task_red }}</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-circle-fill overdue me-2"></i> Просроченные задачи</span>
-                                    <span class="badge bg-danger rounded-pill">{{ developer_info.status_counts.overdue }}</span>
-                                </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-circle-fill text-success me-2"></i> Завершенные задачи</span>
-                                    <span class="badge bg-success rounded-pill">{{ developer_info.status_counts.done }}</span>
-                                </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'deduct_balance' developer_info.developer.id %}" class="btn btn-sm btn-danger">Удержать баланс</a>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#statusModal-{{ forloop.counter }}">Статус задач</button>
+                                {% if developer_info.status_counts.overdue > 0 %}
+                                <a href="{% url 'all_developer_tasks' %}?developer={{ developer_info.developer.id }}&category=overdue" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-exclamation-triangle"></i> Просроченные
+                                </a>
+                                {% endif %}
                             </div>
-                            
-                            <div class="mt-4">
-                                <h6>Недавняя активность</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Задача</th>
-                                                <th>Прогресс</th>
-                                                <th>Статус</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for task_info in developer_info.tasks %}
-                                            <tr>
-                                                <td>{{ task_info.task.title }}</td>
-                                                <td>{{ task_info.task.progress }}%</td>
-                                                <td>
-                                                    {% if task_info.task.progress == 100 %}
-                                                    <span class="badge bg-success">Завершено</span>
-                                                    {% elif task_info.days_until_deadline < 0 %}
-                                                    <span class="badge bg-danger">Просрочено</span>
-                                                    {% else %}
-                                                    <span class="badge bg-warning text-dark">В процессе</span>
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-
+    </div>
+    
+    <!-- Developer Cards for Desktop -->
+    {% for developer_info in developer_data %}
+    <div class="col-md-3 col-sm-6 d-none d-md-block">
+        <div class="developer-card">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="d-flex align-items-center">
+                    <div class="avatar {% if developer_info.status_counts.overdue > 0 %}bg-danger{% elif developer_info.status_counts.task_red > 0 %}bg-warning{% else %}bg-success{% endif %} me-3">
+                        {{ developer_info.developer.username|slice:":2"|upper }}
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{ developer_info.developer.username }}</h6>
+                        <small class="text-muted">{{ developer_info.developer.email }}</small>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <span class="badge {% if developer_info.status_counts.overdue > 0 %}bg-danger{% elif developer_info.status_counts.task_red > 0 %}bg-warning{% else %}bg-success{% endif %}">
+                        ${{ developer_info.balance }}
+                    </span>
+                </div>
+            </div>
+            <div>
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Статус задач</small>
+                </div>
+                <div class="d-flex justify-content-between text-muted mb-3">
+                    <span class="task-green">Безопасно: {{ developer_info.status_counts.task_green }}</span>
+                    <span class="task-yellow">Внимание: {{ developer_info.status_counts.task_yellow }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-muted mb-3">
+                    <span class="task-red">Срочно: {{ developer_info.status_counts.task_red }}</span>
+                    <span class="overdue">Просрочено: {{ developer_info.status_counts.overdue }}</span>
+                </div>
+                <div class="d-flex justify-content-between gap-2">
+                    <a href="{% url 'deduct_balance' developer_info.developer.id %}" class="btn btn-sm btn-danger">Удержать</a>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#statusModal-{{ forloop.counter }}">Статус</button>
+                        {% if developer_info.status_counts.overdue > 0 %}
+                        <a href="{% url 'all_developer_tasks' %}?developer={{ developer_info.developer.id }}&category=overdue" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <!-- Status Modals for each developer (keep these outside the for loops) -->
+    {% for developer_info in developer_data %}
+    <div class="modal fade" id="statusModal-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Статус задач для {{ developer_info.developer.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-circle-fill task-green me-2"></i> Безопасные задачи</span>
+                            <span class="badge bg-success rounded-pill">{{ developer_info.status_counts.task_green }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-circle-fill task-yellow me-2"></i> Задачи с предупреждением</span>
+                            <span class="badge bg-warning text-dark rounded-pill">{{ developer_info.status_counts.task_yellow }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-circle-fill task-red me-2"></i> Срочные задачи</span>
+                            <span class="badge bg-danger rounded-pill">{{ developer_info.status_counts.task_red }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-circle-fill overdue me-2"></i> Просроченные задачи</span>
+                            <span class="badge bg-danger rounded-pill">{{ developer_info.status_counts.overdue }}</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-circle-fill text-success me-2"></i> Завершенные задачи</span>
+                            <span class="badge bg-success rounded-pill">{{ developer_info.status_counts.done }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>Недавняя активность</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Задача</th>
+                                        <th>Прогресс</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task_info in developer_info.tasks %}
+                                    <tr>
+                                        <td>{{ task_info.task.title }}</td>
+                                        <td>{{ task_info.task.progress }}%</td>
+                                        <td>
+                                            {% if task_info.task.progress == 100 %}
+                                            <span class="badge bg-success">Завершено</span>
+                                            {% elif task_info.days_until_deadline < 0 %}
+                                            <span class="badge bg-danger">Просрочено</span>
+                                            {% else %}
+                                            <span class="badge bg-warning text-dark">В процессе</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <!-- View All button at the bottom -->
+    <div class="col-12 d-flex justify-content-center mt-3">
+        <a href="{% url 'all_developer_tasks' %}" class="btn btn-outline-primary">
+            <i class="bi bi-people-fill"></i> Просмотреть всех разработчиков
+        </a>
+    </div>
+</div>
        <!-- Projects & Tasks Table -->
 <div class="row">
     <div class="col-12">
