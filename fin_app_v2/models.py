@@ -35,7 +35,6 @@ class Job(models.Model):
 class Task(models.Model):
     TASK_TYPE_CHOICES = [
         ('SIMPLE', 'Простая задача'),
-        ('MONTHLY', 'Ежемесячная задача'),
         ('PATPIS', 'Повторяющаяся задача')
     ]
 
