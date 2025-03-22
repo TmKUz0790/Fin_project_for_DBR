@@ -224,8 +224,6 @@ def client_progress(request):
     if not job_id:
         return redirect('client_login')
 
-    admin_confirmed_tasks = Task.objects.filter(job=job, confirmed=True, client_confirmed=False).count()
-    client_confirmed_tasks = Task.objects.filter(job=job, client_confirmed=True).count()
 
     job = get_object_or_404(Job, id=job_id)
 
@@ -432,8 +430,7 @@ def client_progress(request):
         'latest_deadline': latest_deadline,
         'formatted_latest_deadline': formatted_latest_deadline,
         'current_date': current_date,
-        'admin_confirmed_tasks': admin_confirmed_tasks,
-        'client_confirmed_tasks': client_confirmed_tasks,
+
         'show_follow_tasks': show_follow_tasks,
         'all_months': all_months,
         'task_matrix': task_matrix,
