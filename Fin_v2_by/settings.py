@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fin_app_v2.apps.FinAppV2Config'
+    'fin_app_v2.apps.FinAppV2Config',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,27 @@ WSGI_APPLICATION = 'Fin_v2_by.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+
+EST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Nice web interface for testing
+    ]
+}
+
+
+
 
 DATABASES = {
     'default': {
